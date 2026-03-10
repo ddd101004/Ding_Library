@@ -22,7 +22,7 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
 
     const checkAuth = async () => {
       // 排除不需要认证的页面
-      const publicPaths = ['/login', '/', '/forgot-password', '/register', '/agreement/user-service-agreement', '/agreement/privacy-policy'];
+      const publicPaths = ['/login', '/forgot-password', '/register', '/agreement/user-service-agreement', '/agreement/privacy-policy'];
       if (publicPaths.includes(router.pathname)) {
         setAuthChecked(true);
         return;
@@ -69,7 +69,7 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
   }, [router.pathname, userInfo?.token, clearUserInfo, router, isLoading, authChecked]);
 
   // 如果还在检查认证或加载中，显示加载状态
-  if (isLoading || (!authChecked && !['/login', '/', '/forgot-password', '/register', '/agreement/user-service-agreement', '/agreement/privacy-policy'].includes(router.pathname))) {
+  if (isLoading || (!authChecked && !['/login', '/forgot-password', '/register', '/agreement/user-service-agreement', '/agreement/privacy-policy'].includes(router.pathname))) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
