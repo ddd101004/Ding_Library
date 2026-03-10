@@ -1,0 +1,239 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "临港图书馆 - 论文引用 API",
+    "description": "论文引用格式化和下载接口",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3007",
+      "description": "本地开发环境"
+    },
+    {
+      "url": "https://api.lingang-library.com",
+      "description": "生产环境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "论文引用",
+      "description": "论文引用格式化和文件下载"
+    }
+  ],
+  "paths": {
+    "/api/chat/citations/format": {
+      "get": {
+        "tags": ["论文引用"],
+        "summary": "格式化引用",
+        "description": "按指定格式生成论文引用文本，支持 APA、MLA、Chicago、BibTeX、RIS 等格式",
+        "operationId": "formatCitation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paper_id",
+            "in": "query",
+            "required": true,
+            "description": "论文 ID",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "引用格式，默认 APA",
+            "schema": {
+              "type": "string",
+              "enum": ["APA", "MLA", "CHICAGO", "BIBTEX", "RIS"],
+              "default": "APA",
+              "example": "APA"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "格式化成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "格式化成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "format": {
+                          "type": "string",
+                          "description": "使用的格式",
+                          "example": "APA"
+                        },
+                        "formatted_text": {
+                          "type": "string",
+                          "description": "格式化后的引用文本",
+                          "example": "Smith, J., Doe, A. (2023). AI Research in Modern Computing. Nature, 25(3), 45-67. https://doi.org/10.1234/example"
+                        },
+                        "download_formats": {
+                          "type": "object",
+                          "description": "可下载的格式",
+                          "properties": {
+                            "bibtex": {
+                              "type": "string",
+                              "description": "BibTeX 格式文本"
+                            },
+                            "ris": {
+                              "type": "string",
+                              "description": "RIS 格式文本"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "参数错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "服务器错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chat/citations/download": {
+      "get": {
+        "tags": ["论文引用"],
+        "summary": "下载引用文件",
+        "description": "下载指定格式的引用文件（BibTeX 或 RIS）",
+        "operationId": "downloadCitation",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "paper_id",
+            "in": "query",
+            "required": true,
+            "description": "论文 ID",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "example": "550e8400-e29b-41d4-a716-446655440000"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "description": "文件格式，默认 BIBTEX",
+            "schema": {
+              "type": "string",
+              "enum": ["BIBTEX", "RIS"],
+              "default": "BIBTEX",
+              "example": "BIBTEX"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "下载成功",
+            "headers": {
+              "Content-Type": {
+                "schema": {
+                  "type": "string",
+                  "example": "application/octet-stream"
+                }
+              },
+              "Content-Disposition": {
+                "schema": {
+                  "type": "string",
+                  "example": "attachment; filename=\"Smith2023.bib\""
+                },
+                "description": "文件名格式：第一作者姓氏+年份+扩展名"
+              }
+            },
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary",
+                  "description": "BibTeX 或 RIS 格式文件内容"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "参数错误或不支持的格式",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "服务器错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT 认证，格式：Bearer {token}"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "操作失败"
+          }
+        }
+      }
+    }
+  }
+}

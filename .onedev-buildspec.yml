@@ -1,0 +1,35 @@
+version: 37
+jobs:
+- name: Run Docker
+  jobExecutor: internal
+  steps:
+  - !CheckoutStep
+    name: checkout
+    cloneCredential: !DefaultCredential {}
+    withLfs: false
+    withSubmodules: false
+    cloneDepth: 1
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Run Docker Container
+    runInContainer: false
+    interpreter: !DefaultInterpreter
+      commands: |
+        docker build -t lingang-library .
+        docker stop lingang-library >/dev/null 2>&1 || true
+        docker rm lingang-library >/dev/null 2>&1 || true
+        docker run --name lingang-library --restart=always -v /var/logs/lingang-library:/var/logs/lingang-library -p 30015:3007 -d lingang-library
+        docker image prune -f
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  triggers:
+  - !BranchUpdateTrigger
+    branches: master
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  timeout: 3600
+  postBuildActions:
+  - !SendNotificationAction
+    condition: previous is failed or failed or successful
+    receivers: authors

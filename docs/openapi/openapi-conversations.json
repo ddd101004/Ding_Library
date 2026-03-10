@@ -1,0 +1,1117 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "临港图书馆 - 对话管理 API",
+    "description": "对话（会话）管理接口文档，包括创建、查询、更新、删除会话。支持普通对话（general）、AI 伴读对话（paper_reading）和文件夹知识库对话（folder_rag）三种类型。",
+    "version": "2.1.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3007",
+      "description": "开发环境"
+    },
+    {
+      "url": "https://api.lingang-library.com",
+      "description": "生产环境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "对话管理",
+      "description": "会话的 CRUD 操作，支持普通对话、AI 伴读对话和文件夹知识库对话"
+    }
+  ],
+  "paths": {
+    "/api/chat/conversations": {
+      "post": {
+        "tags": ["对话管理"],
+        "summary": "创建新会话",
+        "description": "创建一个新的对话会话。支持创建普通对话（general）、AI 伴读对话（paper_reading）和文件夹知识库对话（folder_rag）。伴读对话需要关联已上传的论文，文件夹知识库对话需要关联文件夹。",
+        "operationId": "createConversation",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "会话标题（不传则自动生成）",
+                    "example": "量子计算讨论"
+                  },
+                  "model": {
+                    "type": "string",
+                    "description": "使用的模型",
+                    "default": "deepseek-v3",
+                    "example": "deepseek-v3"
+                  },
+                  "is_deep_think": {
+                    "type": "boolean",
+                    "description": "是否启用深度思考模式",
+                    "default": false
+                  },
+                  "auto_search_papers": {
+                    "type": "boolean",
+                    "description": "是否自动检索相关论文",
+                    "default": false
+                  },
+                  "context_window": {
+                    "type": "integer",
+                    "description": "上下文窗口大小",
+                    "default": 10,
+                    "example": 10
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "description": "最大 token 数",
+                    "default": 64000,
+                    "example": 64000
+                  },
+                  "conversation_type": {
+                    "type": "string",
+                    "enum": ["general", "paper_reading", "folder_rag"],
+                    "description": "对话类型：general-普通对话，paper_reading-AI伴读对话，folder_rag-文件夹知识库对话",
+                    "default": "general"
+                  },
+                  "uploaded_paper_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "关联的论文 ID（仅 paper_reading 类型需要）"
+                  },
+                  "folder_id": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "关联的文件夹 ID（仅 folder_rag 类型需要）"
+                  },
+                  "context_mode": {
+                    "type": "string",
+                    "enum": ["full_paper", "selected_text", "auto"],
+                    "description": "上下文模式：full_paper-全文，selected_text-选中文本，auto-自动",
+                    "default": "auto"
+                  }
+                }
+              },
+              "examples": {
+                "general": {
+                  "summary": "创建普通对话",
+                  "value": {
+                    "title": "AI 技术讨论",
+                    "model": "deepseek-v3"
+                  }
+                },
+                "paper_reading": {
+                  "summary": "创建伴读对话",
+                  "value": {
+                    "conversation_type": "paper_reading",
+                    "uploaded_paper_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "context_mode": "auto"
+                  }
+                },
+                "folder_rag": {
+                  "summary": "创建文件夹知识库对话",
+                  "value": {
+                    "conversation_type": "folder_rag",
+                    "folder_id": "550e8400-e29b-41d4-a716-446655440001",
+                    "title": "文件夹知识库问答"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "创建成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "会话创建成功" },
+                    "data": {
+                      "$ref": "#/components/schemas/ConversationWithPaper"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" },
+          "501": { "$ref": "#/components/responses/ServerError" }
+        }
+      },
+      "get": {
+        "tags": ["对话管理"],
+        "summary": "获取会话列表",
+        "description": "获取当前用户的会话列表。支持两种模式：\n1. 传统分页模式：所有会话按时间倒序排列，支持分页\n2. 时间分组模式：按'最近7天'、'30天内'、'更早'三个时间分组返回，每个分组独立分页\n\n使用时间分组模式需要设置 time_group_mode=true。",
+        "operationId": "getConversations",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "time_group_mode",
+            "in": "query",
+            "description": "是否使用时间分组模式（true=时间分组，false或不存在=传统分页）",
+            "schema": { "type": "boolean", "default": false }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "页码（从1开始，仅在传统模式下有效）",
+            "schema": { "type": "integer", "minimum": 1, "default": 1 }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "每页数量（默认20，最大100，仅在传统模式下有效）",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "recent_page",
+            "in": "query",
+            "description": "最近7天分组的页码（仅在时间分组模式下有效）",
+            "schema": { "type": "integer", "minimum": 1, "default": 1 }
+          },
+          {
+            "name": "recent_limit",
+            "in": "query",
+            "description": "最近7天分组的每页数量（仅在时间分组模式下有效，默认10，最大50）",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 }
+          },
+          {
+            "name": "within30_page",
+            "in": "query",
+            "description": "30天内分组的页码（仅在时间分组模式下有效）",
+            "schema": { "type": "integer", "minimum": 1, "default": 1 }
+          },
+          {
+            "name": "within30_limit",
+            "in": "query",
+            "description": "30天内分组的每页数量（仅在时间分组模式下有效，默认10，最大50）",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 }
+          },
+          {
+            "name": "earlier_page",
+            "in": "query",
+            "description": "更早分组的页码（仅在时间分组模式下有效）",
+            "schema": { "type": "integer", "minimum": 1, "default": 1 }
+          },
+          {
+            "name": "earlier_limit",
+            "in": "query",
+            "description": "更早分组的每页数量（仅在时间分组模式下有效，默认10，最大50）",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 10 }
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "搜索关键词（搜索标题，两种模式都支持）",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "conversation_type",
+            "in": "query",
+            "description": "对话类型筛选（两种模式都支持）",
+            "schema": {
+              "type": "string",
+              "enum": ["general", "paper_reading", "folder_rag"]
+            }
+          },
+          {
+            "name": "uploaded_paper_id",
+            "in": "query",
+            "description": "按关联论文 ID 筛选（仅伴读对话，两种模式都支持）",
+            "schema": { "type": "string", "format": "uuid" }
+          },
+          {
+            "name": "folder_id",
+            "in": "query",
+            "description": "按关联文件夹 ID 筛选（仅文件夹知识库对话，两种模式都支持）",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "oneOf": [
+                        {
+                          "title": "传统分页模式响应",
+                          "type": "object",
+                          "properties": {
+                            "mode": { "type": "string", "example": "pagination" },
+                            "items": {
+                              "type": "array",
+                              "items": {
+                                "$ref": "#/components/schemas/ConversationListItem"
+                              }
+                            },
+                            "total": { "type": "integer" },
+                            "page": { "type": "integer" },
+                            "size": { "type": "integer" },
+                            "has_more": { "type": "boolean" }
+                          }
+                        },
+                        {
+                          "title": "时间分组模式响应",
+                          "type": "object",
+                          "properties": {
+                            "mode": { "type": "string", "example": "time_groups" },
+                            "data": {
+                              "type": "object",
+                              "properties": {
+                                "recent": {
+                                  "title": "最近7天",
+                                  "type": "object",
+                                  "properties": {
+                                    "conversations": {
+                                      "type": "array",
+                                      "items": {
+                                        "$ref": "#/components/schemas/ConversationListItem"
+                                      }
+                                    },
+                                    "pagination": {
+                                      "$ref": "#/components/schemas/PaginationInfo"
+                                    }
+                                  }
+                                },
+                                "within30Days": {
+                                  "title": "30天内",
+                                  "type": "object",
+                                  "properties": {
+                                    "conversations": {
+                                      "type": "array",
+                                      "items": {
+                                        "$ref": "#/components/schemas/ConversationListItem"
+                                      }
+                                    },
+                                    "pagination": {
+                                      "$ref": "#/components/schemas/PaginationInfo"
+                                    }
+                                  }
+                                },
+                                "earlier": {
+                                  "title": "更早",
+                                  "type": "object",
+                                  "properties": {
+                                    "conversations": {
+                                      "type": "array",
+                                      "items": {
+                                        "$ref": "#/components/schemas/ConversationListItem"
+                                      }
+                                    },
+                                    "pagination": {
+                                      "$ref": "#/components/schemas/PaginationInfo"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "传统分页模式": {
+                    "summary": "传统分页模式的响应示例",
+                    "value": {
+                      "code": 200,
+                      "message": "获取成功",
+                      "data": {
+                        "mode": "pagination",
+                        "items": [
+                          {
+                            "conversation_id": "550e8400-e29b-41d4-a716-446655440000",
+                            "title": "量子计算讨论",
+                            "last_message_at": "2025-12-17T10:28:45.471Z",
+                            "message_count": 5
+                          }
+                        ],
+                        "total": 100,
+                        "page": 1,
+                        "size": 20,
+                        "has_more": true
+                      }
+                    }
+                  },
+                  "时间分组模式": {
+                    "summary": "时间分组模式的响应示例",
+                    "value": {
+                      "code": 200,
+                      "message": "获取成功",
+                      "data": {
+                        "mode": "time_groups",
+                        "data": {
+                          "recent": {
+                            "title": "最近7天",
+                            "conversations": [
+                              {
+                                "conversation_id": "550e8400-e29b-41d4-a716-446655440000",
+                                "title": "量子计算讨论",
+                                "last_message_at": "2025-12-17T10:28:45.471Z",
+                                "message_count": 5
+                              }
+                            ],
+                            "pagination": {
+                              "total": 25,
+                              "page": 1,
+                              "limit": 10,
+                              "total_pages": 3
+                            }
+                          },
+                          "within30Days": {
+                            "title": "30天内",
+                            "conversations": [],
+                            "pagination": {
+                              "total": 0,
+                              "page": 1,
+                              "limit": 10,
+                              "total_pages": 0
+                            }
+                          },
+                          "earlier": {
+                            "title": "更早",
+                            "conversations": [
+                              {
+                                "conversation_id": "550e8400-e29b-41d4-a716-446655440001",
+                                "title": "机器学习基础",
+                                "last_message_at": "2025-11-15T08:20:30.123Z",
+                                "message_count": 12
+                              }
+                            ],
+                            "pagination": {
+                              "total": 75,
+                              "page": 1,
+                              "limit": 10,
+                              "total_pages": 8
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "501": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/chat/conversations/{id}/related-papers": {
+      "get": {
+        "tags": ["对话管理"],
+        "summary": "获取对话的相关论文",
+        "description": "获取指定对话中 AI 自动检索到的相关论文列表。系统会在用户提问时自动提取关键词并检索相关学术论文，此接口返回去重后的论文列表。",
+        "operationId": "getConversationRelatedPapers",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "对话 ID",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "获取成功" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "conversation_id": {
+                          "type": "string",
+                          "format": "uuid",
+                          "description": "对话 ID"
+                        },
+                        "total": {
+                          "type": "integer",
+                          "description": "相关论文总数"
+                        },
+                        "papers": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/RelatedPaper"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "code": 200,
+                  "message": "获取成功",
+                  "data": {
+                    "conversation_id": "550e8400-e29b-41d4-a716-446655440000",
+                    "total": 3,
+                    "papers": [
+                      {
+                        "id": "paper-uuid-1",
+                        "title": "Deep Learning for Natural Language Processing",
+                        "authors": ["John Smith", "Jane Doe"],
+                        "publication_name": "Nature",
+                        "publication_year": 2023,
+                        "abstract": "This paper presents...",
+                        "doi": "10.1234/example.doi",
+                        "source": "ebsco",
+                        "source_id": "edsbas:12345",
+                        "search_keywords": "deep learning NLP"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": {
+            "description": "参数错误或无权访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 503 },
+                    "message": { "type": "string" }
+                  }
+                },
+                "examples": {
+                  "missing_id": {
+                    "summary": "缺少对话ID",
+                    "value": {
+                      "code": 503,
+                      "message": "对话ID不能为空"
+                    }
+                  },
+                  "not_found": {
+                    "summary": "对话不存在",
+                    "value": {
+                      "code": 503,
+                      "message": "对话不存在"
+                    }
+                  },
+                  "no_permission": {
+                    "summary": "无权访问",
+                    "value": {
+                      "code": 503,
+                      "message": "无权访问该对话"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "501": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/chat/conversations/{id}/message-versions": {
+      "post": {
+        "tags": ["对话管理"],
+        "summary": "批量获取消息版本信息",
+        "description": "批量获取多个消息的版本信息，包括总版本数、当前版本索引和所有版本详情。前端应根据消息列表接口返回的 has_multiple_versions 字段筛选需要查询版本信息的消息 ID。",
+        "operationId": "batchGetMessageVersions",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "对话 ID",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["message_ids"],
+                "properties": {
+                  "message_ids": {
+                    "type": "array",
+                    "description": "消息 ID 列表（最多 100 个）",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "maxItems": 100,
+                    "example": ["550e8400-e29b-41d4-a716-446655440000", "550e8400-e29b-41d4-a716-446655440001"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "获取成功" },
+                    "data": {
+                      "type": "object",
+                      "description": "消息 ID 到版本信息的映射",
+                      "additionalProperties": {
+                        "$ref": "#/components/schemas/MessageVersionInfo"
+                      },
+                      "example": {
+                        "550e8400-e29b-41d4-a716-446655440000": {
+                          "totalVersions": 3,
+                          "currentVersion": 2,
+                          "rootMessageId": "550e8400-e29b-41d4-a716-446655440000",
+                          "allVersions": [
+                            {
+                              "message_id": "550e8400-e29b-41d4-a716-446655440000",
+                              "content": "第一个版本的内容",
+                              "reasoningContent": null,
+                              "create_time": "2025-01-15T10:00:00.000Z",
+                              "parent_message_id": null,
+                              "status": "completed"
+                            },
+                            {
+                              "message_id": "550e8400-e29b-41d4-a716-446655440002",
+                              "content": "重新生成的第二个版本",
+                              "reasoningContent": null,
+                              "create_time": "2025-01-15T10:05:00.000Z",
+                              "parent_message_id": "550e8400-e29b-41d4-a716-446655440000",
+                              "status": "completed"
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": {
+            "description": "参数错误或无权访问",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 503 },
+                    "message": { "type": "string" }
+                  }
+                },
+                "examples": {
+                  "missing_ids": {
+                    "summary": "缺少消息ID列表",
+                    "value": {
+                      "code": 503,
+                      "message": "message_ids 必须是数组"
+                    }
+                  },
+                  "too_many_ids": {
+                    "summary": "消息ID数量超限",
+                    "value": {
+                      "code": 503,
+                      "message": "单次最多查询 100 条消息的版本信息"
+                    }
+                  },
+                  "no_permission": {
+                    "summary": "无权访问",
+                    "value": {
+                      "code": 503,
+                      "message": "无权访问此会话"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "501": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/api/chat/conversations/{id}": {
+      "get": {
+        "tags": ["对话管理"],
+        "summary": "获取单个会话详情",
+        "description": "根据会话 ID 获取会话的详细信息。如果是伴读对话，会返回关联的论文信息。",
+        "operationId": "getConversationById",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会话 ID",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": {
+                      "$ref": "#/components/schemas/ConversationWithPaper"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" },
+          "501": { "$ref": "#/components/responses/ServerError" }
+        }
+      },
+      "patch": {
+        "tags": ["对话管理"],
+        "summary": "更新会话信息",
+        "description": "更新会话的标题、模型等配置信息",
+        "operationId": "updateConversation",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会话 ID",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": { "type": "string", "description": "会话标题" },
+                  "is_pinned": { "type": "boolean", "description": "是否置顶" },
+                  "is_deep_think": { "type": "boolean", "description": "是否启用深度思考" },
+                  "context_window": {
+                    "type": "integer",
+                    "description": "上下文窗口"
+                  },
+                  "max_tokens": {
+                    "type": "integer",
+                    "description": "最大 token 数"
+                  }
+                },
+                "minProperties": 1
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string" },
+                    "data": { "$ref": "#/components/schemas/Conversation" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" },
+          "501": { "$ref": "#/components/responses/ServerError" }
+        }
+      },
+      "delete": {
+        "tags": ["对话管理"],
+        "summary": "删除会话",
+        "description": "软删除指定会话（设置 deleted_at 字段）",
+        "operationId": "deleteConversation",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "会话 ID",
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": { "type": "string", "example": "删除成功" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" },
+          "501": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT 认证 token，有效期7天"
+      }
+    },
+    "schemas": {
+      "Conversation": {
+        "type": "object",
+        "properties": {
+          "conversation_id": { "type": "string", "format": "uuid" },
+          "user_id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "model": { "type": "string" },
+          "is_deep_think": { "type": "boolean" },
+          "is_pinned": { "type": "boolean" },
+          "auto_search_papers": {
+            "type": "boolean",
+            "description": "是否自动检索相关论文"
+          },
+          "context_window": { "type": "integer" },
+          "max_tokens": { "type": "integer" },
+          "message_count": { "type": "integer" },
+          "last_message_at": { "type": "string", "format": "date-time" },
+          "create_time": { "type": "string", "format": "date-time" },
+          "update_time": { "type": "string", "format": "date-time" },
+          "conversation_type": {
+            "type": "string",
+            "enum": ["general", "paper_reading", "folder_rag"],
+            "description": "对话类型：general-普通对话，paper_reading-AI伴读对话，folder_rag-文件夹知识库对话"
+          },
+          "uploaded_paper_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "关联的论文 ID（仅 paper_reading 类型）"
+          },
+          "folder_id": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true,
+            "description": "关联的文件夹 ID（仅 folder_rag 类型）"
+          },
+          "context_mode": {
+            "type": "string",
+            "enum": ["full_paper", "selected_text", "auto"],
+            "description": "上下文模式"
+          }
+        }
+      },
+      "ConversationListItem": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Conversation" },
+          {
+            "type": "object",
+            "properties": {
+              "last_message_preview": {
+                "type": "string",
+                "description": "最后一条消息预览"
+              },
+              "paper_info": {
+                "$ref": "#/components/schemas/PaperInfoBrief",
+                "nullable": true,
+                "description": "关联论文的简要信息（仅伴读对话）"
+              },
+              "folder_info": {
+                "$ref": "#/components/schemas/FolderInfoBrief",
+                "nullable": true,
+                "description": "关联文件夹的简要信息（仅文件夹知识库对话）"
+              }
+            }
+          }
+        ]
+      },
+      "ConversationWithPaper": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Conversation" },
+          {
+            "type": "object",
+            "properties": {
+              "paper_info": {
+                "$ref": "#/components/schemas/PaperInfoFull",
+                "nullable": true,
+                "description": "关联论文的详细信息（仅伴读对话）"
+              },
+              "folder_info": {
+                "$ref": "#/components/schemas/FolderInfoBrief",
+                "nullable": true,
+                "description": "关联文件夹的简要信息（仅文件夹知识库对话）"
+              }
+            }
+          }
+        ]
+      },
+      "PaperInfoBrief": {
+        "type": "object",
+        "description": "论文简要信息",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "file_name": { "type": "string" },
+          "file_type": { "type": "string" }
+        }
+      },
+      "FolderInfoBrief": {
+        "type": "object",
+        "description": "文件夹简要信息",
+        "properties": {
+          "folder_id": { "type": "string", "format": "uuid" },
+          "folder_name": { "type": "string" }
+        }
+      },
+      "PaperInfoFull": {
+        "type": "object",
+        "description": "论文详细信息",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "title": { "type": "string" },
+          "authors": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "abstract": { "type": "string" },
+          "keywords": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "file_name": { "type": "string" },
+          "file_size": { "type": "integer" },
+          "file_type": { "type": "string" },
+          "parse_status": {
+            "type": "string",
+            "enum": ["pending", "parsing", "completed", "failed"]
+          },
+          "parsed_content": { "type": "string" },
+          "page_count": { "type": "integer", "nullable": true },
+          "word_count": { "type": "integer", "nullable": true }
+        }
+      },
+      "RelatedPaper": {
+        "type": "object",
+        "description": "对话相关论文信息",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "论文 ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "论文标题"
+          },
+          "authors": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "作者列表"
+          },
+          "publication_name": {
+            "type": "string",
+            "nullable": true,
+            "description": "期刊/出版物名称"
+          },
+          "publication_year": {
+            "type": "integer",
+            "nullable": true,
+            "description": "出版年份"
+          },
+          "abstract": {
+            "type": "string",
+            "nullable": true,
+            "description": "摘要"
+          },
+          "doi": {
+            "type": "string",
+            "nullable": true,
+            "description": "DOI"
+          },
+          "source": {
+            "type": "string",
+            "description": "数据来源（如 ebsco, aminer）"
+          },
+          "source_id": {
+            "type": "string",
+            "description": "来源系统中的 ID"
+          },
+          "search_keywords": {
+            "type": "string",
+            "nullable": true,
+            "description": "检索该论文时使用的关键词"
+          }
+        }
+      },
+      "PaginationInfo": {
+        "type": "object",
+        "description": "分页信息",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "总记录数"
+          },
+          "page": {
+            "type": "integer",
+            "description": "当前页码（从1开始）"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "每页记录数"
+          },
+          "total_pages": {
+            "type": "integer",
+            "description": "总页数"
+          }
+        },
+        "example": {
+          "total": 50,
+          "page": 1,
+          "limit": 10,
+          "total_pages": 5
+        }
+      },
+      "MessageVersionInfo": {
+        "type": "object",
+        "description": "消息版本信息",
+        "properties": {
+          "totalVersions": {
+            "type": "integer",
+            "description": "总版本数"
+          },
+          "currentVersion": {
+            "type": "integer",
+            "description": "当前版本索引（从1开始）"
+          },
+          "rootMessageId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "根消息 ID（版本链的起始消息）"
+          },
+          "allVersions": {
+            "type": "array",
+            "description": "所有版本的详细信息（按创建时间排序）",
+            "items": {
+              "type": "object",
+              "properties": {
+                "message_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "消息 ID"
+                },
+                "content": {
+                  "type": "string",
+                  "description": "消息内容"
+                },
+                "reasoningContent": {
+                  "type": "string",
+                  "nullable": true,
+                  "description": "深度思考推理内容"
+                },
+                "create_time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "创建时间"
+                },
+                "parent_message_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "nullable": true,
+                  "description": "父消息 ID（重新生成时指向被替换的消息）"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": ["streaming", "completed", "stopped", "error"],
+                  "description": "消息状态"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "未授权",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string", "example": "未授权" }
+              }
+            }
+          }
+        }
+      },
+      "WarningResponse": {
+        "description": "警告响应",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "ServerError": {
+        "description": "服务器错误",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

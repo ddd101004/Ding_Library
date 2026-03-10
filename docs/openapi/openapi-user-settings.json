@@ -1,0 +1,432 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "临港图书馆 - 用户设置 API",
+    "description": "用户设置相关接口，包括头像管理、通知设置、账户管理。注意：用户资料的获取和更新请使用 /api/auth/info 接口",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3007",
+      "description": "开发环境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "个人中心",
+      "description": "头像管理（用户资料的获取和更新请使用 /api/auth/info）"
+    },
+    {
+      "name": "通知设置",
+      "description": "通知偏好设置"
+    },
+    {
+      "name": "账户管理",
+      "description": "账户删除等操作"
+    }
+  ],
+  "paths": {
+    "/api/user/avatar": {
+      "get": {
+        "tags": ["个人中心"],
+        "summary": "获取头像",
+        "description": "获取当前用户的头像 URL（7天有效期签名 URL）及上传配置",
+        "operationId": "getAvatar",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "获取成功" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "avatar": {
+                          "type": "string",
+                          "nullable": true,
+                          "description": "头像签名 URL（7天有效期），无头像时为 null"
+                        },
+                        "config": {
+                          "type": "object",
+                          "description": "上传配置",
+                          "properties": {
+                            "allowed_types": {
+                              "type": "array",
+                              "items": { "type": "string" },
+                              "example": ["jpg", "jpeg", "png", "gif", "webp"]
+                            },
+                            "max_size": {
+                              "type": "integer",
+                              "description": "最大文件大小（字节）",
+                              "example": 2097152
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        }
+      },
+      "post": {
+        "tags": ["个人中心"],
+        "summary": "获取头像上传签名",
+        "description": "获取 COS 上传签名，用于前端直传头像到腾讯云 COS。上传流程：1.调用此接口获取签名 2.前端使用签名直传文件到 COS 3.调用 PUT 接口确认上传完成",
+        "operationId": "getAvatarUploadSignature",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file_name": {
+                    "type": "string",
+                    "description": "文件名"
+                  },
+                  "file_size": {
+                    "type": "integer",
+                    "description": "文件大小（字节），最大 2MB"
+                  },
+                  "file_type": {
+                    "type": "string",
+                    "description": "文件类型（可选，会自动从文件名提取）",
+                    "enum": ["jpg", "jpeg", "png", "gif", "webp"]
+                  }
+                },
+                "required": ["file_name", "file_size"]
+              },
+              "example": {
+                "file_name": "avatar.jpg",
+                "file_size": 102400,
+                "file_type": "jpg"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "获取签名成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "获取上传签名成功" },
+                    "data": {
+                      "$ref": "#/components/schemas/AvatarUploadSignature"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" }
+        }
+      },
+      "put": {
+        "tags": ["个人中心"],
+        "summary": "确认头像上传完成",
+        "description": "前端直传 COS 成功后，调用此接口确认上传完成并更新数据库",
+        "operationId": "confirmAvatarUpload",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "cos_key": {
+                    "type": "string",
+                    "description": "COS 对象 key，由获取签名接口返回"
+                  }
+                },
+                "required": ["cos_key"]
+              },
+              "example": {
+                "cos_key": "avatars/user123/1702345678_abc123.jpg"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "头像更新成功" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "avatar": {
+                          "type": "string",
+                          "description": "头像签名 URL（7天有效期）"
+                        },
+                        "avatar_key": {
+                          "type": "string",
+                          "description": "COS 对象 key"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" }
+        }
+      },
+      "delete": {
+        "tags": ["个人中心"],
+        "summary": "删除头像",
+        "description": "删除当前用户的头像（同时删除 COS 文件）",
+        "operationId": "deleteAvatar",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "头像已删除" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" }
+        }
+      }
+    },
+    "/api/user/settings/notifications": {
+      "get": {
+        "tags": ["通知设置"],
+        "summary": "获取通知设置",
+        "description": "获取用户的通知偏好设置",
+        "operationId": "getNotificationSettings",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "获取成功" },
+                    "data": {
+                      "$ref": "#/components/schemas/NotificationSettings"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+        }
+      },
+      "patch": {
+        "tags": ["通知设置"],
+        "summary": "更新通知设置",
+        "description": "更新用户的通知偏好设置",
+        "operationId": "updateNotificationSettings",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "doc_delivery": {
+                    "type": "boolean",
+                    "description": "全文传递通知开关"
+                  }
+                }
+              },
+              "example": {
+                "doc_delivery": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "更新成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "更新成功" },
+                    "data": {
+                      "$ref": "#/components/schemas/NotificationSettings"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" }
+        }
+      }
+    },
+    "/api/user/account": {
+      "delete": {
+        "tags": ["账户管理"],
+        "summary": "删除账户",
+        "description": "软删除用户账户，需要输入确认字符串",
+        "operationId": "deleteAccount",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "confirmation": {
+                    "type": "string",
+                    "description": "确认字符串，必须为 DELETE"
+                  }
+                },
+                "required": ["confirmation"]
+              },
+              "example": {
+                "confirmation": "DELETE"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "删除成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": { "type": "integer", "example": 200 },
+                    "message": { "type": "string", "example": "账户已删除" }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/UnauthorizedError" },
+          "503": { "$ref": "#/components/responses/WarningResponse" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "AvatarUploadSignature": {
+        "type": "object",
+        "description": "头像上传签名信息，用于前端直传 COS",
+        "properties": {
+          "cos_key": {
+            "type": "string",
+            "description": "COS 对象 key，上传完成后需要传给确认接口",
+            "example": "avatars/user123/1702345678_abc123.jpg"
+          },
+          "signed_url": {
+            "type": "string",
+            "description": "预签名上传 URL，前端使用此 URL 直传文件"
+          },
+          "expires_at": {
+            "type": "string",
+            "format": "date-time",
+            "description": "签名过期时间（30分钟有效期）"
+          },
+          "method": {
+            "type": "string",
+            "description": "HTTP 方法",
+            "example": "PUT"
+          },
+          "headers": {
+            "type": "object",
+            "description": "上传时需要携带的请求头",
+            "properties": {
+              "Content-Type": {
+                "type": "string",
+                "example": "image/jpeg"
+              }
+            }
+          }
+        }
+      },
+      "NotificationSettings": {
+        "type": "object",
+        "properties": {
+          "doc_delivery": {
+            "type": "boolean",
+            "description": "全文传递通知开关"
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "未授权",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": { "type": "integer", "example": 401 },
+                "message": { "type": "string", "example": "未授权" }
+              }
+            }
+          }
+        }
+      },
+      "WarningResponse": {
+        "description": "警告响应",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": { "type": "integer", "example": 503 },
+                "message": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

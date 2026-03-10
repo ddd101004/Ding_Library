@@ -1,0 +1,820 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AMiner 详情 API",
+    "description": "AMiner 学术搜索系统 - 详情查看相关接口",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3007",
+      "description": "本地开发环境"
+    },
+    {
+      "url": "https://api.example.com",
+      "description": "生产环境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "AMiner详情",
+      "description": "学术资源详情查看接口"
+    }
+  ],
+  "paths": {
+    "/api/aminer/papers/{id}": {
+      "get": {
+        "tags": ["AMiner详情"],
+        "summary": "论文详情",
+        "description": "获取论文详细信息，优先从数据库读取，未缓存时调用 AMiner API",
+        "operationId": "getPaperDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "论文ID（AMiner ID 或数据库 UUID）",
+            "example": "53e99784b7602d9701f3e16c"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PaperDetail"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "论文不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/aminer/scholars/{id}": {
+      "get": {
+        "tags": ["AMiner详情"],
+        "summary": "学者详情",
+        "description": "获取学者详细信息，包括基本信息、研究兴趣、机构职位等",
+        "operationId": "getScholarDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "学者ID（AMiner ID 或数据库 UUID）",
+            "example": "53f42f36dabfaee43ed05f22"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ScholarDetail"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "学者不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/aminer/scholars/{id}/papers": {
+      "get": {
+        "tags": ["AMiner详情"],
+        "summary": "学者论文列表",
+        "description": "获取学者发表的论文列表",
+        "operationId": "getScholarPapers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "学者ID（AMiner ID）",
+            "example": "53f42f36dabfaee43ed05f22"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "description": "论文总数"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "论文ID"
+                              },
+                              "author_id": {
+                                "type": "string",
+                                "description": "作者ID"
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "论文标题"
+                              },
+                              "title_zh": {
+                                "type": "string",
+                                "description": "中文标题"
+                              },
+                              "year": {
+                                "type": "integer",
+                                "description": "发表年份"
+                              },
+                              "venue": {
+                                "type": "object",
+                                "properties": {
+                                  "raw": {
+                                    "type": "string"
+                                  }
+                                }
+                              },
+                              "n_citation": {
+                                "type": "integer",
+                                "description": "引用数"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/aminer/scholars/{id}/patents": {
+      "get": {
+        "tags": ["AMiner详情"],
+        "summary": "学者专利列表",
+        "description": "获取学者的专利列表，支持分页查询。首次请求会从 AMiner API 获取并缓存到数据库，后续请求从数据库分页查询。",
+        "operationId": "getScholarPatents",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "学者ID（AMiner ID 或数据库 UUID）",
+            "example": "53f42f36dabfaee43ed05f22"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "页码（从1开始）"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            "description": "每页数量"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "description": "专利总数"
+                        },
+                        "page": {
+                          "type": "integer",
+                          "description": "当前页码"
+                        },
+                        "size": {
+                          "type": "integer",
+                          "description": "每页数量"
+                        },
+                        "total_pages": {
+                          "type": "integer",
+                          "description": "总页数"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "description": "专利ID（AMiner ID）"
+                              },
+                              "title": {
+                                "type": "string",
+                                "description": "专利标题"
+                              },
+                              "title_zh": {
+                                "type": "string",
+                                "description": "中文标题"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "警告响应（参数错误等）",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 503
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "学者ID不能为空"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "501": {
+            "$ref": "#/components/responses/ErrorResponse"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/aminer/patents/{id}": {
+      "get": {
+        "tags": ["AMiner详情"],
+        "summary": "专利详情",
+        "description": "获取专利详细信息，支持通过 full=true 获取完整详情（付费接口）",
+        "operationId": "getPatentDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "专利ID（AMiner ID 或数据库 UUID）",
+            "example": "CN201910000001"
+          },
+          {
+            "name": "full",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "description": "是否获取完整详情（包含说明书、分类号等，需调用付费API）"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/PatentDetail"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "专利不存在",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PaperDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "数据库 UUID"
+          },
+          "aminer_id": {
+            "type": "string",
+            "description": "AMiner 论文 ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "论文标题"
+          },
+          "title_zh": {
+            "type": "string",
+            "description": "中文标题"
+          },
+          "abstract": {
+            "type": "string",
+            "description": "摘要"
+          },
+          "abstract_zh": {
+            "type": "string",
+            "description": "中文摘要"
+          },
+          "doi": {
+            "type": "string",
+            "description": "DOI"
+          },
+          "year": {
+            "type": "integer",
+            "description": "发表年份"
+          },
+          "language": {
+            "type": "string",
+            "enum": ["zh", "en"],
+            "description": "语言类型"
+          },
+          "keywords": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "关键词"
+          },
+          "keywords_zh": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "中文关键词"
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "name_zh": {
+                  "type": "string"
+                },
+                "org": {
+                  "type": "string"
+                },
+                "org_zh": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "venue": {
+            "type": "object",
+            "properties": {
+              "raw": {
+                "type": "string",
+                "description": "期刊/会议名称"
+              },
+              "raw_zh": {
+                "type": "string",
+                "description": "中文期刊/会议名称"
+              },
+              "t": {
+                "type": "string",
+                "description": "类型"
+              }
+            }
+          },
+          "issn": {
+            "type": "string",
+            "description": "ISSN"
+          },
+          "issue": {
+            "type": "string",
+            "description": "期号"
+          },
+          "volume": {
+            "type": "string",
+            "description": "卷号"
+          },
+          "n_citation": {
+            "type": "integer",
+            "description": "引用数"
+          },
+          "isFavorited": {
+            "type": "boolean",
+            "description": "是否已收藏（仅登录用户返回）"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "缓存时间"
+          },
+          "update_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "更新时间"
+          }
+        }
+      },
+      "ScholarDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "数据库 UUID"
+          },
+          "aminer_id": {
+            "type": "string",
+            "description": "AMiner 学者 ID"
+          },
+          "name": {
+            "type": "string",
+            "description": "姓名"
+          },
+          "name_zh": {
+            "type": "string",
+            "description": "中文姓名"
+          },
+          "orgs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "机构列表"
+          },
+          "org_zhs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "中文机构列表"
+          },
+          "position": {
+            "type": "string",
+            "description": "职位"
+          },
+          "position_zh": {
+            "type": "string",
+            "description": "中文职位"
+          },
+          "bio": {
+            "type": "string",
+            "description": "简介"
+          },
+          "bio_zh": {
+            "type": "string",
+            "description": "中文简介"
+          },
+          "edu": {
+            "type": "string",
+            "description": "教育经历"
+          },
+          "edu_zh": {
+            "type": "string",
+            "description": "中文教育经历"
+          },
+          "interests": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "研究兴趣"
+          },
+          "honor": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            },
+            "description": "荣誉列表"
+          },
+          "n_citation": {
+            "type": "integer",
+            "description": "总引用数"
+          },
+          "isFavorited": {
+            "type": "boolean",
+            "description": "是否已收藏（仅登录用户返回）"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "update_time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "PatentDetail": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "数据库 UUID"
+          },
+          "aminer_id": {
+            "type": "string",
+            "description": "AMiner 专利 ID"
+          },
+          "title": {
+            "type": "string",
+            "description": "专利标题"
+          },
+          "abstract": {
+            "type": "string",
+            "description": "摘要"
+          },
+          "year": {
+            "type": "integer",
+            "description": "申请年份"
+          },
+          "app_num": {
+            "type": "string",
+            "description": "申请号"
+          },
+          "pub_num": {
+            "type": "string",
+            "description": "公开号"
+          },
+          "pub_kind": {
+            "type": "string",
+            "description": "发布类型"
+          },
+          "country": {
+            "type": "string",
+            "description": "国家/地区"
+          },
+          "inventors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "发明人列表"
+          },
+          "assignee": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "受让人列表（仅 full=true 时返回）"
+          },
+          "cpc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "CPC分类号（仅 full=true 时返回）"
+          },
+          "ipc": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IPC分类号（仅 full=true 时返回）"
+          },
+          "ipcr": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "IPCR分类号（仅 full=true 时返回）"
+          },
+          "description": {
+            "type": "string",
+            "description": "说明书（仅 full=true 时返回）"
+          },
+          "app_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "申请日期（仅 full=true 时返回）"
+          },
+          "pub_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "公开日期（仅 full=true 时返回）"
+          },
+          "priority": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "country": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string"
+                },
+                "num": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "优先权信息（仅 full=true 时返回）"
+          },
+          "isFavorited": {
+            "type": "boolean",
+            "description": "是否已收藏（仅登录用户返回）"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "update_time": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 501
+          },
+          "message": {
+            "type": "string",
+            "example": "错误信息"
+          }
+        }
+      }
+    },
+    "responses": {
+      "ErrorResponse": {
+        "description": "错误响应",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "使用 JWT Token 进行身份验证（可选）"
+      }
+    }
+  }
+}

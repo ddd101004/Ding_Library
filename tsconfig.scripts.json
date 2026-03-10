@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "outDir": "./dist/scripts",
+    "module": "commonjs",
+    "declaration": false,
+    "sourceMap": false
+  },
+  "include": [
+    "src/scripts/**/*.ts",
+    "src/db/**/*.ts",
+    "src/service/**/*.ts",
+    "src/helper/**/*.ts",
+    "src/utils/**/*.ts",
+    "src/constants/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/pages/**/*",
+    "src/components/**/*"
+  ]
+}

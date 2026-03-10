@@ -1,0 +1,770 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AMiner 用户 API",
+    "description": "AMiner 学术搜索系统 - 用户相关接口（收藏、历史记录）",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3007",
+      "description": "本地开发环境"
+    },
+    {
+      "url": "https://api.example.com",
+      "description": "生产环境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "用户收藏",
+      "description": "用户收藏管理接口"
+    },
+    {
+      "name": "用户历史",
+      "description": "用户搜索和浏览历史接口"
+    }
+  ],
+  "paths": {
+    "/api/user/favorites": {
+      "post": {
+        "tags": ["用户收藏"],
+        "summary": "添加收藏",
+        "description": "收藏论文、学者或专利",
+        "operationId": "addFavorite",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "item_id"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["paper", "scholar", "patent"],
+                    "description": "收藏类型"
+                  },
+                  "item_id": {
+                    "type": "string",
+                    "description": "资源ID（AMiner ID）"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "收藏成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          },
+          "503": {
+            "description": "已收藏或参数错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarningResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["用户收藏"],
+        "summary": "取消收藏",
+        "description": "取消收藏论文、学者或专利",
+        "operationId": "removeFavorite",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["type", "item_id"],
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["paper", "scholar", "patent"],
+                    "description": "收藏类型"
+                  },
+                  "item_id": {
+                    "type": "string",
+                    "description": "资源ID（AMiner ID）"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "取消成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          }
+        }
+      },
+      "get": {
+        "tags": ["用户收藏"],
+        "summary": "获取收藏列表",
+        "description": "获取用户的收藏列表，支持按类型过滤和分页",
+        "operationId": "getFavorites",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["paper", "scholar", "patent"]
+            },
+            "description": "收藏类型（不传则返回所有类型）"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "页码"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "每页数量"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer",
+                          "description": "总数"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/FavoriteItem"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          }
+        }
+      }
+    },
+    "/api/user/search-history": {
+      "get": {
+        "tags": ["用户历史"],
+        "summary": "获取搜索历史",
+        "description": "获取用户的搜索历史记录，支持按类型过滤和分页",
+        "operationId": "getSearchHistory",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["paper", "scholar", "patent", "comprehensive"]
+            },
+            "description": "搜索类型（不传则返回所有类型）"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "页码"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "每页数量"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/SearchHistoryItem"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["用户历史"],
+        "summary": "删除搜索历史",
+        "description": "删除单条搜索历史或清空全部搜索历史",
+        "operationId": "deleteSearchHistory",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "description": "搜索历史记录ID（删除单条时必传）"
+                  },
+                  "clear_all": {
+                    "type": "boolean",
+                    "description": "是否清空全部搜索历史（true 时忽略 id 参数）"
+                  }
+                },
+                "oneOf": [
+                  {
+                    "required": ["id"]
+                  },
+                  {
+                    "required": ["clear_all"]
+                  }
+                ]
+              },
+              "examples": {
+                "deleteOne": {
+                  "summary": "删除单条记录",
+                  "value": {
+                    "id": "uuid-string"
+                  }
+                },
+                "clearAll": {
+                  "summary": "清空全部历史",
+                  "value": {
+                    "clear_all": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "删除成功或清空成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          },
+          "503": {
+            "description": "参数错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WarningResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/browse-history": {
+      "get": {
+        "tags": ["用户历史"],
+        "summary": "获取浏览历史",
+        "description": "获取用户的浏览历史记录（详情页访问记录），支持按类型过滤和分页，自动去重（1小时内）",
+        "operationId": "getBrowseHistory",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["paper", "scholar", "patent"]
+            },
+            "description": "浏览类型（不传则返回所有类型）"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            },
+            "description": "页码"
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            },
+            "description": "每页数量"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "获取成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/BrowseHistoryItem"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedResponse"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FavoriteItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "收藏记录ID"
+          },
+          "favorite_type": {
+            "type": "string",
+            "enum": ["paper", "scholar", "patent"],
+            "description": "收藏类型"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "收藏时间"
+          },
+          "paper": {
+            "type": "object",
+            "description": "论文信息（仅 type=paper 时存在）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "aminer_id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "title_zh": {
+                "type": "string"
+              },
+              "year": {
+                "type": "integer"
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "scholar": {
+            "type": "object",
+            "description": "学者信息（仅 type=scholar 时存在）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "aminer_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "name_zh": {
+                "type": "string"
+              },
+              "orgs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "patent": {
+            "type": "object",
+            "description": "专利信息（仅 type=patent 时存在）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "aminer_id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "SearchHistoryItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "历史记录ID"
+          },
+          "keyword": {
+            "type": "string",
+            "description": "搜索关键词"
+          },
+          "search_type": {
+            "type": "string",
+            "enum": ["paper", "scholar", "patent", "comprehensive"],
+            "description": "搜索类型"
+          },
+          "result_count": {
+            "type": "integer",
+            "description": "搜索结果数"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "搜索时间"
+          },
+          "paper": {
+            "type": "object",
+            "description": "关联的论文（如果有）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          },
+          "scholar": {
+            "type": "object",
+            "description": "关联的学者（如果有）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              }
+            }
+          },
+          "patent": {
+            "type": "object",
+            "description": "关联的专利（如果有）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BrowseHistoryItem": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "历史记录ID"
+          },
+          "browse_type": {
+            "type": "string",
+            "enum": ["paper", "scholar", "patent"],
+            "description": "浏览类型"
+          },
+          "create_time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "浏览时间"
+          },
+          "paper": {
+            "type": "object",
+            "description": "论文信息（仅 type=paper 时存在）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "title_zh": {
+                "type": "string"
+              },
+              "year": {
+                "type": "integer"
+              },
+              "authors": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "scholar": {
+            "type": "object",
+            "description": "学者信息（仅 type=scholar 时存在）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "name_zh": {
+                "type": "string"
+              },
+              "orgs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "patent": {
+            "type": "object",
+            "description": "专利信息（仅 type=patent 时存在）",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "integer"
+              }
+            }
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "example": "操作成功"
+          }
+        }
+      },
+      "WarningResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 503
+          },
+          "message": {
+            "type": "string",
+            "example": "警告信息"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "example": 501
+          },
+          "message": {
+            "type": "string",
+            "example": "错误信息"
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedResponse": {
+        "description": "未授权",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "code": {
+                  "type": "integer",
+                  "example": 401
+                },
+                "message": {
+                  "type": "string",
+                  "example": "未授权或登录已过期"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "使用 JWT Token 进行身份验证（必需）"
+      }
+    }
+  }
+}

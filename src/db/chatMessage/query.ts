@@ -1,0 +1,364 @@
+import logger from "@/helper/logger";
+import prisma from "@/utils/prismaProxy";
+import { Prisma } from "@prisma/client";
+import { batchGetUserFeedbackStatus, getUserFeedbackStatus } from "@/db/messageFeedback";
+import { batchGetDocDeliveryStatusByPaperIds } from "@/db/docDeliveryRequest";
+
+/**
+ * 获取会话的消息列表（分页，基于message_order）
+ */
+export const getMessagesByConversationId = async (params: {
+  conversation_id: string;
+  user_id: string;
+  limit?: number;
+  before_message_order?: number;
+}) => {
+  try {
+    const { conversation_id, user_id, limit = 50, before_message_order } = params;
+
+    const where: Prisma.ChatMessageWhereInput = {
+      conversation_id,
+    };
+
+    if (before_message_order) {
+      where.message_order = {
+        lt: before_message_order,
+      };
+    }
+
+    const allMessages = await prisma.chatMessage.findMany({
+      where,
+      orderBy: { message_order: "asc" },
+      include: {
+        citations: {
+          include: {
+            paper: {
+              select: {
+                id: true,
+                title: true,
+                authors: true,
+              },
+            },
+          },
+          orderBy: { citation_order: "asc" },
+        },
+        attachments: {
+          include: {
+            uploadedPaper: {
+              select: {
+                parseStatus: true,
+              },
+            },
+          },
+          orderBy: { attachment_order: "asc" },
+        },
+      },
+    });
+
+    const versionGroups = new Map<string, string[]>();
+
+    const assistantMessages = allMessages.filter(m => m.role === 'assistant');
+
+    assistantMessages.forEach(message => {
+      let rootId = message.message_id;
+      let currentId = message.message_id;
+
+      while (currentId) {
+        const current = assistantMessages.find(m => m.message_id === currentId);
+        if (!current || !current.parent_message_id) {
+          rootId = currentId;
+          break;
+        }
+        currentId = current.parent_message_id;
+      }
+
+      if (!versionGroups.has(rootId)) {
+        versionGroups.set(rootId, []);
+      }
+      versionGroups.get(rootId)!.push(message.message_id);
+    });
+
+    const messages = allMessages.filter(message => {
+      // 过滤掉 paper_upload 类型的初始消息（仅用于关联论文，不展示给前端）
+      if (message.content_type === 'paper_upload') {
+        return false;
+      }
+
+      if (message.role === 'user') {
+        return true;
+      }
+
+      if (message.role === 'assistant') {
+        let messageGroup: string[] = [];
+        for (const [, messageIds] of versionGroups.entries()) {
+          if (messageIds.includes(message.message_id)) {
+            messageGroup = messageIds;
+            break;
+          }
+        }
+
+        const latestInGroup = messageGroup
+          .map(id => assistantMessages.find(m => m.message_id === id))
+          .filter((m): m is NonNullable<typeof m> => m !== undefined)
+          .sort((a, b) => new Date(b.create_time).getTime() - new Date(a.create_time).getTime())[0];
+
+        return message.message_id === latestInGroup?.message_id;
+      }
+
+      return false;
+    });
+
+    messages.sort((a, b) => a.message_order - b.message_order);
+
+    const limitedMessages = messages.slice(-limit);
+
+    const messageIds = limitedMessages.map((msg) => msg.message_id);
+    const feedbackStatusMap = await batchGetUserFeedbackStatus(user_id, messageIds);
+
+    // 获取所有 assistant 消息的 root ID（如果有 root_message_id 则用它，否则用 message_id）
+    const rootIds = limitedMessages
+      .filter(msg => msg.role === 'assistant')
+      .map(msg => msg.root_message_id || msg.message_id);
+
+    const uniqueRootIds = [...new Set(rootIds)];
+
+    // 统计每个 root ID 下有多少个子版本
+    const versionCounts = await prisma.chatMessage.groupBy({
+      by: ['root_message_id'],
+      where: {
+        root_message_id: { in: uniqueRootIds },
+      },
+      _count: { message_id: true },
+    });
+
+    const versionCountMap = new Map(
+      versionCounts.map(v => [v.root_message_id!, v._count.message_id])
+    );
+
+    // 提取所有引用论文的 ID，查询文献传递状态
+    const allPaperIds = limitedMessages.flatMap(msg =>
+      msg.citations
+        .filter(c => c.paper_id)
+        .map(c => c.paper_id)
+    );
+    const uniquePaperIds = [...new Set(allPaperIds)];
+    const deliveryStatusMap = uniquePaperIds.length > 0
+      ? await batchGetDocDeliveryStatusByPaperIds(user_id, uniquePaperIds)
+      : {};
+
+    const formattedMessages = limitedMessages.map((msg) => {
+      const feedbackStatus = feedbackStatusMap[msg.message_id] || { is_liked: false, is_disliked: false };
+
+      let has_multiple_versions = false;
+      if (msg.role === 'assistant') {
+        const rootId = msg.root_message_id || msg.message_id;
+        has_multiple_versions = (versionCountMap.get(rootId) || 1) > 1;
+      }
+
+      return {
+        message_id: msg.message_id,
+        conversation_id: msg.conversation_id,
+        role: msg.role,
+        content: msg.content,
+        content_type: msg.content_type,
+        message_order: msg.message_order,
+        status: msg.status,
+        error_message: msg.error_message,
+        parent_message_id: msg.parent_message_id,
+        input_tokens: msg.input_tokens,
+        output_tokens: msg.output_tokens,
+        total_tokens: msg.total_tokens,
+        create_time: msg.create_time,
+        update_time: msg.update_time,
+        message_type: msg.messageType,
+        reasoning_content: msg.reasoningContent,
+        reasoning_tokens: msg.reasoningTokens,
+        context_text: msg.contextText,
+        context_range: msg.contextRange,
+        is_liked: feedbackStatus.is_liked,
+        is_disliked: feedbackStatus.is_disliked,
+        has_multiple_versions,
+        citations: msg.citations.map(citation => ({
+          ...citation,
+          doc_delivery_status: citation.paper_id ? deliveryStatusMap[citation.paper_id] : undefined,
+        })),
+        attachments: msg.attachments.map((att) => ({
+          id: att.id,
+          uploaded_paper_id: att.uploaded_paper_id,
+          file_name: att.file_name,
+          file_type: att.file_type,
+          file_size: att.file_size.toString(),
+          attachment_order: att.attachment_order,
+          parse_status: att.uploadedPaper?.parseStatus,
+        })),
+      };
+    });
+
+    const hasMore = limitedMessages.length === limit;
+
+    return {
+      messages: formattedMessages,
+      has_more: hasMore,
+    };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`获取消息列表失败: ${errorMessage}`, { error });
+    return;
+  }
+};
+
+/**
+ * 根据message_id获取消息详情
+ */
+export const getMessageById = async (message_id: string, user_id?: string) => {
+  try {
+    const message = await prisma.chatMessage.findUnique({
+      where: { message_id },
+      include: {
+        conversation: true,
+        citations: {
+          include: {
+            paper: true,
+          },
+        },
+        attachments: {
+          include: {
+            uploadedPaper: {
+              select: {
+                parseStatus: true,
+              },
+            },
+          },
+          orderBy: { attachment_order: "asc" },
+        },
+      },
+    });
+
+    if (!message) return null;
+
+    let feedbackStatus = { is_liked: false, is_disliked: false };
+    if (user_id) {
+      feedbackStatus = await getUserFeedbackStatus(user_id, message_id);
+    }
+
+    // 查询引用论文的文献传递状态
+    let deliveryStatusMap: Record<string, unknown> = {};
+    if (user_id && message.citations.length > 0) {
+      const paperIds = message.citations
+        .filter(c => c.paper_id)
+        .map(c => c.paper_id);
+      if (paperIds.length > 0) {
+        deliveryStatusMap = await batchGetDocDeliveryStatusByPaperIds(user_id, paperIds);
+      }
+    }
+
+    return {
+      message_id: message.message_id,
+      conversation_id: message.conversation_id,
+      role: message.role,
+      content: message.content,
+      content_type: message.content_type,
+      message_order: message.message_order,
+      status: message.status,
+      error_message: message.error_message,
+      parent_message_id: message.parent_message_id,
+      input_tokens: message.input_tokens,
+      output_tokens: message.output_tokens,
+      total_tokens: message.total_tokens,
+      create_time: message.create_time,
+      update_time: message.update_time,
+      message_type: message.messageType,
+      reasoning_content: message.reasoningContent,
+      reasoning_tokens: message.reasoningTokens,
+      context_text: message.contextText,
+      context_range: message.contextRange,
+      is_liked: feedbackStatus.is_liked,
+      is_disliked: feedbackStatus.is_disliked,
+      conversation: message.conversation,
+      citations: message.citations.map(citation => ({
+        ...citation,
+        doc_delivery_status: citation.paper_id ? deliveryStatusMap[citation.paper_id] : undefined,
+      })),
+      attachments: message.attachments.map((att) => ({
+        id: att.id,
+        uploaded_paper_id: att.uploaded_paper_id,
+        file_name: att.file_name,
+        file_type: att.file_type,
+        file_size: att.file_size.toString(),
+        attachment_order: att.attachment_order,
+        parse_status: att.uploadedPaper?.parseStatus,
+      })),
+    };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`获取消息详情失败: ${errorMessage}`, { error });
+    return;
+  }
+};
+
+/**
+ * 获取最近N条消息用于上下文构建
+ */
+export const getRecentMessages = async (
+  conversation_id: string,
+  limit: number
+) => {
+  try {
+    const messages = await prisma.chatMessage.findMany({
+      where: {
+        conversation_id,
+        status: "completed",
+      },
+      orderBy: { message_order: "desc" },
+      take: limit,
+      select: {
+        role: true,
+        content: true,
+        message_order: true,
+      },
+    });
+
+    return messages.reverse();
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`获取最近消息失败: ${errorMessage}`, { error });
+    return [];
+  }
+};
+
+/**
+ * 获取父消息及其上下文（用于重新生成）
+ */
+export const getParentMessageContext = async (message_id: string) => {
+  try {
+    const message = await prisma.chatMessage.findUnique({
+      where: { message_id },
+      include: {
+        conversation: true,
+      },
+    });
+
+    if (!message) return null;
+
+    const contextMessages = await prisma.chatMessage.findMany({
+      where: {
+        conversation_id: message.conversation_id,
+        message_order: { lt: message.message_order },
+      },
+      orderBy: { message_order: "asc" },
+      select: {
+        role: true,
+        content: true,
+      },
+    });
+
+    return {
+      message,
+      contextMessages,
+    };
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`获取父消息上下文失败: ${errorMessage}`, { error });
+    return null;
+  }
+};

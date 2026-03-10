@@ -1,0 +1,516 @@
+"use client";
+import React, { useState, useRef, useEffect } from "react";
+import CitationModal from "./CitationModal";
+import AuthorAvatar, { AuthorInfo } from "./AuthorAvatar";
+
+interface PaperDetailProps {
+  paper: {
+    id: string;
+    title: string;
+    title_zh?: string;
+    authors?: Array<{
+      name: string;
+      name_zh?: string;
+      org?: string;
+      org_zh?: string;
+    }>;
+    abstract?: string;
+    abstract_zh?: string;
+    year?: number;
+    n_citation?: number;
+    venue?: {
+      raw?: string;
+      raw_zh?: string;
+    };
+    doi?: string;
+    keywords?: string[];
+    publication_type?: string;
+    source?: string;
+    isForeignDiscovery?: boolean;
+    url?: string;
+  };
+  onBack: () => void;
+}
+
+export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
+  // 外文发现判断：使用 API 返回的 isForeignDiscovery 字段，或检查 source 字段
+  const isForeignDiscovery = paper.isForeignDiscovery || paper.source === "wanfang_en";
+  const [translateMode, setTranslateMode] = useState<"zh" | "en">(isForeignDiscovery ? "en" : "zh");
+  const [showNavMenu, setShowNavMenu] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<"detail" | "abstract">(
+    "detail"
+  );
+  const [isCitationModalOpen, setIsCitationModalOpen] = useState(false);
+  const navMenuRef = useRef<HTMLDivElement>(null);
+  const navTriggerRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 处理引用弹窗
+  const handleCitationClick = () => {
+    setIsCitationModalOpen(true);
+  };
+
+  const handleCloseCitationModal = () => {
+    setIsCitationModalOpen(false);
+  };
+
+  // 处理鼠标进入导航区域
+  const handleMouseEnter = () => {
+    // 清除之前的关闭定时器
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setShowNavMenu(true);
+  };
+
+  // 处理鼠标离开导航区域
+  const handleMouseLeave = (e: React.MouseEvent) => {
+    // 检查鼠标是否移动到弹窗上
+    const relatedTarget = e.relatedTarget as HTMLElement;
+
+    // 如果鼠标移动到了弹窗或者触发元素上，不关闭
+    if (
+      navMenuRef.current?.contains(relatedTarget) ||
+      navTriggerRef.current?.contains(relatedTarget)
+    ) {
+      return;
+    }
+
+    // 设置延迟关闭
+    closeTimeoutRef.current = setTimeout(() => {
+      setShowNavMenu(false);
+    }, 150); // 150ms延迟，给用户足够时间移动到弹窗
+  };
+
+  // 处理弹窗的鼠标离开
+  const handlePopupMouseLeave = (e: React.MouseEvent) => {
+    const relatedTarget = e.relatedTarget as HTMLElement;
+
+    // 如果鼠标移动到了触发元素上，不关闭
+    if (navTriggerRef.current?.contains(relatedTarget)) {
+      return;
+    }
+
+    closeTimeoutRef.current = setTimeout(() => {
+      setShowNavMenu(false);
+    }, 150);
+  };
+
+  // 处理选项点击
+  const handleNavOptionClick = (option: "detail" | "abstract") => {
+    setSelectedOption(option);
+    setShowNavMenu(false);
+
+    if (option === "detail") {
+      // 滚动到顶部
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (option === "abstract") {
+      // 滚动到摘要区域
+      const abstractElement = document.getElementById("abstract-section");
+      if (abstractElement) {
+        abstractElement.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
+
+  // 分别提取中文和英文摘要
+  const getAbstractParts = (abstract: string | undefined) => {
+    if (!abstract) return { chinese: "暂无摘要", english: "" };
+
+    // 查找"Objective"关键词作为中英文分界点
+    const objectiveIndex = abstract.indexOf("Objective");
+
+    if (objectiveIndex !== -1) {
+      // 提取中文部分（Objective之前的内容）
+      const chinesePart = abstract.substring(0, objectiveIndex).trim();
+
+      // 提取英文部分（Objective开始的内容）
+      const englishPart = abstract.substring(objectiveIndex).trim();
+
+      return { chinese: chinesePart, english: englishPart };
+    }
+
+    // 如果没找到"Objective"，尝试查找其他英文关键词
+    const englishKeywords = [
+      "Methods",
+      "Results",
+      "Conclusion",
+      "Background",
+      "Purpose",
+    ];
+
+    for (const keyword of englishKeywords) {
+      const keywordIndex = abstract.indexOf(keyword);
+      if (keywordIndex !== -1) {
+        const chinesePart = abstract.substring(0, keywordIndex).trim();
+        const englishPart = abstract.substring(keywordIndex).trim();
+        return { chinese: chinesePart, english: englishPart };
+      }
+    }
+
+    // 如果都没找到英文关键词，全部作为中文处理
+    return { chinese: abstract, english: "" };
+  };
+
+  // 分离标题的中英文部分
+  const getTitleParts = (title: string | undefined) => {
+    if (!title) return { chinese: "", english: "" };
+
+    // 查找" / "作为中英文分界点
+    const separatorIndex = title.indexOf(" / ");
+
+    if (separatorIndex !== -1) {
+      // 提取中文部分（"/"之前的内容）
+      const chinesePart = title.substring(0, separatorIndex).trim();
+
+      // 提取英文部分（"/"之后的内容）
+      const englishPart = title.substring(separatorIndex + 3).trim();
+
+      return { chinese: chinesePart, english: englishPart };
+    }
+
+    // 如果没找到分界符，尝试判断是否包含英文字符
+    const hasEnglish = /[a-zA-Z]/.test(title);
+    const hasChinese = /[\u4e00-\u9fa5]/.test(title);
+
+    // 如果同时包含中英文，但没有明确分界符，返回原文
+    if (hasEnglish && hasChinese) {
+      return { chinese: title, english: title };
+    }
+
+    // 如果只有中文，全部作为中文处理
+    if (hasChinese) {
+      return { chinese: title, english: "" };
+    }
+
+    // 如果只有英文，全部作为英文处理
+    return { chinese: "", english: title };
+  };
+
+  // 获取论文的摘要部分 - 直接使用原始字符串，不需要解析
+  const chineseAbstract = paper.abstract_zh || "";
+  const englishAbstract = paper.abstract || "";
+
+  // 获取论文的标题部分 - 直接使用 title_zh
+  const chineseTitle = paper.title_zh || "";
+  const englishTitle = ""; // 不再需要显示英文标题
+
+  // 组件卸载时清理定时器
+  useEffect(() => {
+    return () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  return (
+    <div className="relative">
+      {/* 头部：图标和详情文字 */}
+      <div
+        className="flex items-center cursor-pointer ml-[305px]"
+        onClick={onBack}
+      >
+        <img
+          src="/paper/paper-details.png"
+          alt="详情"
+          className="w-[6px] h-[10px]"
+        />
+        <span className="ml-[10px] text-sm text-[#666666]">详情</span>
+      </div>
+
+      {/* 分隔线 */}
+      <div className="w-full h-px bg-[#E0E1E5] mt-6" />
+
+      {/* 白色卡片容器 */}
+      <div className="relative mt-[23px] ml-[305px] mr-[305px] w-[calc(100vw-610px)] h-[1060px] overflow-y-auto overflow-x-hidden scrollbar-thin">
+        {/* 导航区域 - 修复鼠标事件处理 */}
+        <div
+          ref={navTriggerRef}
+          className="relative mt-[31px]"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* 导航文字 */}
+          <div className="flex items-center cursor-pointer text-sm font-medium text-[#666666]">
+            <img
+              src="/paper/papers-navigation.png"
+              alt="导航"
+              className="w-[20px] h-[17px] mr-[10px]"
+            />
+            导航
+          </div>
+
+          {/* 悬停弹窗 */}
+          {showNavMenu && (
+            <div
+              ref={navMenuRef}
+              className="absolute top-full left-0 z-50 w-[140px] h-[98px] bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-md border border-[#E9ECF2] mt-2 px-[10px] flex flex-col justify-between"
+              onMouseEnter={handleMouseEnter}
+              onMouseLeave={handlePopupMouseLeave}
+            >
+              {/* 详情选项 */}
+              <div
+                className={`w-[120px] h-8 rounded-md flex items-center justify-center mr-[10px] mt-[10px] cursor-pointer ${
+                  selectedOption === "detail" ? "bg-[#F1F6FF]" : "bg-transparent"
+                }`}
+                onMouseEnter={() => setSelectedOption("detail")}
+                onClick={() => handleNavOptionClick("detail")}
+              >
+                <span className="text-lg text-[#333333] font-normal">详情</span>
+              </div>
+
+              {/* 摘要选项 */}
+              <div
+                className={`w-[120px] h-8 rounded-md flex items-center justify-center mr-[10px] mb-[10px] cursor-pointer ${
+                  selectedOption === "abstract" ? "bg-[#F1F6FF]" : "bg-transparent"
+                }`}
+                onMouseEnter={() => setSelectedOption("abstract")}
+                onClick={() => handleNavOptionClick("abstract")}
+              >
+                <span className="text-lg text-[#333333] font-normal">摘要</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* 其余部分保持不变... */}
+        <div className="relative -ml-[50px]">
+          {/* 论文标题区域 */}
+          <div className="mt-[22px] ml-[50px]">
+            {/* 中文标题 */}
+            {chineseTitle ? (
+              <div className="text-lg font-medium text-[#333333]">
+                {chineseTitle}
+              </div>
+            ) : (
+              // 回退：如果没有中文标题，显示英文标题
+              englishTitle && (
+                <div className="text-lg font-medium text-[#333333]">
+                  {englishTitle}
+                </div>
+              )
+            )}
+
+            <div className="flex items-center justify-between mt-[41px]">
+              <span className="text-base text-[#999999]">
+                {paper.year || "未知年份"}
+              </span>
+
+              {/* 收藏按钮 - 与年份在同一行 */}
+              <div
+                className="flex items-center justify-center cursor-pointer hover:shadow-md transition-all duration-200 bg-white border border-[#C8C9CC] rounded-2xl flex-shrink-0"
+                style={{ width: "56px", height: "40px" }}
+                onClick={handleCitationClick}
+              >
+                <img
+                  src="/paper/paper-quote@2x.png"
+                  alt="引用"
+                  className="w-[17px] h-[16px]"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* 信息表格 */}
+          <div className="w-[calc(100%-55px)] min-h-[182px] bg-white rounded-2xl border border-[#E0E1E5] mt-[50px] ml-[50px] p-5">
+            <div className="flex flex-col h-full">
+              {/* 第一行：出版社 */}
+              <div className="flex items-center justify-start h-10 mb-[10px] pl-[20px]">
+                <img
+                  src="/paper/paper-type@2x.png"
+                  alt="出版社"
+                  className="w-[20px] h-[20px] mr-[19px]"
+                />
+                <span className="text-base text-[#333333] font-medium">
+                  {(() => {
+                    const venueText =
+                      typeof paper.venue === "string"
+                        ? paper.venue
+                        : paper.venue?.raw_zh || paper.venue?.raw || "";
+                    const separatorIndex = venueText.indexOf(" / ");
+                    if (separatorIndex !== -1) {
+                      return venueText.substring(separatorIndex + 3).trim();
+                    }
+                    return venueText || "未知出版社";
+                  })()}
+                </span>
+              </div>
+
+              {/* 第一条分隔线 */}
+              <div className="w-[calc(100%+40px)] h-px bg-[#E0E1E5] -ml-[20px] -mr-[20px]" />
+
+              {/* 第二行：作者 */}
+              <div className="flex items-center justify-start min-h-[60px] my-5 flex-wrap gap-9 pl-[20px] content-center">
+                {paper.authors && paper.authors.length > 0 ? (
+                  paper.authors.map((author, index) => {
+                    // 处理两种数据格式：字符串数组或对象数组
+                    const authorName = typeof author === 'string' ? author : author.name_zh || author.name;
+
+                    return (
+                      <div key={index} className="flex items-center">
+                        <AuthorAvatar
+                          author={typeof author === 'string' ? { name: author } : author}
+                          size="medium"
+                        />
+                        <span className="text-base text-[#999999] ml-[3px]">
+                          {authorName}
+                        </span>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <span className="text-base text-[#999999]">
+                    未知作者
+                  </span>
+                )}
+              </div>
+
+              {/* 第二条分隔线 */}
+              <div className="w-[calc(100%+40px)] h-px bg-[#E0E1E5] -ml-[20px] -mr-[20px]" />
+
+              {/* 第三行：URL */}
+              <div className="flex items-center h-10 mt-5">
+                {paper.url ? (
+                  <>
+                    {/* 第一列：链接文字 */}
+                    <div className="w-[180px] pl-[70px] h-10 flex items-center">
+                      <span className="text-base text-[#999999]">
+                        链接
+                      </span>
+                    </div>
+
+                    {/* 垂直分割线 */}
+                    <div className="w-px h-20 bg-[#E0E1E5] ml-0" />
+
+                    {/* 第二列：官方网址 */}
+                    <div className="flex-1 ml-5 h-10 flex items-center">
+                      <a
+                        href={paper.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-[#3B80FF] no-underline hover:underline"
+                      >
+                        <img
+                          src="/paper/paper-shinyoffitialwebsite@2x.png"
+                          alt="官方网站"
+                          className="w-[20px] h-[20px]"
+                        />
+                        <span className="ml-[11px] text-base">
+                          官方网址
+                        </span>
+                      </a>
+                    </div>
+                  </>
+                ) : (
+                  <div className="flex items-center">
+                    {/* 第一列：链接文字 */}
+                    <div className="w-[180px] pl-[20px] h-10 flex items-center">
+                      <span className="text-base text-[#999999]">
+                        链接
+                      </span>
+                    </div>
+
+                    {/* 垂直分割线 */}
+                    <div className="w-px h-10 bg-[#E0E1E5] ml-0" />
+
+                    {/* 第二列：暂无链接 */}
+                    <div className="flex-1 ml-5 h-10 flex items-center">
+                      <span className="text-base text-[#999999]">
+                        暂无链接
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* 摘要部分 */}
+          <div
+            id="abstract-section"
+            className="flex flex-col mt-[60px] ml-[50px] mr-0"
+          >
+            {/* 摘要标题行 */}
+            <div className="flex justify-between items-center">
+              <div className="text-lg font-medium text-[#333333]">
+                摘要
+              </div>
+
+              {/* 翻译选项框 - 外文发现不显示 */}
+              {!isForeignDiscovery && (
+                <div className="w-[180px] h-10 bg-[#F7F8FA] rounded-2xl border border-[#C8C9CC] flex items-center relative z-10 p-0 box-border">
+                  {/* 中文选项 */}
+                  <button
+                    className={`h-9 w-[90px] flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
+                      translateMode === "zh"
+                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-1"
+                        : "bg-transparent shadow-none ml-1 mr-0"
+                    }`}
+                    onClick={() => setTranslateMode("zh")}
+                  >
+                    <span className={`font-medium text-base select-none ${
+                      translateMode === "zh" ? "text-[#3B80FF]" : "text-[#999999]"
+                    }`}>
+                      中文
+                    </span>
+                  </button>
+
+                  {/* 英文选项 */}
+                  <button
+                    className={`h-9 w-[90px] flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
+                      translateMode === "en"
+                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-1"
+                        : "bg-transparent shadow-none ml-1 mr-0"
+                    }`}
+                    onClick={() => setTranslateMode("en")}
+                  >
+                    <span className={`font-medium text-base select-none ${
+                      translateMode === "en" ? "text-[#3B80FF]" : "text-[#999999]"
+                    }`}>
+                      英文
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            {/* 摘要内容 */}
+            <div className="mt-5 text-base text-[#666666] leading-[1.6] w-full">
+              {/* 根据语言模式显示对应的摘要 */}
+              {translateMode === "zh" ? (
+                chineseAbstract ? (
+                  <div>{chineseAbstract}</div>
+                ) : (
+                  <div>暂无中文摘要</div>
+                )
+              ) : (
+                englishAbstract ? (
+                  <div>{englishAbstract}</div>
+                ) : (
+                  <div>暂无英文摘要</div>
+                )
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 引用弹窗 */}
+      <CitationModal
+        isOpen={isCitationModalOpen}
+        onClose={handleCloseCitationModal}
+        paperTitle={paper.title_zh || paper.title || ""}
+        authors={paper.authors || []}
+        year={paper.year}
+        publicationName={
+          typeof paper.venue === "string"
+            ? paper.venue
+            : paper.venue?.raw || paper.venue?.raw_zh
+        }
+        paperId={paper.id}
+      />
+    </div>
+  );
+}

@@ -1,0 +1,319 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "临港图书馆 - AI 生成 API",
+    "description": "AI 辅助功能接口，包括生成关键词列表和问题列表",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3007",
+      "description": "本地开发环境"
+    },
+    {
+      "url": "https://api.lingang-library.com",
+      "description": "生产环境"
+    }
+  ],
+  "tags": [
+    {
+      "name": "AI 生成",
+      "description": "AI 辅助生成关键词、问题等内容"
+    }
+  ],
+  "paths": {
+    "/api/ai/keywords": {
+      "post": {
+        "tags": [
+          "AI 生成"
+        ],
+        "summary": "生成关键词列表",
+        "description": "根据主题关键词，使用 AI 生成一组相关的子关键词或相关主题",
+        "operationId": "generateKeywords",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "keyword"
+                ],
+                "properties": {
+                  "keyword": {
+                    "type": "string",
+                    "description": "主题关键词",
+                    "example": "深度学习"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "description": "生成关键词数量（默认10，最大20）",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 20,
+                    "example": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "生成成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "生成成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "keyword": {
+                          "type": "string",
+                          "description": "原始关键词",
+                          "example": "深度学习"
+                        },
+                        "count": {
+                          "type": "integer",
+                          "description": "实际生成的关键词数量",
+                          "example": 10
+                        },
+                        "keywords": {
+                          "type": "array",
+                          "description": "生成的关键词列表",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "多模态学习",
+                            "Transformer架构",
+                            "神经网络优化",
+                            "迁移学习",
+                            "强化学习",
+                            "生成对抗网络",
+                            "注意力机制",
+                            "模型压缩",
+                            "预训练模型",
+                            "卷积神经网络"
+                          ]
+                        },
+                        "input_tokens": {
+                          "type": "integer",
+                          "description": "输入 token 数量",
+                          "example": 150
+                        },
+                        "output_tokens": {
+                          "type": "integer",
+                          "description": "输出 token 数量",
+                          "example": 80
+                        },
+                        "total_tokens": {
+                          "type": "integer",
+                          "description": "总 token 数量",
+                          "example": 230
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "参数错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "AI 服务错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ai/questions": {
+      "post": {
+        "tags": [
+          "AI 生成"
+        ],
+        "summary": "生成问题列表",
+        "description": "根据主题关键词，使用 AI 生成一组有启发性的问题，帮助用户深入理解主题。\n\n**使用模式：**\n- **快问快答模式**：keyword 可以为空，系统会从内置关键词库中随机选择一个关键词生成 5 个问题\n- **其他模式**：必须传入 keyword 参数，支持多个关键词用中文顿号「、」隔开（如：\"深度学习、机器学习、自然语言处理\"）",
+        "operationId": "generateQuestions",
+        "security": [
+          {
+            "BearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "keyword": {
+                    "type": "string",
+                    "description": "主题关键词（可选）\n- 快问快答模式：可以为空或不传\n- 其他模式：必须传入，支持多个关键词用「、」隔开",
+                    "example": "深度学习、机器学习"
+                  },
+                  "count": {
+                    "type": "integer",
+                    "description": "生成问题数量（默认5，最大10）",
+                    "default": 5,
+                    "minimum": 1,
+                    "maximum": 10,
+                    "example": 5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "生成成功",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "生成成功"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "keyword": {
+                          "type": "string",
+                          "description": "实际使用的关键词（可能是用户传入的，也可能是随机的）",
+                          "example": "深度学习"
+                        },
+                        "is_quick_mode": {
+                          "type": "boolean",
+                          "description": "是否是快问快答模式（关键词为空时为 true）",
+                          "example": false
+                        },
+                        "count": {
+                          "type": "integer",
+                          "description": "实际生成的问题数量",
+                          "example": 5
+                        },
+                        "questions": {
+                          "type": "array",
+                          "description": "生成的问题列表",
+                          "items": {
+                            "type": "string"
+                          },
+                          "example": [
+                            "什么是深度学习?它与传统机器学习有什么区别?",
+                            "深度学习的核心原理是什么?",
+                            "深度学习在哪些领域有成功应用?",
+                            "如何选择合适的深度学习框架?",
+                            "深度学习模型的训练过程是怎样的?"
+                          ]
+                        },
+                        "input_tokens": {
+                          "type": "integer",
+                          "description": "输入 token 数量",
+                          "example": 180
+                        },
+                        "output_tokens": {
+                          "type": "integer",
+                          "description": "输出 token 数量",
+                          "example": 120
+                        },
+                        "total_tokens": {
+                          "type": "integer",
+                          "description": "总 token 数量",
+                          "example": 300
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "参数错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          },
+          "501": {
+            "description": "AI 服务错误",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT认证，格式：Bearer {token}"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "操作失败"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}
