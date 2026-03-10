@@ -293,14 +293,15 @@ export default function ChatHome() {
               maxWidth: '1300px'
             }}
           >
-            {/* 背景图 */}
+            {/* 背景图 - 替换为浅绿色背景 #c6f2e0ff */}
             <div
               className="absolute inset-0 rounded-[20px] z-10 transition-all duration-300 overflow-hidden"
-              style={{ height: `${300 + backgroundOffset}px` }}
+              style={{ 
+                height: `${300 + backgroundOffset}px`,
+                backgroundColor: '#c6f2e0ff' // 浅绿色背景
+              }}
             >
-              <div
-                className="absolute inset-0 bg-center bg-no-repeat bg-[url('/background/layer-3@2x.png')]"
-              ></div>
+              {/* 移除了背景图片，替换为纯色背景 */}
             </div>
 
             {/* 白色背景层 */}
@@ -384,12 +385,6 @@ export default function ChatHome() {
             </div>
           </div>
 
-          {/* AI图片装饰 */}
-          <img
-            className="fixed hidden lg:block absolute w-[425px] h-[369px] z-0 transition-all duration-300 top-[-255px] right-[40px]"
-            src="/landing-page/landing-page-ai.png"
-            alt="AI"
-          />
         </div>
       </div>
     </>

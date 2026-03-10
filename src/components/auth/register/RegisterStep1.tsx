@@ -15,7 +15,6 @@ export function RegisterStep1({ onNext, onSwitchToLogin }: RegisterStep1Props) {
   const [username, setUsername] = useState("");
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
-  const [agreementChecked, setAgreementChecked] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -48,12 +47,6 @@ export function RegisterStep1({ onNext, onSwitchToLogin }: RegisterStep1Props) {
     const passwordError = validatePassword(password);
     if (passwordError) {
       toast.error(passwordError);
-      return;
-    }
-
-    // 验证用户协议
-    if (!agreementChecked) {
-      toast.error("请同意使用协议和隐私协议");
       return;
     }
 
@@ -121,51 +114,18 @@ export function RegisterStep1({ onNext, onSwitchToLogin }: RegisterStep1Props) {
           />
         </div>
 
-        
         {/* 下一步按钮 */}
         <div className="pt-2 sm:pt-4 flex justify-center">
           <AuthButton
             type="submit"
             loading={loading}
-            disabled={!username || !phone || !password || !agreementChecked}
+            // 移除了协议勾选的禁用条件
+            disabled={!username || !phone || !password}
           >
             下一步
           </AuthButton>
         </div>
-
-        {/* 用户协议 */}
-        <div className="flex items-center justify-center mt-4">
-          <input
-            type="checkbox"
-            id="agreement"
-            checked={agreementChecked}
-            onChange={(e) => setAgreementChecked(e.target.checked)}
-            className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-            disabled={loading}
-          />
-          <label htmlFor="agreement" className="ml-2 text-sm text-gray-600">
-            我已阅读并同意
-            <a
-              href="/agreement/user-service-agreement"
-              className="text-blue-600 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              《使用协议》
-            </a>
-            和
-            <a
-              href="/agreement/privacy-policy"
-              className="text-blue-600 hover:underline"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              《隐私协议》
-            </a>
-          </label>
-        </div>
       </form>
-
     </div>
   );
 }

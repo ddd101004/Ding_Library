@@ -16,7 +16,7 @@ export default function ChatPage1() {
       <WithSidebarLayout 
         isCheckedChat={true}
         functionType={functionType as string} 
-        backgroundImage="/background/chat-page-bg-1.png"
+        backgroundImage=""
       >
         <CheckedChat selectedFunction={functionType as string}/>
       </WithSidebarLayout>

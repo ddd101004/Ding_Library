@@ -51,7 +51,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   {/* 核心修改：给内部容器添加 flex 和 items-center 实现同行对齐 */}
   <div className="flex items-center h-full">
     <img 
-      src="/logo/logologo.png" 
+      src="/logo/ai_logo.png" 
       alt="智图AI" 
       className="h-full object-contain" 
     />

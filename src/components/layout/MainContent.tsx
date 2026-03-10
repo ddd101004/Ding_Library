@@ -20,7 +20,7 @@ const MainContent: React.FC<MainContentProps> = ({
   isChatHome,
   isCheckedChat,
   backgroundImage,
-  backgroundColor,
+  backgroundColor = "#f0faf6", // 默认值改为浅绿
   username,
   functionType,
   isSmallScreen = false,
@@ -67,7 +67,7 @@ const MainContent: React.FC<MainContentProps> = ({
       className={`flex-1 flex flex-col ${
         isKnowledgeBase
           ? "" // 知识库页面：不需要圆角和背景
-          : "rounded-[20px] bg-white"
+          : "rounded-[20px]" // 移除原有的白色背景类，改为通过style控制
       } ${
         isSmallScreen
           ? "mx-0 min-w-0" // 小屏幕时移除边距限制，允许充分利用空间
@@ -75,10 +75,17 @@ const MainContent: React.FC<MainContentProps> = ({
       }`}
       style={{
         backgroundImage: isKnowledgeBase ? "none" : (backgroundImage ? `url('${backgroundImage}')` : "none"),
-        backgroundColor: isKnowledgeBase ? "transparent" : (backgroundColor || "white"),
+        // 调整背景色逻辑：知识库透明，其他情况使用传入的背景色（默认浅绿）
+        backgroundColor: isKnowledgeBase 
+          ? "transparent" 
+          : (backgroundColor || "#f0faf6"), // 默认浅绿 #f0faf6
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
+        // 添加轻微的边框，增强视觉层次感
+        border: isKnowledgeBase ? "none" : "1px solid #d4ede4",
+        // 非知识库页面添加轻微阴影
+        boxShadow: isKnowledgeBase ? "none" : "0 2px 8px rgba(198, 242, 224, 0.2)",
       }}
     >
       {isChatHome ? (
@@ -117,6 +124,10 @@ const MainContent: React.FC<MainContentProps> = ({
               ? ""
               : isSmallScreen ? "p-2 sm:p-3 md:p-4" : "p-6 sm:p-7 md:p-8"
           }`}
+          // 滚动容器添加轻微的背景色，增强可读性
+          style={{
+            backgroundColor: isKnowledgeBase ? "transparent" : "rgba(255, 255, 255, 0.85)",
+          }}
         >
           {children}
         </div>

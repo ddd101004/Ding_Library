@@ -454,23 +454,27 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
               marginTop: "-20px",
             }}
           >
-            {/* 背景图 */}
+            {/* 背景图 - 替换为浅绿色背景 #c6f2e0ff */}
             <div
               className="absolute inset-0 rounded-[20px] z-10 transition-all duration-300 overflow-hidden"
               style={{
                 height: `${280 + backgroundOffset + getAdditionalHeight()}px`,
                 top: "0px",
+                backgroundColor: '#c6f2e0ff', // 浅绿色背景
+                // 移除背景图片
               }}
             >
-              <div className="absolute inset-0 bg-center bg-no-repeat bg-[url('/background/layer-3@2x.png')]"></div>
+              {/* 移除了原有的背景图片div */}
             </div>
 
-            {/* 白色背景层 */}
+            {/* 白色背景层 - 调整为半透明白色，增强浅绿色背景的视觉效果 */}
             <div
-              className="absolute w-full max-w-[calc(100%-20px)] mx-auto bg-white rounded-[20px] top-[10px] left-0 right-0 pt-[10px] z-20 px-2 sm:px-4 transition-all duration-300"
+              className="absolute w-full max-w-[calc(100%-20px)] mx-auto rounded-[20px] top-[10px] left-0 right-0 pt-[10px] z-20 px-2 sm:px-4 transition-all duration-300"
               style={{
                 height: `${180 + backgroundOffset}px`,
                 margin: "0 10px",
+                backgroundColor: 'rgba(255, 255, 255, 0.9)', // 半透明白色
+                border: '1px solid #d4ede4', // 浅绿色边框
               }}
             >
               {/* 上传的文件标签 */}
@@ -553,7 +557,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                       key={key}
                       className={`w-[80px] xs:w-[100px] sm:w-[130px] md:w-[150px] lg:w-[190px] h-8 sm:h-9 md:h-10 rounded-[20px] flex items-center px-1 sm:px-2 md:px-3 lg:px-7 cursor-pointer transition-colors border ${
                         selectedButton === key
-                          ? "border-blue-500 bg-blue-50"
+                          ? "border-[#679CFF] bg-[#e8f8f0]" // 选中状态改为浅绿背景
                           : "border-[#C8C9CC] bg-white"
                       }`}
                       onClick={() => handleTopicTypeSelect(key)}
@@ -593,7 +597,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                       {topics.map((topic, index) => (
                         <div
                           key={index}
-                          className="w-full max-w-[800px] sm:max-w-[900px] lg:max-w-[1000px] h-[40px] bg-[#F7F8FA] rounded-[20px] flex items-center text-gray-700 cursor-pointer transition-colors hover:bg-gray-100 px-4 sm:px-8 lg:px-[28px] text-sm sm:text-base"
+                          className="w-full max-w-[800px] sm:max-w-[900px] lg:max-w-[1000px] h-[40px] bg-[#f0faf6] rounded-[20px] flex items-center text-gray-700 cursor-pointer transition-colors hover:bg-[#e8f8f0] px-4 sm:px-8 lg:px-[28px] text-sm sm:text-base border border-transparent hover:border-[#d4ede4]"
                           onClick={() => handleTopicClick(topic)}
                         >
                           <span className="truncate text-center w-full">
@@ -617,8 +621,8 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                                 selectedTopic === topic && isGeneratingQuestion
                                   ? "border-gray-300 bg-gray-50 cursor-wait"
                                   : selectedTopic === topic
-                                  ? "border-blue-500 bg-blue-50"
-                                  : "border-[#C8C9CC] hover:border-gray-500"
+                                  ? "border-[#679CFF] bg-[#e8f8f0]" // 选中状态改为浅绿背景
+                                  : "border-[#C8C9CC] hover:border-[#d4ede4] hover:bg-[#f0faf6]"
                               }`}
                               onClick={() =>
                                 !isGeneratingQuestion && handleTopicClick(topic)
@@ -667,8 +671,8 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                                 selectedTopic === topic && isGeneratingQuestion
                                   ? "border-gray-300 bg-gray-50 cursor-wait"
                                   : selectedTopic === topic
-                                  ? "border-blue-500 bg-blue-50"
-                                  : "border-[#C8C9CC] hover:border-gray-500"
+                                  ? "border-[#679CFF] bg-[#e8f8f0]" // 选中状态改为浅绿背景
+                                  : "border-[#C8C9CC] hover:border-[#d4ede4] hover:bg-[#f0faf6]"
                               }`}
                               onClick={() =>
                                 !isGeneratingQuestion && handleTopicClick(topic)
@@ -717,7 +721,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
             {/* 换一批按钮 - 只在有内容时显示 */}
             {topics.length > 0 && (
               <div
-                className="absolute z-40 cursor-pointer transition-all duration-300 hover:text-blue-500 flex items-center px-3"
+                className="absolute z-40 cursor-pointer transition-all duration-300 hover:text-[#679CFF] flex items-center px-3"
                 style={{
                   top:
                     currentFunction === "quickQA"

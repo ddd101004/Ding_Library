@@ -124,7 +124,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
       {/* AI头像和信息 */}
       <div className="flex items-center w-full">
         <img
-          src="/logo/LOGO@2x.png"
+          src="/logo/ai_logo.png"
           alt="AI头像"
           className="w-9 h-9 rounded-full mr-3 flex-shrink-0"
         />

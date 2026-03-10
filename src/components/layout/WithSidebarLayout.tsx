@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { useSearch } from "../../components/contexts/SearchContext";
 import { useUser } from "../../components/contexts/UserContext";
@@ -14,7 +14,7 @@ export default function WithSidebarLayout({
   isChatHome = false,
   isCheckedChat = false,
   backgroundImage,
-  backgroundColor = "#FFFFFF",
+  backgroundColor = "#f0faf6", // 修改为更浅的浅绿色（主背景色）
   functionType,
   skipMainContent = false,
   isKnowledgeBase = false,
@@ -63,7 +63,7 @@ export default function WithSidebarLayout({
   }, []);
 
   // 获取最近会话
-  const fetchRecentConversations = useCallback(async (forceRefresh = false) => {
+  const fetchRecentConversations = async () => {
     try {
       const token = localStorage.getItem("token");
 
@@ -73,22 +73,20 @@ export default function WithSidebarLayout({
         return;
       }
 
-      // 第一次加载时先从本地缓存加载数据（非强制刷新时）
-      if (!forceRefresh) {
-        const cachedConversations = localStorage.getItem("recentConversations");
-        if (cachedConversations && recentConversations.length === 0) {
-          try {
-            const parsed = JSON.parse(cachedConversations);
-            const now = Date.now();
-            // 检查缓存是否过期（5分钟）
-            if (parsed.timestamp && now - parsed.timestamp < 5 * 60 * 1000) {
-              setRecentConversations(parsed.data || []);
-              setConversationsLoading(false);
-              return;
-            }
-          } catch (e) {
-            // 缓存格式错误，继续获取新数据
+      // 第一次加载时先从本地缓存加载数据
+      const cachedConversations = localStorage.getItem("recentConversations");
+      if (cachedConversations && recentConversations.length === 0) {
+        try {
+          const parsed = JSON.parse(cachedConversations);
+          const now = Date.now();
+          // 检查缓存是否过期（5分钟）
+          if (parsed.timestamp && now - parsed.timestamp < 5 * 60 * 1000) {
+            setRecentConversations(parsed.data || []);
+            setConversationsLoading(false);
+            return;
           }
+        } catch (e) {
+          // 缓存格式错误，继续获取新数据
         }
       }
 
@@ -126,7 +124,7 @@ export default function WithSidebarLayout({
     } finally {
       setConversationsLoading(false);
     }
-  }, [recentConversations.length, clearUserInfo]);
+  };
 
   // 侧边栏展开时才加载会话
   useEffect(() => {
@@ -165,24 +163,6 @@ export default function WithSidebarLayout({
     else if (pathname === "/history") setActiveIcon("history");
     else if (pathname === "/academic-search") setActiveIcon("academic");
   }, [router.pathname]);
-
-  // 监听路由变化，刷新会话列表
-  useEffect(() => {
-    const handleRouteChangeComplete = (url: string) => {
-      // 只在侧边栏展开时才刷新会话列表，并强制刷新（跳过缓存）
-      if (isSidebarOpen) {
-        fetchRecentConversations(true);
-      }
-    };
-
-    // 监听路由变化完成事件
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-
-    // 清理事件监听
-    return () => {
-      router.events.off('routeChangeComplete', handleRouteChangeComplete);
-    };
-  }, [isSidebarOpen, router.events, fetchRecentConversations]);
 
   // 各类功能点击事件（阻止冒泡，防止触发空白处点击）
   const handleAcademicSearchClick = (e: React.MouseEvent) => {
@@ -335,7 +315,13 @@ export default function WithSidebarLayout({
   };
 
   return (
-    <div className="w-full h-screen overflow-hidden bg-blue-100" style={{ paddingTop: '5px', paddingRight: '5px', paddingBottom: '5px' }}>
+    // 主容器背景修改为更浅的浅绿色 #f0faf6
+    <div className="w-full h-screen overflow-hidden" style={{ 
+      backgroundColor: '#f0faf6', // 更浅的浅绿色主背景
+      paddingTop: '5px', 
+      paddingRight: '5px', 
+      paddingBottom: '5px' 
+    }}>
       <div className="w-full h-full flex overflow-hidden relative min-w-0">
         {/* 侧边栏外层容器 - 小屏幕时保持70px，大屏幕时可展开 */}
         <div
@@ -347,6 +333,8 @@ export default function WithSidebarLayout({
                 ? "w-48 sm:w-52 md:w-56" // 展开时自适应宽度：192-224px
                 : "w-[50px] sm:w-[60px]" // 收起时50-60px，节省空间
           }`}
+          // 侧边栏背景也调整为稍深一点的浅绿，保持层次感
+          style={{ backgroundColor: '#e8f8f0' }}
         >
           {/* 侧边栏内容容器 */}
           <div
@@ -417,11 +405,14 @@ export default function WithSidebarLayout({
         </div>
 
         {skipMainContent ? (
-          <div className="flex-1 overflow-hidden bg-white rounded-[20px]">
+          <div className="flex-1 overflow-hidden" style={{ 
+            backgroundColor: '#ffffff', // 内容区域保持白色，突出内容
+            borderRadius: '20px',
+            // 添加轻微的绿色边框，呼应整体风格
+            border: '1px solid #d4ede4'
+          }}>
             {React.isValidElement(children)
-              ? React.cloneElement(children as any, {
-                  ...(typeof children.type === 'string' ? {} : { isSidebarOpen, isSmallScreen })
-                })
+              ? React.cloneElement(children as any, { isSidebarOpen, isSmallScreen })
               : children}
           </div>
         ) : (
@@ -438,9 +429,7 @@ export default function WithSidebarLayout({
             isKnowledgeBase={isKnowledgeBase}
           >
             {React.isValidElement(children)
-              ? React.cloneElement(children as any, {
-                  ...(typeof children.type === 'string' ? {} : { isSidebarOpen, isSmallScreen })
-                })
+              ? React.cloneElement(children as any, { isSidebarOpen, isSmallScreen })
               : children}
           </MainContent>
         )}

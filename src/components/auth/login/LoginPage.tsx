@@ -81,7 +81,7 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-[28px]">
           <img
-            src="/logo/logologo@2x.png"
+            src="/logo/ai_logo.png"
             alt="Logo"
             className="w-[114px] h-[60px]"
           />

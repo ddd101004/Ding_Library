@@ -34,9 +34,9 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
           style={{
             maxWidth: maxWidth ? maxWidth : "1037px",
             height: "60px",
-            background: "rgba(59,128,255,0.1)",
+            background: "rgba(103, 200, 255, 0.05)", // 调整为浅绿基调的背景
             borderRadius: "20px",
-            border: "1px solid #E0E1E5",
+            border: "1px solid #d4ede4", // 浅绿色边框
             minWidth: "280px", // 确保最小宽度
           }}
         >
@@ -52,6 +52,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
               style={{
                 fontSize: "16px",
                 fontWeight: 500,
+                color: "#2d3748", // 调整文字颜色
               }}
             >
               深度思考已折叠
@@ -61,7 +62,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
           {/* 右侧展开图标 */}
           {onToggleCollapse && (
             <div
-              className="absolute cursor-pointer flex items-center justify-center"
+              className="absolute cursor-pointer flex items-center justify-center hover:bg-[#f0faf6] rounded-full transition-colors"
               style={{
                 right: "30px",
                 top: "calc(50% + 10px)",
@@ -85,9 +86,9 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
           className="transition-all duration-300 relative -mb-4 max-w-full w-full"
           style={{
             maxWidth: maxWidth ? maxWidth : "1037px",
-            background: "rgba(59,128,255,0.1)",
+            background: "rgba(103, 200, 255, 0.05)", // 调整为浅绿基调的背景
             borderRadius: "20px",
-            border: "1px solid #E0E1E5",
+            border: "1px solid #d4ede4", // 浅绿色边框
             padding: "16px",
             paddingLeft: "25px",
             minWidth: "280px", // 确保最小宽度
@@ -121,13 +122,14 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 />
               )}
               <span
-                className="text-sm font-medium text-[#1a365d] ml-4 mb-2"
+                className="text-sm font-medium ml-4 mb-2"
                 style={{
                   width: "289px",
                   height: "16px",
                   fontWeight: "400",
                   fontSize: "16px",
                   lineHeight: "30px",
+                  color: "#2d3748", // 调整文字颜色
                 }}
               >
                 {isStreaming ? "稍等让ZHITU-AI思考一下" : "思考过程"}
@@ -137,11 +139,10 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
             {/* 折叠图标 */}
             {onToggleCollapse && (
               <div
-                className="absolute cursor-pointer flex items-center justify-center"
+                className="absolute cursor-pointer flex items-center justify-center hover:bg-[#f0faf6] rounded-full transition-colors"
                 style={{
                   right: "30px",
                   top:"40px",
-
                   transform: "translateY(-50%)",
                   padding: "10px",
                   margin: "-10px",
@@ -162,7 +163,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
             style={{
               width: "calc(100% - 50px)",
               height: "1px",
-              background: "#E0E1E5",
+              background: "#d4ede4", // 浅绿色分割线
               margin: "20px 0",
               marginLeft: "5px",
             }}
@@ -197,7 +198,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 style={{
                   width: "1px",
                   minHeight: "1px",
-                  background: "#E0E1E5",
+                  background: "#d4ede4", // 浅绿色竖线
                   borderRadius: "1px",
                   flex: 1,
                 }}
@@ -206,7 +207,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
 
             {/* 思考过程内容 */}
             <div
-              className="text-sm text-[#2d3748] whitespace-pre-wrap leading-relaxed flex-1 min-w-0"
+              className="text-sm whitespace-pre-wrap leading-relaxed flex-1 min-w-0"
               style={{
                 fontSize: "14px",
                 lineHeight: "1.5",
@@ -214,11 +215,12 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 maxWidth: "calc(100% - 80px)",
                 wordBreak: "break-word", // 确保长文本能够换行
                 overflowWrap: "break-word", // 兼容性更好的换行
+                color: "#2d3748", // 调整文字颜色
               }}
             >
               {thinking}
               {isStreaming && (
-                <span className="inline-block w-2 h-4 ml-1 bg-blue-500 animate-bounce"></span>
+                <span className="inline-block w-2 h-4 ml-1 bg-[#679CFF] animate-bounce"></span> // 调整为主题蓝色
               )}
             </div>
           </div>

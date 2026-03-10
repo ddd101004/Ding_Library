@@ -12,7 +12,7 @@ export default function ChatPage() {
       </Head>
       <WithSidebarLayout
         isChatHome={true}
-        backgroundImage="/background/chat-page-bg-1.png" // ChatHome 使用背景图
+        backgroundImage="" // ChatHome 使用背景图
       >
         <ChatHome />
       </WithSidebarLayout>
