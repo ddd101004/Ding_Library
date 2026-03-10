@@ -139,18 +139,6 @@ export function AuthPageLayout({ title, children }: AuthPageLayoutProps) {
           </div>
         </div>
 
-        {/* 右上角返回按钮 */}
-        <div className="absolute top-6 right-6 z-10">
-          <button
-            onClick={handleGoToHome}
-            className="flex items-center text-[#666666] hover:text-[#333333] transition-colors"
-            title="点击可返回到这个网页的默认首页"
-          >
-            <span className="font-['Source_Han_Sans_CN'] font-normal text-[14px]">
-              返回 &gt;
-            </span>
-          </button>
-        </div>
 
         {/* 表单内容 */}
         {children}

@@ -283,7 +283,12 @@ export const updateOperateTime = async (userId: string) => {
     });
     return user;
   } catch (error: any) {
-    logger.error(`更新操作时间失败: ${error?.message}`, { error });
+    const prismaError = error;
+    if (prismaError?.code === 'P2025') {
+      logger.warn(`更新操作时间失败: 用户不存在 ${userId}`);
+    } else {
+      logger.error(`更新操作时间失败: ${error?.message}`, { error });
+    }
     return;
   }
 };
