@@ -1,21 +1,12 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { flushSync } from "react-dom";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
 import AvatarPopup from "./common/AvatarPopup";
-import FileUploadModal from "./common/FileUploadModal";
 import ChatInput, { ChatInputRef } from "./common/ChatInput";
 import Toolbar from "./common/Toolbar";
 import FileTags from "./common/FileTags";
-import FunctionSelection from "./common/FunctionSelection";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { useAudioRecorder } from "@/hooks/use-audio-recorder";
 import { useFileHandler } from "@/hooks/use-file-handler";
 import { useConversation } from "@/hooks/use-conversation";
@@ -42,88 +33,26 @@ export default function ChatHome() {
   const [inputText, setInputText] = useState("");
   const [showAvatarPopup, setShowAvatarPopup] = useState(false);
   const [sendButtonHover, setSendButtonHover] = useState(false);
-  const [isAiReadingActive, setIsAiReadingActive] = useState(false);
-  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
-  const [isAiReadingUploadMode, setIsAiReadingUploadMode] = useState(false); // 标记是否是AI伴读模式下的上传
-  const [aiReadingFilesUploaded, setAiReadingFilesUploaded] = useState(false); // 标记AI伴读模式下是否已上传文件
-  const [currentFileCount, setCurrentFileCount] = useState(0); // 当前文件数量
-  const [isFileParsing, setIsFileParsing] = useState(false); // 文件解析状态
-  const parsingFileCountRef = useRef(0); // 正在解析的文件数量计数器
 
   const avatarPopupRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<ChatInputRef>(null);
-  
+
   const { isRecording, toggleRecording, transcribedText, setTranscribedText } = useAudioRecorder();
   const { preloadMultiple } = usePreload();
-  
+
   const {
     uploadedFiles,
-    setUploadedFiles,
     showUploadModal,
     setShowUploadModal,
     isUploading,
-    setUploadingStatus,
     handleFileUpload,
-    handleFileCompleted,
     handleRemoveFile,
     formatFileContent,
     saveFilesToSession,
     clearUploadedFiles
   } = useFileHandler();
 
-  // 包装文件上传处理函数
-  const handleAiReadingFileUpload = async (files: any[]) => {
-    // AI伴读模式下，文件已经在 FileUploadModal 中上传过了
-    // 这里只需要保存 uploadedPaperId 到文件对象中
-    if (isAiReadingActive) {
-      for (const fileData of files) {
-        // FileUploadModal 已经在上传时设置了 fileId，这里直接使用
-        if (fileData.fileId) {
-          fileData.uploadedPaperId = fileData.fileId;
-        }
-      }
-
-      // 调用原有的文件上传处理（不再重复上传）
-      await handleFileUpload(files);
-    } else {
-      // 非AI伴读模式，使用原有逻辑
-      await handleFileUpload(files);
-    }
-  };
-  
   const { handleSendMessage, isSending } = useConversation();
-
-  // 处理文件上传开始
-  const handleUploadStart = () => {
-    // 增加计数器
-    parsingFileCountRef.current += 1;
-
-    flushSync(() => {
-      setIsFileParsing(true);
-    });
-  };
-
-  // 处理文件上传结束
-  const handleUploadEnd = () => {
-    // 减少计数器
-    parsingFileCountRef.current -= 1;
-
-    // 只有当所有文件都解析完成时，才恢复发送按钮
-    if (parsingFileCountRef.current === 0) {
-      setIsFileParsing(false);
-    }
-  };
-
-  // 处理文件添加（上传开始前立即显示文件卡片）
-  const handleFilesAdding = (files: any[]) => {
-    // 将上传中的文件添加到列表
-    setUploadedFiles(prev => [...prev, ...files]);
-
-    // AI伴读模式下，用户选择文件后立即显示功能标签
-    if (isAiReadingUploadMode) {
-      setIsAiReadingActive(true);
-    }
-  };
 
   const router = useRouter();
   const { preloadData } = usePreload();
@@ -149,7 +78,7 @@ export default function ChatHome() {
       // 开始录音前保存当前文本
       textBeforeRecording.current = inputText;
       // 设置累积文本为当前输入框的文本
-      setTranscribedText(inputText); // 这里会更新 accumulatedTextRef
+      setTranscribedText(inputText);
     } else {
       // 停止录音时不需要重置，保持累积文本
     }
@@ -159,25 +88,9 @@ export default function ChatHome() {
   // 实时更新输入框中的语音识别文字
   useEffect(() => {
     if (isRecording || transcribedText) {
-      // 直接使用 transcribedText，它已经包含了累积的文本
       setInputText(transcribedText);
     }
   }, [transcribedText, isRecording]);
-
-  // 监听上传弹窗关闭，自动聚焦到输入框
-  useEffect(() => {
-    if (!showUploadModal) {
-      // 弹窗关闭后延迟聚焦，确保 DOM 更新完成
-      const timer = setTimeout(() => {
-        chatInputRef.current?.focusToEnd();
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showUploadModal]);
-
-  // 注意：移除了文件上传状态与AI伴读状态的自动关联
-  // AI伴读状态现在只通过用户点击按钮来控制
 
   // 组件挂载时预加载所有深度学习关键词
   useEffect(() => {
@@ -215,86 +128,6 @@ export default function ChatHome() {
     }
   }, [preloadMultiple]);
 
-  // 组件挂载时清理可能残留的AI伴读状态
-  useEffect(() => {
-    // 检查是否有残留的AI伴读文件信息
-    if (typeof window !== 'undefined') {
-      const hasAiReadingFiles = sessionStorage.getItem('aiReadingFiles');
-      const hasTransferredFiles = sessionStorage.getItem('transferredFiles_nav') || sessionStorage.getItem('transferredFiles_home');
-
-      // 如果有残留的文件信息，清理它们
-      if (hasAiReadingFiles || hasTransferredFiles) {
-        sessionStorage.removeItem('aiReadingFiles');
-        sessionStorage.removeItem('aiReadingConversationId');
-        sessionStorage.removeItem('transferredFiles_home');
-        sessionStorage.removeItem('transferredFiles_nav');
-
-        // 清理文件状态
-        clearUploadedFiles();
-
-        // 重置状态
-        setIsAiReadingActive(false);
-        setIsAiReadingUploadMode(false);
-        setAiReadingFilesUploaded(false);
-        setCurrentFileCount(0);
-      }
-    }
-  }, []); // 只在组件挂载时执行一次
-
-  // 监听路由变化，清理AI伴读状态
-  useEffect(() => {
-    // 路由开始变化时清空AI伴读状态
-    const handleRouteChangeStart = (url: string) => {
-      // 如果离开ChatHome页面，立即清空AI伴读状态
-      if (!url.includes('/chat') && url !== '/') {
-        setIsAiReadingActive(false);
-        setIsAiReadingUploadMode(false);
-        setAiReadingFilesUploaded(false);
-        setCurrentFileCount(0);
-      }
-    };
-
-    // 路由变化完成后清理文件信息
-    const handleRouteChangeComplete = (url: string) => {
-      // 如果返回到ChatHome页面，清理AI伴读相关的文件信息
-      if (url === '/' || url.includes('/chat')) {
-        // 强制清理useFileHandler中的文件状态
-        clearUploadedFiles();
-
-        // 清理sessionStorage中的所有相关文件信息
-        if (typeof window !== 'undefined') {
-          sessionStorage.removeItem('aiReadingFiles');
-          sessionStorage.removeItem('aiReadingConversationId');
-          sessionStorage.removeItem('transferredFiles_home');
-          sessionStorage.removeItem('transferredFiles_nav');
-        }
-
-        // 重置AI伴读相关状态
-        setIsAiReadingActive(false);
-        setIsAiReadingUploadMode(false);
-        setAiReadingFilesUploaded(false);
-        setCurrentFileCount(0);
-
-        // 确保页面刷新时状态也被重置
-        setTimeout(() => {
-          if (uploadedFiles.length > 0) {
-            clearUploadedFiles();
-          }
-        }, 100);
-      }
-    };
-
-    // 监听路由变化事件
-    router.events.on('routeChangeStart', handleRouteChangeStart);
-    router.events.on('routeChangeComplete', handleRouteChangeComplete);
-
-    // 组件卸载时清理事件监听
-    return () => {
-      router.events.off('routeChangeStart', handleRouteChangeStart);
-      router.events.off('routeChangeComplete', handleRouteChangeComplete);
-    };
-  }, [router.events, clearUploadedFiles, uploadedFiles.length]);
-
   // 搜索历史记录
   const [searchHistory] = useState<string[]>([
     "多模态模型",
@@ -314,7 +147,7 @@ export default function ChatHome() {
     setIsPaperSearchActive(!isPaperSearchActive);
   };
 
-  // 发送消息 - 关键修改：保存文件到sessionStorage用于传递
+  // 发送消息
   const handleSend = async () => {
     // 检查输入文本是否为空
     if (!inputText.trim()) {
@@ -328,53 +161,6 @@ export default function ChatHome() {
       return;
     }
 
-    // 检查是否是AI伴读模式 - 修改：简化判断条件，只要激活了AI伴读且有文件就进入AI伴读流程
-    // 修复：只要激活了AI伴读模式且有文件，就进入AI伴读流程，不再要求uploadedPaperId
-    if (isAiReadingActive && uploadedFiles.length > 0) {
-      // AI伴读模式限制文件数量最多5个
-      if (uploadedFiles.length > 5) {
-        toast.error("AI伴读模式暂不支持多余五个文件，请删减文件后重试");
-        return;
-      }
-
-      const file = uploadedFiles[0];
-      if (!file) {
-        toast.error("文件信息不完整，请重新上传");
-        return;
-      }
-
-      // 保存文件到 sessionStorage（用于跳转到AI伴读对话页面）
-      const filesToSave = uploadedFiles.map(file => {
-        // 确保有uploadedPaperId，如果没有则使用fileId
-        const uploadedPaperId = file.uploadedPaperId || file.fileId || null;
-        return {
-          file: {
-            name: file.file.name,
-            type: file.file.type,
-            size: file.file.size
-          },
-          fileId: file.fileId,
-          uploadedPaperId: uploadedPaperId
-        };
-      });
-
-      sessionStorage.setItem('transferredFiles_home', JSON.stringify(filesToSave));
-      sessionStorage.setItem('aiReadingFiles', JSON.stringify(filesToSave));
-
-      // 跳转到AI伴读对话页面，传递文件ID（如果有）
-      router.push({
-        pathname: "/ai-reading-chat",
-        query: {
-          inputText,
-          isDeepThink: isDeepThinkActive,
-          uploadedPaperId: file.uploadedPaperId || file.fileId || undefined,
-          functionName: "aiReading",
-        },
-      });
-      return;
-    }
-
-    // 非AI伴读模式，正常处理
     // 保存文件到 sessionStorage
     if (uploadedFiles.length > 0) {
       const filesToSave = uploadedFiles.map(file => ({
@@ -383,10 +169,10 @@ export default function ChatHome() {
           type: file.file.type,
           size: file.file.size
         },
-        fileId: file.fileId || null, // 修复：保存fileId
+        fileId: file.fileId || null,
         uploadedPaperId: file.uploadedPaperId || null
       }));
-      
+
       sessionStorage.setItem('transferredFiles_home', JSON.stringify(filesToSave));
     }
 
@@ -395,65 +181,14 @@ export default function ChatHome() {
       uploadedFiles,
       isDeepThinkActive,
       isPaperSearchActive,
-      currentFunction: isAiReadingActive ? "aiReading" : null,
+      currentFunction: null,
       formatFileContent,
       saveFilesToSession
     });
   };
 
-  // 处理导航 - 保存文件到sessionStorage用于传递
+  // 处理导航
   const handleNavigate = async (functionType: string) => {
-    if (functionType === "aiReading") {
-      // 如果论文搜索处于激活状态，需要取消并提示用户
-      if (isPaperSearchActive) {
-        setIsPaperSearchActive(false);
-        toast.info("AI伴读功能暂不支持论文搜索");
-      }
-
-      // 检查是否已经有上传的文件
-      if (uploadedFiles.length > 0) {
-        // AI伴读模式限制文件数量最多5个
-        if (uploadedFiles.length > 5) {
-          toast.error("AI伴读模式暂不支持多余五个文件，请删减文件后重试");
-          return;
-        }
-
-        // 有文件，需要为AI伴读模式设置uploadedPaperId
-        const filesToSave = uploadedFiles.map(file => {
-          // 如果文件有fileId但没有uploadedPaperId，则设置uploadedPaperId
-          const uploadedPaperId = file.uploadedPaperId || file.fileId || null;
-          return {
-            file: {
-              name: file.file.name,
-              type: file.file.type,
-              size: file.file.size
-            },
-            fileId: file.fileId || null,
-            uploadedPaperId: uploadedPaperId
-          };
-        });
-
-        // 同时更新内存中的文件状态，确保uploadedPaperId被设置
-        uploadedFiles.forEach(file => {
-          if (!file.uploadedPaperId && file.fileId) {
-            file.uploadedPaperId = file.fileId;
-          }
-        });
-
-        sessionStorage.setItem('transferredFiles_nav', JSON.stringify(filesToSave));
-
-        // 激活AI伴读功能标签
-        setIsAiReadingActive(true);
-      } else {
-        // 没有文件，弹出上传弹窗并标记为AI伴读模式
-        setIsAiReadingActive(true);
-        setIsAiReadingUploadMode(true);
-        setAiReadingFilesUploaded(false);
-        setShowUploadModal(true);
-      }
-      return;
-    }
-
     // 快问快答：立即发起请求获取随机问题
     if (functionType === "quickQA") {
       // 立即发起请求，不等待页面跳转
@@ -467,9 +202,15 @@ export default function ChatHome() {
       ).then((questions) => {
         // 将获取到的问题保存到sessionStorage
         sessionStorage.setItem("quickQA_questions_prefetched", JSON.stringify(questions));
+        console.log("快问快答问题已预加载:", questions);
       }).catch((error) => {
         console.error("预加载快问快答问题失败:", error);
       });
+    }
+
+    // 深度学习：预加载所有类型的关键词（已在组件挂载时预加载，这里无需额外操作）
+    if (functionType === "deepStudy") {
+      console.log("进入深度学习模式，使用预加载的关键词");
     }
 
     // 深度学习和快问快答：只有当有文件时才保存
@@ -496,41 +237,13 @@ export default function ChatHome() {
         function: functionType,
         inputText,
         isDeepThink: isDeepThinkActive,
-        isPaperSearch: isPaperSearchActive,
       },
     });
-  };
-
-
-// 处理关闭AI伴读功能
-  const handleCloseAiReading = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsAiReadingActive(false);
-  };
-
-// 处理所有文件删除时的AI伴读状态关闭
-  const handleAllFilesRemoved = () => {
-    // 只有当AI伴读状态是激活时才关闭
-    if (isAiReadingActive) {
-      setIsAiReadingActive(false);
-    }
-  };
-
-  // 文件数量变化回调
-  const handleFileCountChange = (count: number) => {
-    setCurrentFileCount(count);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-
-      // 检查要发送的文件是否正在上传或解析
-      if (uploadedFiles.some(file => file.isUploading)) {
-        toast.warning("文件解析中，请稍后再试");
-        return;
-      }
-
       handleSend();
     }
   };
@@ -541,80 +254,21 @@ export default function ChatHome() {
         <title>临港科技智慧图书馆-AI对话</title>
       </Head>
 
-      {/* 文件上传弹窗 */}
-      <FileUploadModal
-        show={showUploadModal}
-        preventAutoClose={isAiReadingUploadMode} // AI伴读模式下阻止自动关闭
-        totalFileCount={currentFileCount}
-        onUploadStart={handleUploadStart}
-        onUploadEnd={handleUploadEnd}
-        onFilesAdding={handleFilesAdding}
-        onFileCompleted={handleFileCompleted}
-        onClose={() => {
-          // AI伴读模式下，只有在用户没有选择任何文件时才关闭标签
-          // 如果用户已经选择了文件（uploadedFiles.length > 0），则保持标签显示
-          if (isAiReadingUploadMode && uploadedFiles.length === 0) {
-            setIsAiReadingActive(false);
-          }
-          setIsAiReadingUploadMode(false);
-          setShowUploadModal(false);
-        }}
-        onFileUpload={(files) => {
-          // 检查是否有成功上传的文件
-          if (files.length === 0) {
-            // 没有成功上传的文件，不关闭弹窗
-            return;
-          }
-
-          // 使用局部变量保存是否是AI伴读模式（避免状态更新异步问题）
-          const isAiReadingMode = isAiReadingUploadMode;
-
-          // AI伴读模式下检查文件数量限制
-          if (isAiReadingMode) {
-            const currentTotalFiles = currentFileCount + files.length;
-            if (currentTotalFiles > 5) {
-              // 计算还能上传多少个文件
-              const remainingSlots = 5 - currentFileCount;
-              if (remainingSlots > 0) {
-                toast.error(`AI伴读模式下文件总数不得超过五个，当前还可上传${remainingSlots}个文件`);
-              } else {
-                toast.error("AI伴读模式下文件总数不得超过五个，请删除已有文件后再上传");
-              }
-              return;
-            }
-          }
-
-          setAiReadingFilesUploaded(true); // 标记已上传文件
-          handleAiReadingFileUpload(files);
-
-          // AI伴读模式下，确保标签保持激活状态（在文件处理之后再设置，确保状态正确）
-          if (isAiReadingMode) {
-            setIsAiReadingActive(true);
-          }
-
-          // 成功上传文件后关闭弹窗（useEffect 会自动聚焦到输入框）
-          setShowUploadModal(false);
-          setIsAiReadingUploadMode(false);
-        }}
-      />
-
       {/* 用户头像 */}
       <div className="fixed z-50 top-5 right-5">
         <img
           src={avatarUrl}
           alt="用户头像"
           className={`rounded-full border-2 border-white shadow-md w-12 h-12 object-cover ${
-            isUploading || isAnyModalOpen || showUploadModal
+            isUploading
               ? 'cursor-not-allowed opacity-60'
               : 'cursor-pointer'
           }`}
-          onClick={() => !isUploading && !isAnyModalOpen && !showUploadModal && setShowAvatarPopup(true)}
+          onClick={() => !isUploading && setShowAvatarPopup(true)}
         />
-
         <AvatarPopup
           show={showAvatarPopup}
           onClose={() => setShowAvatarPopup(false)}
-          onAnyModalOpen={setIsAnyModalOpen}
         />
       </div>
 
@@ -658,30 +312,17 @@ export default function ChatHome() {
               <div className="relative top-[30px] z-30">
                 <FileTags
                   files={uploadedFiles}
-                  onRemoveFile={(index) => handleRemoveFile(index, handleAllFilesRemoved)}
+                  onRemoveFile={(index) => handleRemoveFile(index)}
                   maxFiles={5}
-                  onFileCountChange={handleFileCountChange}
                 />
               </div>
-              
+
               <div className="flex flex-col h-full">
                 {/* 输入框 */}
                 <div
                   className="flex items-center transition-all duration-300"
                   style={{ marginTop: `${backgroundOffset > 0 ? 80 : 0}px` }}
                 >
-                  {/* AI伴读功能标签 */}
-                  {isAiReadingActive && (
-                    <>
-                      <FunctionSelection
-                        functionType="aiReading"
-                        onClose={handleCloseAiReading}
-                        isFileParsing={isFileParsing}
-                      />
-                      <div className="w-[1px] h-[30px] bg-[#E0E1E5] rounded-[1px] mx-3"></div>
-                    </>
-                  )}
-
                   {/* 输入框 */}
                   <div className="flex-1">
                     <ChatInput
@@ -710,99 +351,36 @@ export default function ChatHome() {
                     onToggleRecording={handleToggleRecording}
                     sendButtonHover={sendButtonHover}
                     onSendButtonHover={setSendButtonHover}
-                    onAddFile={() => {
-              setIsAiReadingUploadMode(false); // 普通上传模式
-              setShowUploadModal(true);
-            }}
+                    onAddFile={() => {}} // 已移除文件上传功能
                     onSend={handleSend}
                     isSending={isSending}
-                    totalFileCount={currentFileCount}
-                    isAiReadingActive={isAiReadingActive}
-                    isFileParsing={isFileParsing}
                   />
                 </div>
               </div>
             </div>
 
-            {/* 功能按钮区域 */}
+            {/* 功能按钮区域 - 已移除AI伴读按钮 */}
             <div
               className="flex justify-center gap-[47px] absolute z-40 transition-all duration-300 bottom-[40px] left-0 right-0"
             >
               {[
                 { key: "quickQA", icon: "chat-page-qqqa.png", label: "快问快答" },
                 { key: "deepStudy", icon: "chat-page-deep-study.png", label: "深度学习" },
-                { key: "aiReading", icon: isAiReadingActive ? "chat-page-alreadyreading@2x.png" : "chat-page-reading@2x.png", label: "AI伴读" },
                 { key: "more", icon: "chat-page-more.png", label: "更多" }
-              ].map(({ key, icon, label }) => {
-                // 判断按钮是否应该禁用（快问快答和深度学习在文件解析时禁用）
-                const isButtonDisabled = isFileParsing && (key === 'quickQA' || key === 'deepStudy');
-
-                const buttonContent = (
-                  <div
-                    className={`w-[160px] h-10 rounded-[20px] border flex items-center px-7 transition-colors duration-200 ${
-                      isButtonDisabled
-                        ? 'bg-[#F5F5F5] border-[#E0E0E0] cursor-not-allowed opacity-60'
-                        : key === 'aiReading' && isAiReadingActive
-                          ? 'bg-[#F5F5F5] border-[#C8C9CC] cursor-pointer'
-                          : 'bg-white border-[#C8C9CC] hover:border-[#679CFF] cursor-pointer'
-                    }`}
-                  >
-                    <img
-                      src={`/chat-page/${icon}`}
-                      alt={label}
-                      className="w-[22px] h-[22px] mr-3"
-                    />
-                    <span
-                      className={
-                        key === 'aiReading' && isAiReadingActive ? 'text-[#F5F5F5]' : ''
-                      }
-                      style={{
-                        color: isButtonDisabled
-                          ? '#999999'
-                          : key === 'aiReading' && isAiReadingActive
-                            ? '#999999'
-                            : 'inherit'
-                      }}
-                    >{label}</span>
-                  </div>
-                );
-
-                return (
-                  <div key={key} className="relative">
-                    {key === 'more' ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div onClick={() => !isButtonDisabled && key !== 'more' && handleNavigate(key)}>
-                              {buttonContent}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>更多功能开发中</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : isButtonDisabled ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div>
-                              {buttonContent}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>文件解析中</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
-                      <div onClick={() => !isButtonDisabled && key !== 'more' && handleNavigate(key)}>
-                        {buttonContent}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+              ].map(({ key, icon, label }) => (
+                <div
+                  key={key}
+                  className={`w-[160px] h-10 rounded-[20px] border flex items-center px-7 cursor-pointer transition-colors duration-200 bg-white border-[#C8C9CC] hover:border-[#679CFF]`}
+                  onClick={() => key !== 'more' && handleNavigate(key)}
+                >
+                  <img
+                    src={`/chat-page/${icon}`}
+                    alt={label}
+                    className="w-[22px] h-[22px] mr-3"
+                  />
+                  <span>{label}</span>
+                </div>
+              ))}
             </div>
           </div>
 

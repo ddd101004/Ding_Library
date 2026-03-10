@@ -90,7 +90,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <AvatarPopupProvider>
           <SearchProvider>
             <AuthChecker>
-              <Component {...pageProps} />
+              <AvatarProvider>
+                <Component {...pageProps} />
+              </AvatarProvider>
               <Toaster />
             </AuthChecker>
           </SearchProvider>
