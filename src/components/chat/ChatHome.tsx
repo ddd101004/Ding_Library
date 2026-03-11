@@ -642,7 +642,9 @@ export default function ChatHome() {
             <div
               className="absolute inset-0 rounded-[20px] z-10 transition-all duration-300 overflow-hidden"
               style={{
-                backgroundColor: '#d5f4cfff' // 淡青色背景
+                height: `${210 + backgroundOffset}px`,
+                top: "0px",
+                backgroundColor: '#d5f4cfff', // 淡青色背景
               }}
             >
               {/* 移除了背景图片，改为纯色背景 */}

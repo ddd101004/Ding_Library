@@ -134,7 +134,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
 
   // 根据功能类型计算额外高度
   const getAdditionalHeight = () => {
-    if (currentFunction === "quickQA") return -70;
+    if (currentFunction === "quickQA" || currentFunction === "deepStudy") return -70;
     return 0;
   };
 

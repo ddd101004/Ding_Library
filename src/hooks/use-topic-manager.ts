@@ -85,20 +85,13 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
 
   // 获取深度学习关键词
   const fetchDeepLearningKeywords = useCallback(async (type: string, forceRefresh = false) => {
-    const keywordMap = {
-      cuttingEdge: "人工智能前沿技术",
-      basicResearch: "科学研究方法",
-      coreTechnology: "AI核心技术",
-      coreConcepts: "人工智能基础概念",
-    };
-
     const timestamp = Date.now(); // 使用时间戳避免缓存
     const keywords = await preloadData(
       "/api/ai/keywords",
-      { 
-        keyword: keywordMap[type as keyof typeof keywordMap], 
+      {
+        keyword: type,
         count: 13,
-        _t: forceRefresh ? timestamp : undefined 
+        _t: forceRefresh ? timestamp : undefined
       },
       {
         cacheKey: forceRefresh ? `deepLearning_${type}_keywords_${timestamp}` : `deepLearning_${type}_keywords`,

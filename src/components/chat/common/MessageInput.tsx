@@ -72,7 +72,7 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
       className={`relative mx-auto transition-all duration-300 left-[10px] bg-white rounded-[20px] border border-[#E9ECF2] shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] ${
         showRelatedPapers ? "w-full" : "max-w-7xl w-full"
       }`}
-      style={{ height: `${200 + backgroundOffset}px` }}
+      style={{ height: `${160 + backgroundOffset}px` }}
     >
       {/* 文件标签区域 */}
       {!isFromOtherPage && !hideFileTags && uploadedFiles.length > 0 && (
@@ -87,7 +87,7 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
 
       <div className="flex flex-col h-full pt-4">
         <div
-          className="ml-6 pb-[120px] flex items-center transition-all duration-300 flex-1"
+          className="ml-6 pb-[60px] flex items-center transition-all duration-300 flex-1"
           style={{ marginTop: `${backgroundOffset > 0 ? 80 : 0}px` }}
         >
           {/* 修复：添加 FunctionSelection 组件 */}
