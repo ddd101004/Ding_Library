@@ -42,7 +42,7 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
           height: "40px",
           background: "rgba(255,255,255,0)",
           borderRadius: "20px",
-          border: "2px solid #679CFF",
+          border: "2px solid #6FCF97",
           opacity: 0.7
         }}
       >
@@ -61,7 +61,7 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
           style={{
             fontWeight: 400,
             fontSize: "16px",
-            color: "#679CFF",
+            color: "#6FCF97",
             lineHeight: "40px",
           }}
         >

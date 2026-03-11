@@ -15,7 +15,6 @@ interface ToolbarProps {
   onToggleRecording: () => void;
   sendButtonHover: boolean;
   onSendButtonHover: (hover: boolean) => void;
-  onAddFile: () => void;
   onSend: () => void;
   disabled?: boolean;
   isSending?: boolean;
@@ -35,7 +34,6 @@ export default function Toolbar({
   onToggleRecording,
   sendButtonHover,
   onSendButtonHover,
-  onAddFile,
   onSend,
   disabled = false,
   isSending = false,
@@ -45,12 +43,6 @@ export default function Toolbar({
   isFolderChat = false,
   isFileParsing = false
 }: ToolbarProps) {
-  const handleAddFile = () => {
-    if (!isSending) onAddFile();
-  };
-
-  // 检查是否超过文件数量限制（所有会话类型都限制为5个文件）
-  const isFileUploadDisabled = totalFileCount >= 5;
 
   const handleToggleDeepThink = () => {
     if (!disabled && !isSending) onToggleDeepThink();

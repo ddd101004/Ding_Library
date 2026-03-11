@@ -621,10 +621,8 @@ export default function ChatHome() {
             {/* 背景 - 修改：替换背景图片为纯色背景 */}
             <div
               className="absolute inset-0 rounded-[20px] z-10 transition-all duration-300 overflow-hidden"
-              style={{ 
-                height: `${300 + backgroundOffset}px`,
+              style={{
                 backgroundColor: '#d5f4cfff' // 淡青色背景
-              
               }}
             >
               {/* 移除了背景图片，改为纯色背景 */}
@@ -691,10 +689,6 @@ export default function ChatHome() {
                     onToggleRecording={handleToggleRecording}
                     sendButtonHover={sendButtonHover}
                     onSendButtonHover={setSendButtonHover}
-                    onAddFile={() => {
-              setIsAiReadingUploadMode(false); // 普通上传模式
-              setShowUploadModal(true);
-            }}
                     onSend={handleSend}
                     isSending={isSending}
                     totalFileCount={currentFileCount}
