@@ -147,11 +147,11 @@ export default function SearchModal() {
                 {searchHistory.map((keyword: any, index: any) => (
                   <div
                     key={index}
-                    className="relative group w-[120px] h-[40px] bg-white rounded-[20px] border border-[#C8C9CC] hover:border-[#3B80FF] transition-colors"
+                    className="relative group w-[120px] h-[40px] bg-white rounded-[20px] border border-[#C8C9CC] hover:border-[#6FCF97] transition-colors"
                   >
                     <button
                       onClick={() => handleHistoryClick(keyword)}
-                      className="w-full h-full flex items-center justify-center px-3 text-gray-700 hover:text-[#3B80FF] transition-colors rounded-[20px] text-primary text-[16px] font-normal leading-[40px]"
+                      className="w-full h-full flex items-center justify-center px-3 text-gray-700 hover:text-[#6FCF97] transition-colors rounded-[20px] text-primary text-[16px] font-normal leading-[40px]"
                     >
                       <span className="truncate block text-center" title={keyword}>{keyword}</span>
                     </button>

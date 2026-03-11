@@ -221,7 +221,7 @@ export default function ChatSplitLayout({
   );
 
   return (
-    <div className="h-screen overflow-hidden bg-white flex flex-col">
+    <div className="h-screen overflow-hidden bg-[#d5f4cff] flex flex-col">
       <div
         className="flex-1 flex overflow-hidden"
       >

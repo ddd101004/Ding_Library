@@ -871,12 +871,12 @@ export default function ChatConversation({
         
         /* 消息列表容器背景 */
         .flex-1.overflow-y-auto {
-          background-color: #f0faf6 !important;
+          background-color: #d5f4cff !important;
         }
         
         /* 输入区域背景 */
         .chat-input-area {
-          background-color: #ffffff !important;
+          background-color: #d5f4cff !important;
           border-top: 1px solid #d4ede4 !important;
         }
         
@@ -974,7 +974,7 @@ export default function ChatConversation({
                 isFolderChat={isFolderChat}
               />
               <div className="flex-1 overflow-y-auto overflow-x-hidden auto-hide-scrollbar pb-[10px]"
-                style={{ backgroundColor: '#f0faf6' }}>
+                style={{ backgroundColor: '#d5f4cff' }}>
                 <div className="flex justify-center items-start w-full">
                   <div className="relative responsive-container flex justify-center w-full">
                     <MessageListContainer
@@ -1032,8 +1032,8 @@ export default function ChatConversation({
               isFolderChat={isFolderChatActive}
               isFileParsing={isFileParsing}
               hideFileTags={false}
-              style={{ 
-                backgroundColor: 'white',
+              style={{
+                backgroundColor: '#d5f4cff',
                 borderTop: '1px solid #d4ede4'
               }}
             />

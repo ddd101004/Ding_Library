@@ -129,7 +129,7 @@ export default function AvatarHoverMenu({
               </button>
               <button
                 onClick={handleLogoutClick}
-                className="w-full px-4 py-3 text-left text-[#e53e3e] text-[16px] hover:bg-[#fee2e2] transition-colors flex items-center gap-2"
+                className="w-full px-3 py-3 text-left text-[#e53e3e] text-[16px] hover:bg-[#fee2e2] transition-colors flex items-center gap-2"
               >
                 <img
                   src="/settings/exit1.png"

@@ -74,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <span className="text-white text-[16px]">新对话</span>
           </div>
         ) : (
-          <img src="/slibar/edit1.png" alt="新建对话" className="w-[32px] h-[27px] object-contain" />
+          <img src="/slibar/edit1.png" alt="新建对话" className="w-[30px] h-[26px] " />
         )}
       </div>
 
