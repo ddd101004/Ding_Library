@@ -148,14 +148,14 @@ const MessageFeedback: React.FC<MessageFeedbackProps> = ({
   // 获取点赞图标
   const getLikeIcon = () => {
     return currentFeedback === "like"
-      ? "/paper/paper-clicklike@2x.png"
+      ? "/paper/like1.png"
       : "/paper/paper-like@2x.png";
   };
 
   // 获取点踩图标
   const getDislikeIcon = () => {
     return currentFeedback === "dislike"
-      ? "/paper/paper-shinydislike@2x.png"
+      ? "/paper/dislike1.png"
       : "/paper/paper-dislike@2x.png";
   };
 

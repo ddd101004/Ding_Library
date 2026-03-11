@@ -31,7 +31,7 @@ const SIZE_CONFIG = {
 // 图标路径
 const ICONS = {
   default: "/paper/paper-copy@2x.png",
-  success: "/chat-page/chat-page-copyok.png",
+  success: "/chat-page/copyok1.png",
 } as const;
 
 /**

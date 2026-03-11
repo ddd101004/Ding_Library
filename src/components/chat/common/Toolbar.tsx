@@ -258,7 +258,7 @@ export default function Toolbar({
                   ? '/chat-page/send2.png'
                   : '/chat-page/send1.png'}
                 alt="发送"
-                className="w-full h-full border border border-gray-200 rounded-lg"
+                className="w-full h-full"
               />
             )}
           </button>

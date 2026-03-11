@@ -622,11 +622,11 @@ export default function ChatHome() {
         <div className="relative responsive-container w-full">
           {/* 问候语 - 绝对定位在左上角 */}
           <div className="absolute text-gray-900 flex flex-col gap-[20px] z-30 left-[40px] -top-[200px]">
-            <div className="text-[60px] font-medium">
+            <div className="text-[58px] font-medium">
               {getGreeting()}，{userInfo?.username || "访客"}
             </div>
             <div className="text-[24px]">
-              能听懂人话的图书馆，千人千面，找到"与你相关"的科学
+              更懂人的图书馆，遇见对你有用的知识。
             </div>
           </div>
 

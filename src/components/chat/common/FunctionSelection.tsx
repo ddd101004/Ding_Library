@@ -99,7 +99,10 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
               className="flex items-center justify-center cursor-pointer"
               style={{
                 width: "20px",
-                height: "15px"
+                height: "20px",
+                backgroundColor: "#e0f2e0",
+                borderRadius: "10px",
+                border: "1px solid #6FCF97"
               }}
             >
               <img

@@ -153,14 +153,14 @@ export default function AvatarHoverMenu({
           <div
             className="relative bg-[#f8fcf9] rounded-[20px] border border-[#d4ede4] shadow-[0px_10px_29px_1px_rgba(198,242,224,0.15)] overflow-hidden"
             style={{
-              width: "500px",
-              height: "450px",
+              width: "450px",
+              height: "320px",
             }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* 标题 */}
             <div className="flex justify-between items-center px-8 pt-6 pb-4 border-b border-[#d4ede4]">
-              <h2 className="text-[24px] font-medium text-[#2d3748]">
+              <h2 className="text-[22px] font-medium text-[#2d3748]">
                 个人中心
               </h2>
               <button
