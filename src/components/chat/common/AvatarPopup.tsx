@@ -513,12 +513,15 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
               className="absolute inset-0 bg-[length:100%_108%] bg-center bg-no-repeat"
               style={{
                 backgroundImage: "url('/background/settings-bg@2x.png')",
+                // 浅绿主题覆盖色
+                backgroundColor: 'rgba(240, 250, 246, 0.95)',
+                backgroundBlendMode: 'soft-light'
               }}
             />
 
             <div className="relative w-full h-full flex flex-col items-center pt-[36px]">
               {/* 头像 */}
-              <div className="w-[90px] h-[90px] rounded-full overflow-hidden border-4 border-white mb-[20px]">
+              <div className="w-[90px] h-[90px] rounded-full overflow-hidden border-4 border-[#f0faf6] mb-[20px]">
                 <img
                   src={avatarUrl}
                   alt="用户头像"
@@ -540,7 +543,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                     className="w-[20px] h-[16px] mr-[17px] self-end"
                   />
                   <span
-                    className="text-[#333333] font-normal"
+                    className="text-[#2d3748] font-normal"
                     style={{
                       width: "98px",
                       height: "16px",
@@ -562,7 +565,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                     className="w-[17px] h-[20px] mr-[17px] self-end"
                   />
                   <span
-                    className="text-[#333333] font-normal"
+                    className="text-[#2d3748] font-normal"
                     style={{
                       width: "98px",
                       height: "16px",
@@ -576,13 +579,13 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                 </div>
               </div>
 
-              {/* 功能菜单白色背景框 */}
-              <div className="w-[260px] h-[200px] bg-white rounded-[20px] opacity-80 mb-4">
+              {/* 功能菜单浅绿背景框 */}
+              <div className="w-[260px] h-[200px] bg-[#f0faf6] rounded-[20px] opacity-90 mb-4 border border-[#d4ede4]">
                 <div className="w-full h-full flex flex-col justify-center px-7">
                   {/* 第一行 */}
                   <div className="flex justify-between mb-6 mt-4">
                     <div
-                      className="flex flex-col items-center cursor-pointer"
+                      className="flex flex-col items-center cursor-pointer hover:bg-[#e8f8f0] rounded-lg p-2 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         openSettingsPopup("personal");
@@ -595,12 +598,12 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         height={30}
                         className="w-[30px] h-[30px] mb-[6px]"
                       />
-                      <span className="text-[16px] text-[#666666] font-normal leading-[40px]">
+                      <span className="text-[16px] text-[#2d3748] font-normal leading-[40px]">
                         个人中心
                       </span>
                     </div>
                     <div
-                      className="flex flex-col items-center cursor-pointer"
+                      className="flex flex-col items-center cursor-pointer hover:bg-[#e8f8f0] rounded-lg p-2 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         openSettingsPopup("delivery");
@@ -613,7 +616,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         height={30}
                         className="w-[30px] h-[30px] mb-[6px]"
                       />
-                      <span className="text-[16px] text-[#666666] font-normal leading-[40px]">
+                      <span className="text-[16px] text-[#2d3748] font-normal leading-[40px]">
                         全文传递
                       </span>
                     </div>
@@ -622,7 +625,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                   {/* 第二行 */}
                   <div className="flex justify-between">
                     <div
-                      className="flex flex-col items-center ml-[20px] cursor-pointer"
+                      className="flex flex-col items-center ml-[20px] cursor-pointer hover:bg-[#e8f8f0] rounded-lg p-2 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         openSettingsPopup("notification");
@@ -635,12 +638,12 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         height={30}
                         className="w-[30px] h-[30px] mb-[6px]"
                       />
-                      <span className="text-[16px] text-[#666666] font-normal leading-[40px]">
+                      <span className="text-[16px] text-[#2d3748] font-normal leading-[40px]">
                         通知
                       </span>
                     </div>
                     <div
-                      className="flex flex-col items-center cursor-pointer pr-[14px]"
+                      className="flex flex-col items-center cursor-pointer pr-[14px] hover:bg-[#e8f8f0] rounded-lg p-2 transition-colors"
                       onClick={(e) => {
                         e.stopPropagation();
                         openSettingsPopup("system");
@@ -653,7 +656,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         height={30}
                         className="w-[30px] h-[30px] mb-[6px]"
                       />
-                      <span className="text-[16px] text-[#666666] font-normal leading-[40px]">
+                      <span className="text-[16px] text-[#2d3748] font-normal leading-[40px]">
                         系统
                       </span>
                     </div>
@@ -661,13 +664,13 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                 </div>
               </div>
 
-              {/* 退出登录按钮 */}
+              {/* 退出登录按钮 - 浅绿主题 */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowLogoutDialog(true);
                 }}
-                className="w-[260px] h-[40px] bg-blue-500 rounded-[20px] opacity-80 flex items-center justify-center gap-3 hover:bg-blue-600 transition-colors border border-gray-200"
+                className="w-[260px] h-[40px] bg-[#679CFF] rounded-[20px] opacity-90 flex items-center justify-center gap-3 hover:bg-[#5588ee] transition-colors border border-[#d4ede4]"
               >
                 <img
                   src="/settings/settings-exit.svg"
@@ -693,10 +696,10 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             className="absolute inset-0 bg-black bg-opacity-50"
             onClick={closeSettingsPopup}
           />
-          {/* 弹窗容器 */}
+          {/* 弹窗容器 - 浅绿主题 */}
           <div
             ref={settingsPopupRef}
-            className="relative bg-white rounded-[20px] border border-[#E9ECF2] shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] overflow-hidden"
+            className="relative bg-[#f8fcf9] rounded-[20px] border border-[#d4ede4] shadow-[0px_10px_29px_1px_rgba(198,242,224,0.15)] overflow-hidden"
             style={{
               width: "864px",
               height: "673px",
@@ -706,7 +709,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             {/* 标题区域 */}
             <div className="absolute left-[31px] top-[26px]">
               <h2
-                className="text-[#333333] font-medium"
+                className="text-[#2d3748] font-medium"
                 style={{
                   width: "78px",
                   height: "28px",
@@ -722,7 +725,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             {/* 应用习惯文字 */}
             <div className="absolute left-[109px] top-[30px]">
               <span
-                className="text-[#333333] font-normal"
+                className="text-[#2d3748] font-normal"
                 style={{
                   fontSize: "16px",
                   fontWeight: 400,
@@ -733,13 +736,13 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
               </span>
             </div>
 
-            {/* 上分割线 */}
+            {/* 上分割线 - 浅绿色 */}
             <div
               className="absolute left-0 top-[calc(26px+40px+27px)]"
               style={{
                 width: "803px",
                 height: "1px",
-                background: "#E0E1E5",
+                background: "#d4ede4",
                 borderRadius: "1px",
                 left: "50%",
                 transform: "translateX(-50%)",
@@ -749,13 +752,13 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             {/* 内容区域 */}
             <div className="absolute inset-0 pt-[calc(26px+40px+27px+1px)]">
               <div className="flex h-full">
-                <div className="w-[220px] p-4 relative">
+                <div className="w-[220px] p-4 relative bg-[#f0faf6]">
                   <div
                     className="absolute right-0 top-0 bottom-0"
                     style={{
                       width: "1px",
                       height: "622px",
-                      background: "#E0E1E5",
+                      background: "#d4ede4",
                       borderRadius: "1px",
                     }}
                   />
@@ -765,8 +768,8 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         <button
                           className={`flex items-center w-full px-4 py-3 rounded-lg text-[16px] ${
                             activePage === "personal"
-                              ? "bg-blue-50 text-blue-600"
-                              : "text-gray-700 hover:bg-gray-100"
+                              ? "bg-[#e8f8f0] text-[#679CFF]"
+                              : "text-[#2d3748] hover:bg-[#e8f8f0]"
                           }`}
                           onClick={() => setActivePage("personal")}
                         >
@@ -786,8 +789,8 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         <button
                           className={`flex items-center w-full px-4 py-3 rounded-lg text-[16px] ${
                             activePage === "delivery"
-                              ? "bg-blue-50 text-blue-600"
-                              : "text-gray-700 hover:bg-gray-100"
+                              ? "bg-[#e8f8f0] text-[#679CFF]"
+                              : "text-[#2d3748] hover:bg-[#e8f8f0]"
                           }`}
                           onClick={() => setActivePage("delivery")}
                         >
@@ -807,8 +810,8 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         <button
                           className={`flex items-center w-full px-4 py-3 rounded-lg text-[16px] ${
                             activePage === "notification"
-                              ? "bg-blue-50 text-blue-600"
-                              : "text-gray-700 hover:bg-gray-100"
+                              ? "bg-[#e8f8f0] text-[#679CFF]"
+                              : "text-[#2d3748] hover:bg-[#e8f8f0]"
                           }`}
                           onClick={() => setActivePage("notification")}
                         >
@@ -828,8 +831,8 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         <button
                           className={`flex items-center w-full px-4 py-3 rounded-lg text-[16px] ${
                             activePage === "system"
-                              ? "bg-blue-50 text-blue-600"
-                              : "text-gray-700 hover:bg-gray-100"
+                              ? "bg-[#e8f8f0] text-[#679CFF]"
+                              : "text-[#2d3748] hover:bg-[#e8f8f0]"
                           }`}
                           onClick={() => setActivePage("system")}
                         >
@@ -850,25 +853,25 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                 </div>
 
                 {/* 右侧内容区域 */}
-                <div className="flex-1 bg-white">
+                <div className="flex-1 bg-[#f8fcf9]">
                   {/* 个人中心 */}
                   {activePage === "personal" && (
                     <div className="h-full pl-[30px] pt-[30px]">
-                      <h2 className="text-[20px] font-bold text-[#333333] mb-6 ">
+                      <h2 className="text-[20px] font-bold text-[#2d3748] mb-6 ">
                         个人中心
                       </h2>
                       <div>
                         <div className="flex items-center mb-4">
-                          <h2 className="font-medium text-gray-900 mr-[9px]">
+                          <h2 className="font-medium text-[#2d3748] mr-[9px]">
                             头像
                           </h2>
-                          <span className="text-[14px] text-[#999999]">
+                          <span className="text-[14px] text-[#718096]">
                             更新头像
                           </span>
                         </div>
                         <div className="flex items-center space-x-6">
                           <div className="relative">
-                            <div className="w-20 h-20 rounded-full bg-gray-200 overflow-hidden">
+                            <div className="w-20 h-20 rounded-full bg-[#e8f8f0] overflow-hidden border border-[#d4ede4]">
                               <img
                                 src={avatarUrl}
                                 alt="用户头像"
@@ -879,9 +882,9 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                             </div>
                           </div>
 
-                          {/* 上传图片按钮 */}
+                          {/* 上传图片按钮 - 浅绿主题 */}
                           <div
-                            className="w-[128px] h-[40px] bg-white rounded-[20px] border border-[#C8C9CC] flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+                            className="w-[128px] h-[40px] bg-[#f0faf6] rounded-[20px] border border-[#d4ede4] flex items-center justify-center cursor-pointer hover:bg-[#e8f8f0] transition-colors"
                             style={{ marginLeft: "23px" }}
                             onClick={handleFileSelect}
                           >
@@ -890,12 +893,12 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                               alt="上传"
                               className="w-4 h-4 mr-2"
                             />
-                            <span className="text-sm">{uploading ? "上传中..." : "上传图片"}</span>
+                            <span className="text-sm text-[#2d3748]">{uploading ? "上传中..." : "上传图片"}</span>
                           </div>
 
-                          {/* 删除按钮 */}
+                          {/* 删除按钮 - 浅绿主题 */}
                           <div
-                            className="w-[40px] h-[40px] bg-white rounded-[20px] border border-[#C8C9CC] flex items-center justify-center cursor-pointer hover:bg-gray-50 transition-colors"
+                            className="w-[40px] h-[40px] bg-[#f0faf6] rounded-[20px] border border-[#d4ede4] flex items-center justify-center cursor-pointer hover:bg-[#e8f8f0] transition-colors"
                             style={{ marginLeft: "20px" }}
                             onClick={handleDeleteAvatar}
                           >
@@ -909,31 +912,31 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                           </div>
                         </div>
 
-                        <p className="text-[14px] text-[#999999] mt-[5px]">
+                        <p className="text-[14px] text-[#718096] mt-[5px]">
                           我们仅支持2MB以内的JPG，JPEG或PNG文件
                         </p>
                       </div>
                       <div>
                         <div className="flex items-center mb-[20px] mt-6">
-                          <h2 className="text-[16px] font-medium text-gray-900 mr-[10px]">
+                          <h2 className="text-[16px] font-medium text-[#2d3748] mr-[10px]">
                             个人信息
                           </h2>
-                          <span className="text-[14px] text-[#999999]">
+                          <span className="text-[14px] text-[#718096]">
                             编辑您的个人信息
                           </span>
                         </div>
 
                         <div className="space-y-4">
-                          {/* 昵称输入框 */}
+                          {/* 昵称输入框 - 浅绿主题 */}
                           <div>
-                            <div className="w-[582px] h-[36px] bg-white rounded-[4px] border border-[#E1E2E6] flex items-center">
+                            <div className="w-[582px] h-[36px] bg-white rounded-[4px] border border-[#d4ede4] flex items-center">
                               <div className="flex items-center ml-[21px] relative">
-                                <div className="w-[6px] h-[6px] bg-red-500 rounded-full absolute left-[-8px] top-1/2 transform -translate-y-1/2"></div>
-                                <span className="text-[16px] text-[#999999] mr-[20px]">
+                                <div className="w-[6px] h-[6px] bg-[#679CFF] rounded-full absolute left-[-8px] top-1/2 transform -translate-y-1/2"></div>
+                                <span className="text-[16px] text-[#718096] mr-[20px]">
                                   昵称
                                 </span>
                               </div>
-                              <div className="w-[1px] h-[16px] bg-[#E2E3E7]"></div>
+                              <div className="w-[1px] h-[16px] bg-[#d4ede4]"></div>
                               <input
                                 type="text"
                                 value={loading ? "加载中..." : nickname}
@@ -942,26 +945,26 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                                   setNickname(value);
                                   validateNickname(value);
                                 }}
-                                className="flex-1 px-[15px] border-0 focus:outline-none text-[16px] bg-white"
+                                className="flex-1 px-[15px] border-0 focus:outline-none text-[16px] bg-white focus:ring-1 focus:ring-[#679CFF]"
                                 style={{ marginLeft: "15px" }}
                                 placeholder="请输入昵称"
                               />
                             </div>
                             {nicknameError && (
-                              <p className="text-red-500 text-xs mt-1 ml-[100px]">{nicknameError}</p>
+                              <p className="text-[#e53e3e] text-xs mt-1 ml-[100px]">{nicknameError}</p>
                             )}
                           </div>
 
-                          {/* 邮箱输入框 */}
+                          {/* 邮箱输入框 - 浅绿主题 */}
                           <div>
-                            <div className="w-[582px] h-[36px] bg-white rounded-[4px] border border-[#E1E2E6] flex items-center">
+                            <div className="w-[582px] h-[36px] bg-white rounded-[4px] border border-[#d4ede4] flex items-center">
                               <div className="flex items-center ml-[21px] relative">
-                                <div className="w-[6px] h-[6px] bg-red-500 rounded-full absolute left-[-8px] top-1/2 transform -translate-y-1/2"></div>
-                                <span className="text-[16px] text-[#999999] mr-[20px]">
+                                <div className="w-[6px] h-[6px] bg-[#679CFF] rounded-full absolute left-[-8px] top-1/2 transform -translate-y-1/2"></div>
+                                <span className="text-[16px] text-[#718096] mr-[20px]">
                                   邮件
                                 </span>
                               </div>
-                              <div className="w-[1px] h-[16px] bg-[#E2E3E7]"></div>
+                              <div className="w-[1px] h-[16px] bg-[#d4ede4]"></div>
                               <input
                                 type="email"
                                 value={loading ? "加载中..." : email}
@@ -970,38 +973,38 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                                   setEmail(value);
                                   validateEmail(value);
                                 }}
-                                className="flex-1 px-[15px] border-0 focus:outline-none text-[16px] bg-white"
+                                className="flex-1 px-[15px] border-0 focus:outline-none text-[16px] bg-white focus:ring-1 focus:ring-[#679CFF]"
                                 style={{ marginLeft: "15px" }}
                                 placeholder="请输入邮箱"
                               />
                             </div>
                             {emailError && (
-                              <p className="text-red-500 text-xs mt-1 ml-[100px]">{emailError}</p>
+                              <p className="text-[#e53e3e] text-xs mt-1 ml-[100px]">{emailError}</p>
                             )}
                           </div>
                         </div>
                       </div>
-                      {/* 电话号码部分 */}
+                      {/* 电话号码部分 - 浅绿主题 */}
                       <div>
                         <div className="flex items-center mb-[20px] mt-6">
-                          <h2 className="text-[16px] font-medium text-gray-900 mr-[10px]">
+                          <h2 className="text-[16px] font-medium text-[#2d3748] mr-[10px]">
                             电话号码
                           </h2>
-                          <span className="text-[14px] text-[#999999]">
+                          <span className="text-[14px] text-[#718096]">
                             更新您的电话号码
                           </span>
                         </div>
 
                         <div>
-                          {/* 电话输入框 */}
-                          <div className="w-[582px] h-[36px] bg-white rounded-[4px] border border-[#E1E2E6] flex items-center">
+                          {/* 电话输入框 - 浅绿主题 */}
+                          <div className="w-[582px] h-[36px] bg-white rounded-[4px] border border-[#d4ede4] flex items-center">
                             <div className="flex items-center ml-[21px] relative">
-                              <div className="w-[6px] h-[6px] bg-red-500 rounded-full absolute left-[-8px] top-1/2 transform -translate-y-1/2"></div>
-                              <span className="text-[16px] text-[#999999] mr-[20px]">
+                              <div className="w-[6px] h-[6px] bg-[#679CFF] rounded-full absolute left-[-8px] top-1/2 transform -translate-y-1/2"></div>
+                              <span className="text-[16px] text-[#718096] mr-[20px]">
                                 电话
                               </span>
                             </div>
-                            <div className="w-[1px] h-[16px] bg-[#E2E3E7]"></div>
+                            <div className="w-[1px] h-[16px] bg-[#d4ede4]"></div>
                             <input
                               type="tel"
                               value={
@@ -1018,14 +1021,14 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                           </div>
                         </div>
                       </div>
-                      {/* 保存更改按钮 */}
+                      {/* 保存更改按钮 - 浅绿主题 */}
                       <div
                         className="flex justify-end gap-3"
                         style={{ marginTop: "28px", marginRight: "36px" }}
                       >
                         {/* 保存按钮 */}
                         <button
-                          className="w-[128px] h-[40px] bg-[#3B80FF] text-white rounded-[20px] border-0 text-[16px] hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="w-[128px] h-[40px] bg-[#679CFF] text-white rounded-[20px] border-0 text-[16px] hover:bg-[#5588ee] disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={handleSaveProfile}
                           disabled={saving || !!nicknameError || !!emailError}
                         >
@@ -1035,21 +1038,21 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                     </div>
                   )}
 
-                  {/* 全文传递 */}
+                  {/* 全文传递 - 浅绿主题 */}
                   {activePage === "delivery" && (
                     <div className="h-full pl-[30px] pt-[30px]">
                       {/* 标题和筛选区域在同一行 */}
                       <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-[20px] font-bold text-[#333333]">
+                        <h2 className="text-[20px] font-bold text-[#2d3748]">
                           全文传递
                         </h2>
-                        {/* 状态筛选框 */}
-                        <div className="w-[240px] h-[40px] bg-[#F7F8FA] rounded-[20px] border border-[#C8C9CC] flex mr-[30px]">
+                        {/* 状态筛选框 - 浅绿主题 */}
+                        <div className="w-[240px] h-[40px] bg-[#f0faf6] rounded-[20px] border border-[#d4ede4] flex mr-[30px]">
                           <button
                             className={`flex-1 rounded-[20px] text-[16px] font-medium ${
                               activeTab === "all"
-                                ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] text-[#333333]"
-                                : "text-[#999999]"
+                                ? "bg-white shadow-[0px_0px_10px_0px_rgba(198,242,224,0.2)] text-[#2d3748]"
+                                : "text-[#718096]"
                             }`}
                             onClick={() => setActiveTab("all")}
                             style={{ fontWeight: 500 }}
@@ -1059,8 +1062,8 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                           <button
                             className={`flex-1 rounded-[20px] text-[16px] font-medium ${
                               activeTab === "pending"
-                                ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] text-[#333333]"
-                                : "text-[#999999]"
+                                ? "bg-white shadow-[0px_0px_10px_0px_rgba(198,242,224,0.2)] text-[#2d3748]"
+                                : "text-[#718096]"
                             }`}
                             onClick={() => setActiveTab("pending")}
                             style={{ fontWeight: 500 }}
@@ -1070,8 +1073,8 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                           <button
                             className={`flex-1 rounded-[20px] text-[16px] font-medium ${
                               activeTab === "completed"
-                                ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] text-[#333333]"
-                                : "text-[#999999]"
+                                ? "bg-white shadow-[0px_0px_10px_0px_rgba(198,242,224,0.2)] text-[#2d3748]"
+                                : "text-[#718096]"
                             }`}
                             onClick={() => setActiveTab("completed")}
                             style={{ fontWeight: 500 }}
@@ -1092,17 +1095,17 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                       >
                         {deliveryLoading && deliveryItems.length === 0 ? (
                           <div className="flex justify-center items-center py-10">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#679CFF]"></div>
                           </div>
                         ) : deliveryItems.length === 0 ? (
-                          <div className="flex justify-center items-center py-10 text-gray-500">
+                          <div className="flex justify-center items-center py-10 text-[#718096]">
                             暂无数据
                           </div>
                         ) : (
                           deliveryItems.map((item, index) => (
                             <div
                               key={item.id}
-                              className="paper-card paper-card-bg mb-2.5"
+                              className="paper-card paper-card-bg mb-2.5 bg-white border border-[#d4ede4] rounded-lg p-4 shadow-sm"
                             >
                               {/* 完成状态标识 */}
                               {item.status === 8 && (
@@ -1119,29 +1122,29 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                               {/* 论文内容 */}
                               <div className="px-6" style={{ paddingTop: '40px' }}>
                                 <div className="flex items-start">
-                                  {/* 蓝色圆点 */}
-                                  <div className="blue-dot mt-2 ml-2.5 mr-2.5" />
+                                  {/* 浅绿色圆点 */}
+                                  <div className="blue-dot mt-2 ml-2.5 mr-2.5 bg-[#679CFF]" />
 
                                   {/* 引用标记 */}
-                                  <span className="reference-tag mt-0.5 mr-2.5">
+                                  <span className="reference-tag mt-0.5 mr-2.5 text-[#2d3748]">
                                     [{index + 1}]
                                   </span>
 
                                   <div className="flex-1 min-w-0">
-                                    <h4 className="paper-title mb-4 max-w-[calc(100%-110px)]">
+                                    <h4 className="paper-title mb-4 max-w-[calc(100%-110px)] text-[#2d3748]">
                                       {item.title}
                                     </h4>
 
                                     {/* 作者和发表时间在同一行 */}
                                     {item.authors && item.authors.length > 0 && (
-                                      <div className="authors-container -ml-10">
+                                      <div className="authors-container -ml-10 text-[#4a5568]">
                                         {/* 作者列表 */}
                                         <div className="flex items-center">
                                           {item.authors.slice(0, 2).map((author, authorIndex) => (
                                             <React.Fragment key={authorIndex}>
                                               <span className="truncate">{typeof author === 'string' ? author : author.name}</span>
                                               {authorIndex === 0 && item.authors.length > 1 && (
-                                                <div className="author-divider" />
+                                                <div className="author-divider bg-[#d4ede4]" />
                                               )}
                                             </React.Fragment>
                                           ))}
@@ -1161,13 +1164,13 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                                   </div>
                                 </div>
 
-                                {/* 分隔线 */}
+                                {/* 分隔线 - 浅绿色 */}
                                 <div className="absolute bottom-[120px] left-0 right-0">
-                                  <div className="divider-horizontal ml-10" style={{ width: '465px' }} />
+                                  <div className="divider-horizontal ml-10 bg-[#d4ede4]" style={{ width: '465px' }} />
                                 </div>
 
                                 {/* 摘要区域 */}
-                                <div className="absolute bottom-[132px] left-10 abstract-container abstract-container-lg">
+                                <div className="absolute bottom-[132px] left-10 abstract-container abstract-container-lg text-[#4a5568]">
                                   <span className="abstract-text">
                                     {item.abstract || '暂无摘要'}
                                   </span>
@@ -1176,38 +1179,38 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                                 {/* 按钮组 - 只在已完成(status=8)时显示 */}
                                 {item.status === 8 && (
                                   <div className="absolute bottom-[62px] left-10 flex items-center gap-2.5">
-                                    {/* PDF 按钮 */}
-                                    <div className="action-button">
+                                    {/* PDF 按钮 - 浅绿主题 */}
+                                    <div className="action-button bg-[#f0faf6] hover:bg-[#e8f8f0] rounded px-3 py-1 border border-[#d4ede4]">
                                       <img
                                         src="/paper/paper-shinydownload.png"
                                         alt="pdf"
                                         className="icon-sm"
                                       />
-                                      <span className="ml-2.5 text-base text-gray-500">
+                                      <span className="ml-2.5 text-base text-[#4a5568]">
                                         PDF
                                       </span>
                                     </div>
 
-                                    {/* AI伴读按钮 */}
-                                    <div className="action-button">
+                                    {/* AI伴读按钮 - 浅绿主题 */}
+                                    <div className="action-button bg-[#f0faf6] hover:bg-[#e8f8f0] rounded px-3 py-1 border border-[#d4ede4]">
                                       <img
                                         src="/paper/paper-ai-read@2x.png"
                                         alt="AI伴读"
                                         className="icon-sm"
                                       />
-                                      <span className="ml-2.5 text-base text-gray-500">
+                                      <span className="ml-2.5 text-base text-[#4a5568]">
                                         AI伴读
                                       </span>
                                     </div>
 
-                                    {/* 已加入按钮 */}
-                                    <div className="action-button">
+                                    {/* 已加入按钮 - 浅绿主题 */}
+                                    <div className="action-button bg-[#f0faf6] hover:bg-[#e8f8f0] rounded px-3 py-1 border border-[#d4ede4]">
                                       <img
                                         src="/paper/paper-star.png"
                                         alt="已加入"
                                         className="icon-sm"
                                       />
-                                      <span className="ml-2.5 text-base text-gray-500">
+                                      <span className="ml-2.5 text-base text-[#4a5568]">
                                         已加入
                                       </span>
                                     </div>
@@ -1219,11 +1222,11 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                         )}
                         {deliveryLoading && deliveryItems.length > 0 && (
                           <div className="flex justify-center py-4">
-                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#679CFF]"></div>
                           </div>
                         )}
                         {!hasMore && deliveryItems.length > 0 && (
-                          <div className="text-center text-gray-500 text-sm pb-4" style={{ marginBottom: '12px',marginTop:"0" }}>
+                          <div className="text-center text-[#718096] text-sm pb-4" style={{ marginBottom: '12px',marginTop:"0" }}>
                             没有更多数据了
                           </div>
                         )}
@@ -1231,15 +1234,15 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                     </div>
                   )}
 
-                  {/* 通知 */}
+                  {/* 通知 - 浅绿主题 */}
                   {activePage === "notification" && (
                     <div className="h-full pl-[30px] pt-[30px]">
-                      <h2 className="text-[20px] font-bold text-[#333333] mb-2">
+                      <h2 className="text-[20px] font-bold text-[#2d3748] mb-2">
                         通知
                       </h2>
                       <div>
                         <div className="flex items-center justify-between py-4 w-[582px]">
-                          <span className="text-gray-700 text-m">全文传递</span>
+                          <span className="text-[#2d3748] text-m">全文传递</span>
                           <label className="relative inline-flex items-center cursor-pointer">
                             <input
                               type="checkbox"
@@ -1247,27 +1250,27 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                               onChange={(e) => handleToggleDocDelivery(e.target.checked)}
                               className="sr-only peer"
                             />
-                            <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                            <div className="w-11 h-6 bg-[#e8f8f0] peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-[#d4ede4] after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#679CFF]"></div>
                           </label>
                         </div>
                       </div>
                     </div>
                   )}
 
-                  {/* 系统 */}
+                  {/* 系统 - 浅绿主题 */}
                   {activePage === "system" && (
                     <div className="h-full pl-[30px] pt-[30px]">
-                      <h2 className="text-[20px] font-bold text-[#333333] mb-4">
+                      <h2 className="text-[20px] font-bold text-[#2d3748] mb-4">
                         系统
                       </h2>
                       <div>
                         <div className="mb-8">
                           <div className="flex items-center justify-between w-[582px]">
-                            <span className="text-m text-gray-700">
+                            <span className="text-m text-[#2d3748]">
                               删除账户
                             </span>
                             <button
-                              className="w-[83px] h-[36px] bg-[#FF4B4B] text-white rounded-[18px] border-0 hover:shadow-lg transition-shadow"
+                              className="w-[83px] h-[36px] bg-[#e53e3e] text-white rounded-[18px] border-0 hover:shadow-lg transition-shadow hover:bg-[#c53030]"
                               onClick={(e) => {
                                 e.stopPropagation(); // 阻止事件冒泡
                                 setShowDeleteDialog(true);
@@ -1290,7 +1293,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                 e.stopPropagation();
                 closeSettingsPopup();
               }}
-              className="absolute top-8 right-4 w-8 h-8 flex items-center justify-center z-10"
+              className="absolute top-8 right-4 w-8 h-8 flex items-center justify-center z-10 hover:bg-[#f0faf6] rounded-full transition-colors"
             >
               <img
                 src="/settings/settings-cancel.svg"
@@ -1303,7 +1306,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
         </div>
       )}
 
-      {/* 删除账户确认弹窗 */}
+      {/* 删除账户确认弹窗 - 浅绿主题 */}
       {showDeleteDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
@@ -1311,7 +1314,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             onClick={() => setShowDeleteDialog(false)}
           />
           <div
-            className="relative bg-white rounded-[20px] border border-[#E9ECF2] shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)]"
+            className="relative bg-[#f8fcf9] rounded-[20px] border border-[#d4ede4] shadow-[0px_10px_29px_1px_rgba(198,242,224,0.15)]"
             style={{
               width: "500px",
               height: "220px",
@@ -1322,7 +1325,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             {/* 删除账户确认文字 */}
             <div className="flex justify-center mt-[64px]">
               <div
-                className="font-medium text-[#333333]"
+                className="font-medium text-[#2d3748]"
                 style={{
                   fontWeight: 500,
                   fontSize: "24px",
@@ -1336,9 +1339,9 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             <div
               className="absolute bottom-[49px] left-0 right-0 flex justify-center"
             >
-              {/* 取消按钮 */}
+              {/* 取消按钮 - 浅绿主题 */}
               <button
-                className="w-[128px] h-[40px] bg-white border border-[#C8C9CC] rounded-[20px] text-[16px] text-[#666666] hover:shadow-lg transition-shadow"
+                className="w-[128px] h-[40px] bg-[#f0faf6] border border-[#d4ede4] rounded-[20px] text-[16px] text-[#2d3748] hover:bg-[#e8f8f0] transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowDeleteDialog(false);
@@ -1349,7 +1352,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
 
               {/* 确认按钮 */}
               <button
-                className="w-[128px] h-[40px] bg-[#FF4B4B] text-white rounded-[20px] border-0 text-[16px] hover:bg-red-600 transition-colors ml-[20px]"
+                className="w-[128px] h-[40px] bg-[#e53e3e] text-white rounded-[20px] border-0 text-[16px] hover:bg-[#c53030] transition-colors ml-[20px]"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteAccount();
@@ -1362,7 +1365,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
         </div>
       )}
 
-      {/* 退出登录确认弹窗 */}
+      {/* 退出登录确认弹窗 - 浅绿主题 */}
       {showLogoutDialog && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div
@@ -1370,7 +1373,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             onClick={() => setShowLogoutDialog(false)}
           />
           <div
-            className="relative bg-white rounded-[20px] border border-[#E9ECF2] shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)]"
+            className="relative bg-[#f8fcf9] rounded-[20px] border border-[#d4ede4] shadow-[0px_10px_29px_1px_rgba(198,242,224,0.15)]"
             style={{
               width: "500px",
               height: "220px",
@@ -1381,7 +1384,7 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             {/* 退出登录确认文字 */}
             <div className="flex justify-center mt-[64px]">
               <div
-                className="font-medium text-[#333333]"
+                className="font-medium text-[#2d3748]"
                 style={{
                   fontWeight: 500,
                   fontSize: "24px",
@@ -1395,9 +1398,9 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
             <div
               className="absolute bottom-[49px] left-0 right-0 flex justify-center"
             >
-              {/* 取消按钮 */}
+              {/* 取消按钮 - 浅绿主题 */}
               <button
-                className="w-[128px] h-[40px] bg-white border border-[#C8C9CC] rounded-[20px] text-[16px] text-[#666666] hover:shadow-lg transition-shadow"
+                className="w-[128px] h-[40px] bg-[#f0faf6] border border-[#d4ede4] rounded-[20px] text-[16px] text-[#2d3748] hover:bg-[#e8f8f0] transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowLogoutDialog(false);
@@ -1406,9 +1409,9 @@ export default function AvatarPopup({ show, onClose, onAnyModalOpen }: AvatarPop
                 取消
               </button>
 
-              {/* 确认按钮 */}
+              {/* 确认按钮 - 浅绿主题 */}
               <button
-                className="w-[128px] h-[40px] bg-[#3B80FF] text-white rounded-[20px] border-0 text-[16px] hover:bg-blue-700 transition-colors ml-[20px]"
+                className="w-[128px] h-[40px] bg-[#679CFF] text-white rounded-[20px] border-0 text-[16px] hover:bg-[#5588ee] transition-colors ml-[20px]"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleLogout();

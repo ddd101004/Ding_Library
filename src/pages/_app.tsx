@@ -87,16 +87,16 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <TooltipProvider>
       <UserProvider>
-        <AvatarPopupProvider>
-          <SearchProvider>
-            <AuthChecker>
-              <AvatarProvider>
+        <AvatarProvider>
+          <AvatarPopupProvider>
+            <SearchProvider>
+              <AuthChecker>
                 <Component {...pageProps} />
-              </AvatarProvider>
-              <Toaster />
-            </AuthChecker>
-          </SearchProvider>
-        </AvatarPopupProvider>
+                <Toaster />
+              </AuthChecker>
+            </SearchProvider>
+          </AvatarPopupProvider>
+        </AvatarProvider>
       </UserProvider>
     </TooltipProvider>
   );
