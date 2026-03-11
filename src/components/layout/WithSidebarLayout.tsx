@@ -331,7 +331,7 @@ export default function WithSidebarLayout({
               ? "w-[50px] sm:w-[60px]" // 小屏幕50-60px宽度，节省空间
               : isSidebarOpen
                 ? "w-48 sm:w-52 md:w-56" // 展开时自适应宽度：192-224px
-                : "w-[50px] sm:w-[60px]" // 收起时50-60px，节省空间
+                : "w-[75px] sm:w-[80px]" // 收起时75-80px，节省空间
           }`}
           // 侧边栏背景也调整为稍深一点的浅绿，保持层次感
           style={{ backgroundColor: '#e8f8f0' }}

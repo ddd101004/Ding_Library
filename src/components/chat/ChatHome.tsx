@@ -634,7 +634,7 @@ export default function ChatHome() {
           <div
             className="flex w-full transition-all duration-300"
             style={{
-              height: `${310 + backgroundOffset}px`,
+              height: `${210 + backgroundOffset}px`,
               maxWidth: '1300px'
             }}
           >

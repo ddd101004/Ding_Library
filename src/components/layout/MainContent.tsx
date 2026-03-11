@@ -45,17 +45,17 @@ const MainContent: React.FC<MainContentProps> = ({
       case "quickQA":
         return {
           title: "快问快答",
-          description: "能听懂人话的图书馆，千人千面，找到与你相关的科学",
+          description: "更懂人的图书馆，遇见对你有用的知识",
         };
       case "deepStudy":
         return {
           title: "深度学习",
-          description: "带您探索知识的海洋",
+          description: "带您遨游知识的海洋",
         };
       default:
         return {
           title: "深度学习",
-          description: "带您探索知识的海洋",
+          description: "带您探索遨游知识的海洋",
         };
     }
   };

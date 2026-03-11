@@ -64,7 +64,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* 新对话按钮 */}
       <div
         className={`flex items-center justify-center mt-[20px] transition-all duration-300 cursor-pointer ${
-          isSidebarOpen ? "w-[192px] h-[36px] bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-[18px]" : "w-[36px] h-[56px]"
+          isSidebarOpen ? "w-[192px] h-[36px] bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-[18px]" : "w-[38px] h-[58px]"
         }`}
         onClick={(e) => handleSidebarItemClick(e, () => onNewChatClick(e))}
       >
@@ -74,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <span className="text-white text-[16px]">新对话</span>
           </div>
         ) : (
-          <img src="/slibar/edit1.png" alt="新建对话" className="w-[30px] h-[25px] object-contain" />
+          <img src="/slibar/edit1.png" alt="新建对话" className="w-[32px] h-[27px] object-contain" />
         )}
       </div>
 
@@ -88,7 +88,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         <img
           src={activeIcon === "academic" ? "/slibar/questions1.png" : "/slibar/slibar-questions-answers@2x.png"}
           alt="学术搜索"
-          className="w-[20px] h-[20px]"
+          className="w-[22px] h-[22px]"
         />
         {isSidebarOpen && (
           <span className={`text-[16px] ml-2 ${isMenuItemActive("academic") ? "text-[#0D9488]" : "text-gray-700"}`}>学术搜索</span>
