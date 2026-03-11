@@ -91,7 +91,7 @@ export default function Toolbar({
         className={`w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
           isDeepThinkActive
             ? 'bg-[#0D9488] opacity-80 text-white'
-            : 'bg-white border border-[#C8C9CC] text-[#666666]'
+            : 'bg-transparent border border-[#C8C9CC] text-[#666666]'
         } ${
           isControlDisabled
             ? 'opacity-50 cursor-not-allowed'
@@ -128,7 +128,7 @@ export default function Toolbar({
               className={`w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
                 isPaperSearchActive
                   ? 'bg-[#0D9488] opacity-80 text-white'
-                  : 'bg-white border border-[#C8C9CC] text-[#666666]'
+                  : 'bg-transparent border border-[#C8C9CC] text-[#666666]'
               } ${
                 isPaperSearchDisabled
                   ? 'opacity-50 cursor-not-allowed'

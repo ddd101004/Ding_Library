@@ -704,8 +704,8 @@ export default function ChatHome() {
               className="flex justify-center gap-[47px] absolute z-40 transition-all duration-300 bottom-[40px] left-0 right-0"
             >
               {[
-                { key: "quickQA", icon: "chat-page-qqqa.png", label: "快问快答" },
-                { key: "deepStudy", icon: "chat-page-deep-study.png", label: "深度学习" }
+                { key: "quickQA", icon: "qqqa1.png", label: "快问快答" },
+                { key: "deepStudy", icon: "deepstudy1.png", label: "深度学习" }
               ].map(({ key, icon, label }) => {
                 const isButtonDisabled = isFileParsing && (key === 'quickQA' || key === 'deepStudy');
 

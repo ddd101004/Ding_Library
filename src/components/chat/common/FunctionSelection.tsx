@@ -10,11 +10,11 @@ interface FunctionSelectionProps {
 // 功能类型到图标和标签的映射
 const functionConfig = {
   quickQA: {
-    icon: '/chat-page/chat-page-qqqa.png',
+    icon: '/chat-page/qqqa1.png',
     label: '快问快答'
   },
   deepStudy: {
-    icon: '/chat-page/chat-page-deep-study.png',
+    icon: '/chat-page/deepstudy1.png',
     label: '深度学习'
   },
   aiReading: {

@@ -74,7 +74,7 @@ const Sidebar: React.FC<SidebarProps> = ({
             <span className="text-white text-[16px]">新对话</span>
           </div>
         ) : (
-          <img src="/slibar/slibar-editedit@2x.png" alt="新建对话" className="w-[50px] h-[50px] object-contain" />
+          <img src="/slibar/edit1.png" alt="新建对话" className="w-[30px] h-[25px] object-contain" />
         )}
       </div>
 
@@ -86,7 +86,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         onClick={(e) => handleSidebarItemClick(e, () => onAcademicSearchClick(e))}
       >
         <img
-          src={activeIcon === "academic" ? "/slibar/slibar-shinyquestions-answers@2x.png" : "/slibar/slibar-questions-answers@2x.png"}
+          src={activeIcon === "academic" ? "/slibar/questions1.png" : "/slibar/slibar-questions-answers@2x.png"}
           alt="学术搜索"
           className="w-[20px] h-[20px]"
         />
@@ -103,7 +103,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         onClick={(e) => onMenuItemClick(e, "/knowledge-base", "knowledge")}
       >
         <img
-          src={activeIcon === "knowledge" ? "/slibar/slibar-shinyknowledge-base@2x.png" : "/slibar/slibar-knowledge-base@2x.png"}
+          src={activeIcon === "knowledge" ? "/slibar/folder1.png" : "/slibar/slibar-knowledge-base@2x.png"}
           alt="知识库"
           className="w-[21px] h-[20px]"
         />
@@ -120,7 +120,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         onClick={(e) => onMenuItemClick(e, "/history", "history")}
       >
         <img
-          src={activeIcon === "history" ? "/slibar/slibar-shinyhistory@2x.png" : "/slibar/slibar-history@2x(1).png"}
+          src={activeIcon === "history" ? "/slibar/history1.png" : "/slibar/slibar-history@2x(1).png"}
           alt="历史记录"
           className="w-[21px] h-[21px]"
         />

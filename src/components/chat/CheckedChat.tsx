@@ -524,34 +524,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
               </div>
             </div>
 
-            {/* 功能按钮区域 - 只在 deepStudy 功能时显示 */}
-            {currentFunction === "deepStudy" && (
-              <div className="flex justify-center absolute z-30 transition-all duration-300 bottom-[40px] left-0 right-0 px-4">
-                <div className="flex flex-wrap justify-center max-w-7xl mx-auto gap-1 sm:gap-2 md:gap-3 lg:gap-[47px]">
-                  {deepStudyTopics.map(({ key, icon, label }) => (
-                    <div
-                      key={key}
-                      className={`w-[80px] xs:w-[100px] sm:w-[130px] md:w-[150px] lg:w-[190px] h-8 sm:h-9 md:h-10 rounded-[20px] flex items-center px-1 sm:px-2 md:px-3 lg:px-7 cursor-pointer transition-colors border ${
-                        selectedButton === key
-                          ? "border-[#679CFF] bg-[#e8f8f0]" // 选中状态改为浅绿背景
-                          : "border-[#C8C9CC] bg-white"
-                      }`}
-                      onClick={() => handleTopicTypeSelect(key)}
-                    >
-                      <img
-                        src={`/chat-page/${icon}`}
-                        alt={label}
-                        className="w-[12px] xs:w-[14px] sm:w-[16px] md:w-[18px] lg:w-[22px] h-[12px] xs:h-[14px] sm:h-[16px] md:h-[18px] lg:h-[22px] mr-1 sm:mr-1.5 md:mr-2 lg:mr-2 flex-shrink-0"
-                      />
-                      <span className="text-xs xs:text-sm sm:text-sm md:text-sm lg:text-base truncate flex-1 text-center">
-                        {label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
             {/* 主题选择区域 - 显示动态获取的内容 */}
             {topics.length > 0 && (
               <div

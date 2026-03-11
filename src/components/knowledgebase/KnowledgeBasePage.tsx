@@ -293,7 +293,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
         {/* 知识库标题 */}
         <div className="flex items-center mb-6">
           <img
-            src="/slibar/slibar-shinyknowledge-base@2x.png"
+            src="/slibar/folder1.png"
             alt="知识库图标"
             className="w-[24px] h-[24px] sm:w-[28px] sm:h-[28px] lg:w-[31px] lg:h-[30px] mr-3 sm:mr-6"
           />
