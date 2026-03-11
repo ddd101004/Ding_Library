@@ -85,9 +85,9 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
               title="文件解析中，请稍后再关闭"
             >
               <img
-                src="/chat-page/chat-page-cancel@2x.png"
+                src="/chat-page/cancel1.png"
                 alt="关闭"
-                className="w-[19px] h-[19px]"
+                className="w-[12px] h-[12px]"
               />
             </div>
           </>
@@ -98,14 +98,14 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
               onClick={onClose}
               className="flex items-center justify-center cursor-pointer"
               style={{
-                width: "18px",
-                height: "18px"
+                width: "20px",
+                height: "15px"
               }}
             >
               <img
-                src="/chat-page/chat-page-cancel@2x.png"
+                src="/chat-page/cancel1.png"
                 alt="关闭"
-                className="w-[19px] h-[19px]"
+                className="w-[10px] h-[10px]"
               />
             </button>
           </>

@@ -200,9 +200,9 @@ export default function FileTags({ files, onRemoveFile, maxFiles = 5, onFileCoun
                   className="absolute right-[-6px] top-[0px] text-red-500 hover:text-gray-700 cursor-pointer"
                 >
                   <img
-                    src="/chat-page/chat-page-cancel@2x.png"
+                    src="/chat-page/cancel1.png"
                     alt="删除"
-                    className="w-[19px] h-[19px]"
+                    className="w-[12px] h-[12px]"
                   />
                 </button>
               )}

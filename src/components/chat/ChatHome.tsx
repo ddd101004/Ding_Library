@@ -310,6 +310,26 @@ export default function ChatHome() {
     setIsPaperSearchActive(!isPaperSearchActive);
   };
 
+  // 处理功能按钮点击
+  const handleNavigateFunction = (functionType: string) => {
+    if (functionType === "aiReading") {
+      // AI伴读功能保持原有逻辑
+      handleNavigate(functionType);
+      return;
+    }
+
+    // 快问快答和深度学习：跳转到checkedchat页面
+    router.push({
+      pathname: "/checkedchat",
+      query: {
+        function: functionType,
+        inputText,
+        isDeepThink: isDeepThinkActive,
+        isPaperSearch: isPaperSearchActive,
+      },
+    });
+  };
+
   // 发送消息 - 关键修改：保存文件到sessionStorage用于传递
   const handleSend = async () => {
     // 检查输入文本是否为空
@@ -694,6 +714,7 @@ export default function ChatHome() {
                     totalFileCount={currentFileCount}
                     isAiReadingActive={isAiReadingActive}
                     isFileParsing={isFileParsing}
+                    onNavigateFunction={handleNavigateFunction}
                   />
                 </div>
               </div>
@@ -703,56 +724,6 @@ export default function ChatHome() {
             <div
               className="flex justify-center gap-[47px] absolute z-40 transition-all duration-300 bottom-[40px] left-0 right-0"
             >
-              {[
-                { key: "quickQA", icon: "qqqa1.png", label: "快问快答" },
-                { key: "deepStudy", icon: "deepstudy1.png", label: "深度学习" }
-              ].map(({ key, icon, label }) => {
-                const isButtonDisabled = isFileParsing && (key === 'quickQA' || key === 'deepStudy');
-
-                const buttonContent = (
-                  <div
-                    className={`w-[160px] h-10 rounded-[20px] border flex items-center px-7 transition-colors duration-200 ${
-                      isButtonDisabled
-                        ? 'bg-[#F5F5F5] border-[#E0E0E0] cursor-not-allowed opacity-60'
-                        : 'bg-white border-[#C8C9CC] hover:border-[#6FCF97] hover:text-[#6FCF97] cursor-pointer'
-                    }`}
-                  >
-                    <img
-                      src={`/chat-page/${icon}`}
-                      alt={label}
-                      className="w-[22px] h-[22px] mr-3"
-                    />
-                    <span
-                      style={{
-                        color: isButtonDisabled ? '#999999' : 'inherit'
-                      }}
-                    >{label}</span>
-                  </div>
-                );
-
-                return (
-                  <div key={key} className="relative">
-                    {isButtonDisabled ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div>
-                              {buttonContent}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>文件解析中</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
-                      <div onClick={() => !isButtonDisabled && handleNavigate(key)}>
-                        {buttonContent}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
             </div>
           </div>
         </div>

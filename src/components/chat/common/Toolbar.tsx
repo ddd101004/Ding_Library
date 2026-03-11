@@ -23,6 +23,7 @@ interface ToolbarProps {
   isAiReadingActive?: boolean;
   isFolderChat?: boolean;
   isFileParsing?: boolean;
+  onNavigateFunction?: (functionType: string) => void;
 }
 
 export default function Toolbar({
@@ -41,7 +42,8 @@ export default function Toolbar({
   totalFileCount = 0,
   isAiReadingActive = false,
   isFolderChat = false,
-  isFileParsing = false
+  isFileParsing = false,
+  onNavigateFunction
 }: ToolbarProps) {
 
   const handleToggleDeepThink = () => {
@@ -165,6 +167,47 @@ export default function Toolbar({
           )}
         </Tooltip>
       )}
+
+      {/* 快问快答和深度学习按钮 - 只在ChatHome模式时显示 */}
+      {!isFolderChat && onNavigateFunction && (
+        <>
+          <button
+            onClick={() => onNavigateFunction('quickQA')}
+            onMouseDown={(e) => e.preventDefault()}
+            className={`w-[100px] h-10 rounded-[20px] border flex items-center justify-center gap-2 transition-all ${
+              isControlDisabled
+                ? 'bg-[#F5F5F5] border-[#E0E0E0] cursor-not-allowed opacity-60'
+                : 'bg-white border-[#C8C9CC] hover:border-[#6FCF97] hover:text-[#6FCF97] cursor-pointer'
+            }`}
+            disabled={isControlDisabled}
+          >
+            <img
+              src="/chat-page/qqqa1.png"
+              alt="快问快答"
+              className="w-[18px] h-[18px]"
+            />
+            <span className="text-sm">快问快答</span>
+          </button>
+
+          <button
+            onClick={() => onNavigateFunction('deepStudy')}
+            onMouseDown={(e) => e.preventDefault()}
+            className={`w-[100px] h-10 rounded-[20px] border flex items-center justify-center gap-2 transition-all ${
+              isControlDisabled
+                ? 'bg-[#F5F5F5] border-[#E0E0E0] cursor-not-allowed opacity-60'
+                : 'bg-white border-[#C8C9CC] hover:border-[#6FCF97] hover:text-[#6FCF97] cursor-pointer'
+            }`}
+            disabled={isControlDisabled}
+          >
+            <img
+              src="/chat-page/deepstudy1.png"
+              alt="深度学习"
+              className="w-[18px] h-[18px]"
+            />
+            <span className="text-sm">深度学习</span>
+          </button>
+        </>
+      )}
       </div>
 
       {/* Voice recording button */}
@@ -174,7 +217,7 @@ export default function Toolbar({
           <TooltipTrigger asChild>
             <img
               src={isRecording
-                ? '/chat-page/chat-page-shinyvoice@2x.png'
+                ? '/chat-page/voice1.png'
                 : '/chat-page/chat-page-voice@2x.png'}
               alt="语音"
               className={`w-10 h-10 transition-opacity ${
@@ -212,10 +255,10 @@ export default function Toolbar({
             ) : (
               <img
                 src={sendButtonHover && !isOverallDisabled
-                  ? '/chat-page/chat-page-send@2x.png'
-                  : '/chat-page/chat-page-no-send.png'}
+                  ? '/chat-page/send2.png'
+                  : '/chat-page/send1.png'}
                 alt="发送"
-                className="w-full h-full"
+                className="w-full h-full border border border-gray-200 rounded-lg"
               />
             )}
           </button>

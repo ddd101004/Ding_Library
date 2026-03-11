@@ -132,9 +132,9 @@ export default function AvatarHoverMenu({
                 className="w-full px-4 py-3 text-left text-[#e53e3e] text-[16px] hover:bg-[#fee2e2] transition-colors flex items-center gap-2"
               >
                 <img
-                  src="/settings/settings-exit.svg"
+                  src="/settings/exit1.png"
                   alt="退出登录"
-                  className="w-5 h-5"
+                  className="w-8 h-8"
                 />
                 退出登录
               </button>
