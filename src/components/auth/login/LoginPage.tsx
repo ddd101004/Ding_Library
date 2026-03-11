@@ -83,7 +83,7 @@ export default function LoginPage() {
           <img
             src="/logo/ai_logo.png"
             alt="Logo"
-            className="w-[114px] h-[60px]"
+            className="w-[114px] h-[72px]"
           />
         </div>
 
