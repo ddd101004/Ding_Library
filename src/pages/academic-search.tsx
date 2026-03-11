@@ -15,7 +15,7 @@ export default function academicSearch() {
         backgroundColor="#FFFFFF" // 学术搜索页面使用纯白背景
       >
         <Head>
-          <title>临港科技智慧图书馆-学术搜索</title>
+          <title>AI智慧学术交互图书馆-学术搜索</title>
         </Head>
 
         <AcademicSearch />

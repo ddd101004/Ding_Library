@@ -5,8 +5,7 @@ import { useRouter } from "next/router";
 import { apiGet, apiDel } from "@/api/request";
 import { toast } from "sonner";
 import { useAutoHideScrollbar } from "@/hooks/use-auto-hide-scrollbar";
-import { useAvatar } from "@/contexts/AvatarContext";
-import AvatarPopup from "../chat/common/AvatarPopup";
+import AvatarHoverMenu from "../chat/common/AvatarHoverMenu";
 import AddToFolderModal from "./AddToFolderModal";
 
 // 论文信息接口
@@ -186,8 +185,6 @@ const DeleteConfirmationDialog: React.FC<{
 };
 
 const History: React.FC = () => {
-  const { avatarUrl } = useAvatar();
-  const [showAvatarPopup, setShowAvatarPopup] = useState(false);
   const [conversations, setConversations] = useState<HistoryItem[]>([]);
   const [searchResults, setSearchResults] = useState<SearchResultItem[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -921,19 +918,7 @@ const History: React.FC = () => {
   return (
     <>
       {/* 头像组件 - 固定在右上角 */}
-      <div className="fixed z-50 top-5 right-5">
-        <img
-          src={avatarUrl}
-          alt="用户头像"
-          className="rounded-full border-2 border-white shadow-md w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity object-cover"
-          onClick={() => setShowAvatarPopup(true)}
-        />
-
-        <AvatarPopup
-          show={showAvatarPopup}
-          onClose={() => setShowAvatarPopup(false)}
-        />
-      </div>
+      <AvatarHoverMenu />
 
       <div className="h-full flex flex-col bg-white p-2 items-center justify-center">
         <DeleteConfirmationDialog

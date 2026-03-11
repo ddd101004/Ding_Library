@@ -167,7 +167,7 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
             />
             {!imageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                <div className="w-8 h-8 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-2 border-gray-300 border-t-[#0D9488] rounded-full animate-spin"></div>
               </div>
             )}
             <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
@@ -280,7 +280,7 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
             <button
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-[128px] h-[40px] bg-[#3B80FF] text-white rounded-[20px] text-[16px] hover:bg-[#2E6EFF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-[128px] h-[40px] bg-[#0D9488] text-white rounded-[20px] text-[16px] hover:bg-[#0F766E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitButtonText}
             </button>

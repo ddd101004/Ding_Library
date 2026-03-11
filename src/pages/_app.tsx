@@ -7,7 +7,6 @@ import "../styles/global.css";
 import { SearchProvider } from "../components/contexts/SearchContext";
 import { UserProvider, useUser } from "../components/contexts/UserContext";
 import { AvatarProvider } from "../contexts/AvatarContext";
-import { AvatarPopupProvider } from "../contexts/AvatarPopupContext";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
@@ -66,7 +65,7 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
     if (!authChecked) {
       checkAuth();
     }
-  }, [router.pathname, userInfo?.token, clearUserInfo, router, isLoading, authChecked]);
+  }, [router.pathname, userInfo?.token, clearUserInfo, isLoading, authChecked]);
 
   // 如果还在检查认证或加载中，显示加载状态
   if (isLoading || (!authChecked && !['/login', '/forgot-password', '/register', '/agreement/user-service-agreement', '/agreement/privacy-policy'].includes(router.pathname))) {
@@ -88,14 +87,12 @@ function MyApp({ Component, pageProps }: AppProps) {
     <TooltipProvider>
       <UserProvider>
         <AvatarProvider>
-          <AvatarPopupProvider>
-            <SearchProvider>
-              <AuthChecker>
-                <Component {...pageProps} />
-                <Toaster />
-              </AuthChecker>
-            </SearchProvider>
-          </AvatarPopupProvider>
+          <SearchProvider>
+            <AuthChecker>
+              <Component {...pageProps} />
+              <Toaster />
+            </AuthChecker>
+          </SearchProvider>
         </AvatarProvider>
       </UserProvider>
     </TooltipProvider>

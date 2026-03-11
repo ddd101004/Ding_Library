@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { apiGetAuth, apiPatch } from '@/api/request';
 import { toast } from 'sonner';
-import { useAvatarPopup } from '@/contexts/AvatarPopupContext';
 
 interface UnreadCountResponse {
   unread_count: number;
@@ -19,7 +19,7 @@ interface NotificationSettingsResponse {
 const FullTextDeliveryToast: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
   const hasFetched = useRef(false);
-  const { openAvatarPopup } = useAvatarPopup();
+  const router = useRouter();
 
   useEffect(() => {
     // 防止 React Strict Mode 导致的重复请求
@@ -42,8 +42,8 @@ const FullTextDeliveryToast: React.FC = () => {
         ]);
 
         // 判断是否显示通知：
-        // 1. 用户开启了文档传递通知 (doc_delivery === true)
-        // 2. 有未读通知 (unread_count >= 1)
+        //1. 用户开启了文档传递通知 (doc_delivery === true)
+        //2. 有未读通知 (unread_count >= 1)
         const isNotificationEnabled = settingsResponse.data.doc_delivery;
         const hasUnreadNotifications = countResponse.data.unread_count >= 1;
 
@@ -69,8 +69,8 @@ const FullTextDeliveryToast: React.FC = () => {
       // 隐藏通知
       setIsVisible(false);
 
-      // 打开个人中心的全文传递页面
-      openAvatarPopup('delivery');
+      // 跳转到首页（个人中心）
+      router.push('/');
     } catch (error) {
       console.error('标记通知已读失败:', error);
       toast.error('操作失败，请稍后再试');

@@ -16,10 +16,10 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
   return (
     <button
       className={cn(
-        "w-[360px] h-[40px] bg-gradient-to-r from-[#9459FF] to-[#2E6EFF]",
+        "w-[360px] h-[40px] bg-gradient-to-r from-[#14B8A6] to-[#0D9488]",
         "text-white rounded-[10px] font-medium text-lg transition-all",
-        "shadow-[0px_10px_20px_0px_rgba(0,49,255,0.2)]",
-        "hover:shadow-[0px_10px_20px_0px_rgba(0,49,255,0.3)]",
+        "shadow-[0px_10px_20px_0px_rgba(13,148,136,0.2)]",
+        "hover:shadow-[0px_10px_20px_0px_rgba(13,148,136,0.3)]",
         "disabled:opacity-50 disabled:cursor-not-allowed",
         className
       )}

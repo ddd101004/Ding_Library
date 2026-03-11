@@ -210,8 +210,8 @@ export default function AddToFolderModal({
                   className={cn(
                     "flex items-center cursor-pointer py-[6px] relative w-[804px] h-[32px] rounded-[10px]",
                     selectedFolder === folder.folder_id
-                      ? "bg-[rgba(59,128,255,0.1)]"
-                      : "bg-transparent hover:bg-[rgba(59,128,255,0.1)]"
+                      ? "bg-[rgba(13,148,136,0.1)]"
+                      : "bg-transparent hover:bg-[rgba(13,148,136,0.1)]"
                   )}
                   onClick={() => handleFolderSelect(folder.folder_id)}
                 >
@@ -222,7 +222,7 @@ export default function AddToFolderModal({
                     {/* 选中状态显示蓝色圆点 */}
                     {selectedFolder === folder.folder_id && (
                       <div
-                        className="w-[8px] h-[8px] bg-[#3B80FF] rounded-[50%]"
+                        className="w-[8px] h-[8px] bg-[#0D9488] rounded-[50%]"
                       />
                     )}
                   </div>
@@ -273,7 +273,7 @@ export default function AddToFolderModal({
               "transition-all duration-200 ease",
               isAdding
                 ? "bg-[#999999] cursor-not-allowed opacity-60"
-                : "bg-[#3B80FF] hover:bg-[#2E6EFF]"
+                : "bg-[#0D9488] hover:bg-[#0F766E]"
             )}
           >
             {isAdding ? "添加中..." : "确认"}

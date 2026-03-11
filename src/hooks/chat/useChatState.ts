@@ -38,7 +38,6 @@ export function useChatState() {
   // messageVersions 和 currentVersionMessageIds 由 useMessageVersions hook 管理
 
   // ============ UI状态 ============
-  const [showAvatarPopup, setShowAvatarPopup] = useState(false);
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const [isFileParsing, setIsFileParsing] = useState(false);
   const [pendingFiles, setPendingFiles] = useState<any[]>([]);
@@ -187,8 +186,6 @@ export function useChatState() {
     setLatestAiMessageId,
     // messageVersions, setMessageVersions 由 useMessageVersions hook 管理
     // currentVersionMessageIds, setCurrentVersionMessageIds 由 useMessageVersions hook 管理
-    showAvatarPopup,
-    setShowAvatarPopup,
     copiedMessageId,
     setCopiedMessageId,
     isFileParsing,

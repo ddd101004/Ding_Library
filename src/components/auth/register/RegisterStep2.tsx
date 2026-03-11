@@ -136,7 +136,7 @@ export function RegisterStep2({
           <button
             type="button"
             onClick={handleSendCode}
-            className="text-sm text-blue-600 hover:text-blue-700 hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
+            className="text-sm text-[#0D9488] hover:text-[#0F766E] hover:underline disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isRunning || loading}
           >
             {isRunning ? `${countdown}秒后可重新发送` : "重新发送验证码"}

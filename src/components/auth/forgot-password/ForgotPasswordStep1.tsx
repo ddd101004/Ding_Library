@@ -76,7 +76,7 @@ export function ForgotPasswordStep1({
         <button
           type="button"
           onClick={onBackToLogin}
-          className="text-sm text-blue-600 hover:text-blue-700 hover:underline"
+          className="text-sm text-[#0D9488] hover:text-[#0F766E] hover:underline"
         >
           返回登录
         </button>

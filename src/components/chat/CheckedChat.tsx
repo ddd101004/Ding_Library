@@ -4,7 +4,7 @@ import { flushSync } from "react-dom";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import FunctionSelection from "./common/FunctionSelection";
-import AvatarPopup from "./common/AvatarPopup";
+import AvatarHoverMenu from "./common/AvatarHoverMenu";
 import FileUploadModal from "./common/FileUploadModal";
 import ChatInput, { ChatInputRef } from "./common/ChatInput";
 import Toolbar from "./common/Toolbar";
@@ -15,18 +15,15 @@ import { useConversation } from "@/hooks/use-conversation";
 import { useTopicManager } from "@/hooks/use-topic-manager";
 import { toast } from "sonner";
 import { apiPost } from "@/api/request";
-import { useAvatar } from "@/contexts/AvatarContext";
 
 interface CheckedChatProps {
   selectedFunction?: string;
 }
 
 export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
-  const { avatarUrl } = useAvatar();
   const [isDeepThinkActive, setIsDeepThinkActive] = useState(false);
   const [isPaperSearchActive, setIsPaperSearchActive] = useState(false);
   const [inputText, setInputText] = useState("");
-  const [showAvatarPopup, setShowAvatarPopup] = useState(false);
   const [sendButtonHover, setSendButtonHover] = useState(false);
   const [currentFunction, setCurrentFunction] = useState<string | null>(null);
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
@@ -405,7 +402,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
   return (
     <>
       <Head>
-        <title>临港科技智慧图书馆-AI对话</title>
+        <title>AI智慧学术交互图书馆-AI对话</title>
       </Head>
 
       {/* 文件上传弹窗 */}
@@ -421,28 +418,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
       />
 
       {/* 用户头像 */}
-      <div className="fixed z-50 top-5 right-5">
-        <div className="flex items-center gap-3">
-          <img
-            src={avatarUrl}
-            alt="用户头像"
-            className={`rounded-full border-2 border-white shadow-md w-12 h-12 object-cover ${
-              isAnyModalOpen || showUploadModal
-                ? "cursor-not-allowed opacity-60"
-                : "cursor-pointer"
-            }`}
-            onClick={() =>
-              !isAnyModalOpen && !showUploadModal && setShowAvatarPopup(true)
-            }
-          />
-        </div>
-
-        <AvatarPopup
-          show={showAvatarPopup}
-          onClose={() => setShowAvatarPopup(false)}
-          onAnyModalOpen={setIsAnyModalOpen}
-        />
-      </div>
+      <AvatarHoverMenu />
 
       <div className="flex-1 flex justify-center items-center w-full max-w-7xl mx-auto px-4">
         <div className="relative w-full max-w-7xl mx-auto flex justify-center">

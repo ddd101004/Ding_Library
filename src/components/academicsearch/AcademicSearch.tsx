@@ -3,8 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSearch } from "../../components/contexts/SearchContext";
 import { apiPost, apiGet } from "@/api/request";
-import { useAvatar } from "@/contexts/AvatarContext";
-import AvatarPopup from "../chat/common/AvatarPopup";
+import AvatarHoverMenu from "../chat/common/AvatarHoverMenu";
 import {
   ComprehensiveSearchTab,
   ChineseDiscoveryTab,
@@ -26,8 +25,6 @@ import {
 export default function AcademicSearchPage() {
   const [currentTab, setCurrentTab] = useState("综合");
   const { searchHistory } = useSearch();
-  const { avatarUrl } = useAvatar();
-  const [showAvatarPopup, setShowAvatarPopup] = useState(false);
   const router = useRouter();
   // 从路由参数获取搜索关键词和标签
   const initialKeyword = router.query.q as string;
@@ -738,19 +735,7 @@ export default function AcademicSearchPage() {
   return (
     <>
     {/* 头像组件 - 固定在右上角 */}
-    <div className="fixed z-50 top-5 right-5">
-      <img
-        src={avatarUrl}
-        alt="用户头像"
-        className="rounded-full border-2 border-white shadow-md w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
-        onClick={() => setShowAvatarPopup(true)}
-      />
-
-      <AvatarPopup
-        show={showAvatarPopup}
-        onClose={() => setShowAvatarPopup(false)}
-      />
-    </div>
+    <AvatarHoverMenu />
 
     {/* 主容器，使用自适应布局 */}
     <div
@@ -797,14 +782,14 @@ export default function AcademicSearchPage() {
                     key={tab}
                     onClick={() => handleTabChange(tab)}
                     className={`relative flex items-center justify-center font-medium text-xl ${
-                      currentTab === tab ? "text-[#3B80FF]" : "text-[#333333]"
+                      currentTab === tab ? "text-[#0D9488]" : "text-[#333333]"
                     } ${
                       index < tabs.length - 1 ? "mr-[50px]" : "mr-0"
                     } border-none bg-transparent cursor-pointer pb-[5px]`}
                   >
                     {tab}
                     {currentTab === tab && (
-                      <div className="absolute bottom-[-5px] w-[30px] h-[4px] bg-[#3B80FF] rounded-[2px]" />
+                      <div className="absolute bottom-[-5px] w-[30px] h-[4px] bg-[#0D9488] rounded-[2px]" />
                     )}
                   </button>
                 ))}
@@ -859,14 +844,14 @@ export default function AcademicSearchPage() {
                         key={tab}
                         onClick={() => handleTabChange(tab)}
                         className={`relative flex items-center justify-center font-medium text-xl ${
-                          currentTab === tab ? "text-[#3B80FF]" : "text-[#333333]"
+                          currentTab === tab ? "text-[#0D9488]" : "text-[#333333]"
                         } ${
                           index < tabs.length - 1 ? "mr-[50px]" : "mr-0"
                         } border-none bg-transparent cursor-pointer pb-[5px]`}
                       >
                         {tab}
                         {currentTab === tab && (
-                          <div className="absolute bottom-[-5px] w-[30px] h-[4px] bg-[#3B80FF] rounded-[2px]" />
+                          <div className="absolute bottom-[-5px] w-[30px] h-[4px] bg-[#0D9488] rounded-[2px]" />
                         )}
                       </button>
                     ))}

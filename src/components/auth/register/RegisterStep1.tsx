@@ -110,7 +110,7 @@ export function RegisterStep1({ onNext, onSwitchToLogin }: RegisterStep1Props) {
             placeholder="请输入密码"
             required
             disabled={loading}
-            className="w-[360px] h-[40px] border border-[#C8C9CC] rounded-[10px] focus-visible:ring-blue-500 focus-visible:border-blue-500"
+            className="w-[360px] h-[40px] border border-[#C8C9CC] rounded-[10px] focus-visible:ring-[#0D9488] focus-visible:border-[#0D9488]"
           />
         </div>
 

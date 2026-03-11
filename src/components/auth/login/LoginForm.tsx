@@ -151,7 +151,7 @@ export function LoginForm({
               placeholder="请输入密码"
               required
               disabled={loading}
-              className="w-[360px] h-[40px] border border-[#C8C9CC] rounded-[10px] focus-visible:ring-blue-500 focus-visible:border-blue-500"
+              className="w-[360px] h-[40px] border border-[#C8C9CC] rounded-[10px] focus-visible:ring-[#0D9488] focus-visible:border-[#0D9488]"
             />
           </div>
         ) : (
@@ -198,7 +198,7 @@ export function LoginForm({
           <button
             type="button"
             onClick={() => setLoginType(loginType === 'password' ? 'code' : 'password')}
-            className="text-[#3B80FF] font-['Source_Han_Sans_CN'] font-medium text-[16px] leading-[40px]"
+            className="text-[#0D9488] font-['Source_Han_Sans_CN'] font-medium text-[16px] leading-[40px]"
             disabled={loading}
           >
             {loginType === 'password' ? '手机验证码登录' : '密码登录'}
@@ -206,7 +206,7 @@ export function LoginForm({
           <button
             type="button"
             onClick={onForgotPassword}
-            className="text-[#3B80FF] font-['Source_Han_Sans_CN'] font-medium text-[16px] leading-[40px]"
+            className="text-[#0D9488] font-['Source_Han_Sans_CN'] font-medium text-[16px] leading-[40px]"
             disabled={loading}
           >
             忘记密码

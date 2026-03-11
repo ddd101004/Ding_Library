@@ -4,7 +4,7 @@ import { flushSync } from "react-dom";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { toast } from "sonner";
-import AvatarPopup from "./common/AvatarPopup";
+import AvatarHoverMenu from "./common/AvatarHoverMenu";
 import FileUploadModal from "./common/FileUploadModal";
 import ChatInput, { ChatInputRef } from "./common/ChatInput";
 import Toolbar from "./common/Toolbar";
@@ -20,8 +20,6 @@ import { useAudioRecorder } from "@/hooks/use-audio-recorder";
 import { useFileHandler } from "@/hooks/use-file-handler";
 import { useConversation } from "@/hooks/use-conversation";
 import { usePreload } from "@/hooks/use-preload";
-import { useAvatar } from "@/contexts/AvatarContext";
-import { useAvatarPopup } from "@/contexts/AvatarPopupContext";
 import { useUser } from "@/components/contexts/UserContext";
 
 // 根据时间生成问候语
@@ -35,12 +33,10 @@ const getGreeting = () => {
 };
 
 export default function ChatHome() {
-  const { avatarUrl } = useAvatar();
   const { userInfo } = useUser();
   const [isDeepThinkActive, setIsDeepThinkActive] = useState(false);
   const [isPaperSearchActive, setIsPaperSearchActive] = useState(false);
   const [inputText, setInputText] = useState("");
-  const [showAvatarPopup, setShowAvatarPopup] = useState(false);
   const [sendButtonHover, setSendButtonHover] = useState(false);
   const [isAiReadingActive, setIsAiReadingActive] = useState(false);
   const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
@@ -538,7 +534,7 @@ export default function ChatHome() {
   return (
     <>
       <Head>
-        <title>临港科技智慧图书馆-AI对话</title>
+        <title>AI智慧学术交互图书馆-AI对话</title>
       </Head>
 
       {/* 文件上传弹窗 */}
@@ -599,24 +595,7 @@ export default function ChatHome() {
       />
 
       {/* 用户头像 */}
-      <div className="fixed z-50 top-5 right-5">
-        <img
-          src={avatarUrl}
-          alt="用户头像"
-          className={`rounded-full border-2 border-white shadow-md w-12 h-12 object-cover ${
-            isUploading || isAnyModalOpen || showUploadModal
-              ? 'cursor-not-allowed opacity-60'
-              : 'cursor-pointer'
-          }`}
-          onClick={() => !isUploading && !isAnyModalOpen && !showUploadModal && setShowAvatarPopup(true)}
-        />
-
-        <AvatarPopup
-          show={showAvatarPopup}
-          onClose={() => setShowAvatarPopup(false)}
-          onAnyModalOpen={setIsAnyModalOpen}
-        />
-      </div>
+      <AvatarHoverMenu />
 
       {/* 主容器 - 水平垂直居中 */}
       <div className="flex-1 flex justify-center items-center w-full">
@@ -639,14 +618,16 @@ export default function ChatHome() {
               maxWidth: '1300px'
             }}
           >
-            {/* 背景图 */}
+            {/* 背景 - 修改：替换背景图片为纯色背景 */}
             <div
               className="absolute inset-0 rounded-[20px] z-10 transition-all duration-300 overflow-hidden"
-              style={{ height: `${300 + backgroundOffset}px` }}
+              style={{ 
+                height: `${300 + backgroundOffset}px`,
+                backgroundColor: '#d5f4cfff' // 淡青色背景
+              
+              }}
             >
-              <div
-                className="absolute inset-0 bg-center bg-no-repeat bg-[url('/background/layer-3@2x.png')]"
-              ></div>
+              {/* 移除了背景图片，改为纯色背景 */}
             </div>
 
             {/* 白色背景层 */}
@@ -805,13 +786,6 @@ export default function ChatHome() {
               })}
             </div>
           </div>
-
-          {/* AI图片装饰 */}
-          <img
-            className="fixed hidden lg:block absolute w-[425px] h-[369px] z-0 transition-all duration-300 top-[-255px] right-[40px]"
-            src="/landing-page/landing-page-ai.png"
-            alt="AI"
-          />
         </div>
       </div>
     </>

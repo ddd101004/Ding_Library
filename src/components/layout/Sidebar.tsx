@@ -50,13 +50,13 @@ const Sidebar: React.FC<SidebarProps> = ({
 <div className={`flex items-center justify-center mt-[33px] ${isSidebarOpen ? "w-[192px] mb-2" : "w-[70px] h-[66px] mb-2"}`}>
   {/* 核心修改：给内部容器添加 flex 和 items-center 实现同行对齐 */}
   <div className="flex items-center h-full">
-    <img 
-      src="/logo/ai_logo.png" 
-      alt="智图AI" 
-      className="h-full object-contain" 
+    <img
+      src="/logo/ai_logo.png"
+      alt="AI学术图书馆"
+      className="h-[40px] w-[40px] object-contain"
     />
     {isSidebarOpen && (
-      <span className="text-[#3B80FF] text-[30px] ml-2">智图AI</span>
+      <span className="text-[#0D9488] text-[24px] ml-2">AI学术图书馆</span>
     )}
   </div>
 </div>
@@ -64,13 +64,13 @@ const Sidebar: React.FC<SidebarProps> = ({
       {/* 新对话按钮 */}
       <div
         className={`flex items-center justify-center mt-[20px] transition-all duration-300 cursor-pointer ${
-          isSidebarOpen ? "w-[192px] h-[36px] bg-gradient-to-r from-[#7934F6] to-[#2E6EFF] rounded-[18px]" : "w-[36px] h-[56px]"
+          isSidebarOpen ? "w-[192px] h-[36px] bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-[18px]" : "w-[36px] h-[56px]"
         }`}
         onClick={(e) => handleSidebarItemClick(e, () => onNewChatClick(e))}
       >
         {isSidebarOpen ? (
           <div className="flex items-center">
-            <img src="/slibar/slibar-editedit@2x.png" alt="新对话" className="w-[26px] h-[26px] mr-[17px]" />
+            <img src="slibar/slibar-editedit@2x.png" alt="新对话" className="w-[26px] h-[26px] mr-[17px]" />
             <span className="text-white text-[16px]">新对话</span>
           </div>
         ) : (
@@ -91,7 +91,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           className="w-[20px] h-[20px]"
         />
         {isSidebarOpen && (
-          <span className={`text-[16px] ml-2 ${isMenuItemActive("academic") ? "text-[#3B80FF]" : "text-gray-700"}`}>学术搜索</span>
+          <span className={`text-[16px] ml-2 ${isMenuItemActive("academic") ? "text-[#0D9488]" : "text-gray-700"}`}>学术搜索</span>
         )}
       </div>
 
@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           className="w-[21px] h-[20px]"
         />
         {isSidebarOpen && (
-          <span className={`text-[16px] ml-2 ${isMenuItemActive("knowledge") ? "text-[#3B80FF]" : "text-gray-700"}`}>知识库</span>
+          <span className={`text-[16px] ml-2 ${isMenuItemActive("knowledge") ? "text-[#0D9488]" : "text-gray-700"}`}>知识库</span>
         )}
       </div>
 
@@ -125,7 +125,7 @@ const Sidebar: React.FC<SidebarProps> = ({
           className="w-[21px] h-[21px]"
         />
         {isSidebarOpen && (
-          <span className={`text-[16px] ml-2 ${isMenuItemActive("history") ? "text-[#3B80FF]" : "text-gray-700"}`}>历史记录</span>
+          <span className={`text-[16px] ml-2 ${isMenuItemActive("history") ? "text-[#0D9488]" : "text-gray-700"}`}>历史记录</span>
         )}
       </div>
 
@@ -146,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                         <Tooltip>
                           <TooltipTrigger asChild>
                             <div
-                              className="text-[14px] text-gray-700 cursor-pointer hover:text-[#3B80FF] transition-colors duration-200 truncate max-w-[140px] border-0 outline-none focus:outline-none focus:ring-0 hover:bg-transparent hover:border-none"
+                              className="text-[14px] text-gray-700 cursor-pointer hover:text-[#0D9488] transition-colors duration-200 truncate max-w-[140px] border-0 outline-none focus:outline-none focus:ring-0 hover:bg-transparent hover:border-none"
                               onClick={(e) => onRecentConversationClick(conversation.conversation_id, e)}
                             >
                               {conversation.title || "未命名对话"}

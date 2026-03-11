@@ -9,8 +9,7 @@ import ImportModal from "./ImportModal";
 import FolderDetailPage from "./FolderDetailPage";
 import { Folder } from "../../types/foder";
 import { useAutoHideScrollbar } from "@/hooks/use-auto-hide-scrollbar";
-import { useAvatar } from "@/contexts/AvatarContext";
-import AvatarPopup from "../chat/common/AvatarPopup";
+import AvatarHoverMenu from "../chat/common/AvatarHoverMenu";
 
 interface KnowledgeBasePageProps {
   isSidebarOpen?: boolean;
@@ -18,8 +17,6 @@ interface KnowledgeBasePageProps {
 
 const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = false }) => {
   const router = useRouter();
-  const { avatarUrl } = useAvatar();
-  const [showAvatarPopup, setShowAvatarPopup] = useState(false);
   const [folders, setFolders] = useState<Folder[]>([]);
   const [expanded, setExpanded] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
@@ -262,19 +259,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
   return (
     <>
       {/* 头像组件 - 固定在右上角 */}
-      <div className="fixed z-50 top-5 right-5">
-        <img
-          src={avatarUrl}
-          alt="用户头像"
-          className="rounded-full border-2 border-white shadow-md w-12 h-12 cursor-pointer hover:opacity-80 transition-opacity"
-          onClick={() => setShowAvatarPopup(true)}
-        />
-
-        <AvatarPopup
-          show={showAvatarPopup}
-          onClose={() => setShowAvatarPopup(false)}
-        />
-      </div>
+      <AvatarHoverMenu />
 
       <div className="flex h-full w-full">
       {/* 知识库弹窗（创建/编辑） */}
@@ -321,7 +306,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
         <div className="mb-6 sm:mb-8">
           <button
             onClick={openCreateModal}
-            className="flex items-center justify-center w-full sm:w-[240px] h-[32px] sm:h-[36px] bg-gradient-to-r from-[#7934F6] to-[#2E6EFF] rounded-[16px] sm:rounded-[18px] text-white text-[14px] sm:text-[16px] font-normal"
+            className="flex items-center justify-center w-full sm:w-[240px] h-[32px] sm:h-[36px] bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-[16px] sm:rounded-[18px] text-white text-[14px] sm:text-[16px] font-normal"
           >
             <img
               src="/slibar/plus.svg"

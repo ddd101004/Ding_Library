@@ -12,7 +12,7 @@ export default function KnowledgeBase() {
         isKnowledgeBase={true} // 标识为知识库页面
       >
         <Head>
-          <title>临港科技智慧图书馆-知识库</title>
+          <title>AI智慧学术交互图书馆-知识库</title>
         </Head>
         <KnowledgeBasePage />
       </WithSidebarLayout>

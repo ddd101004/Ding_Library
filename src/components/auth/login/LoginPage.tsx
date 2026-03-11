@@ -111,7 +111,7 @@ export default function LoginPage() {
                 <span className="font-['Source_Han_Sans_CN'] font-normal text-[16px] text-[#999999] leading-[40px]">
                   {mode === "login" ? "没有账户，" : "已有账户，"}
                 </span>
-                <span className="font-['Source_Han_Sans_CN'] font-medium text-[16px] text-[#3B80FF] leading-[40px] hover:underline">
+                <span className="font-['Source_Han_Sans_CN'] font-medium text-[16px] text-[#0D9488] leading-[40px] hover:underline">
                   {mode === "login" ? "去注册" : "去登录"}
                 </span>
               </button>

@@ -72,8 +72,6 @@ export default function ChatConversation({
     setRelatedPapersList,
     latestAiMessageId,
     setLatestAiMessageId,
-    showAvatarPopup,
-    setShowAvatarPopup,
     copiedMessageId,
     setCopiedMessageId,
     isFileParsing,
@@ -861,7 +859,7 @@ export default function ChatConversation({
   return (
     <>
       <Head>
-        <title>临港科技智慧图书馆-AI对话</title>
+        <title>AI智慧学术交互图书馆-AI对话</title>
       </Head>
 
       {/* 全局样式覆盖 - 浅绿主题 */}
@@ -935,13 +933,7 @@ export default function ChatConversation({
         onFileCompleted={handleFileCompleted}
       />
 
-      <UserAvatarSection
-        onAvatarClick={() => setShowAvatarPopup(true)}
-        showAvatarPopup={showAvatarPopup}
-        onAvatarPopupClose={() => setShowAvatarPopup(false)}
-        showUploadModal={showUploadModal}
-        isUploading={false}
-      />
+      <UserAvatarSection />
 
       {/* 主容器添加浅绿背景和边框样式 */}
       <div style={{ 
