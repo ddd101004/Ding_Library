@@ -70,11 +70,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         {isSidebarOpen ? (
           <div className="flex items-center">
-            <img src="slibar/slibar-editedit@2x.png" alt="新对话" className="w-[26px] h-[26px] mr-[17px]" />
+            <img src="/slibar/slibar-editedit@2x.png" alt="新对话" className="w-[26px] h-[26px] mr-[17px]" />
             <span className="text-white text-[16px]">新对话</span>
           </div>
         ) : (
-          <img src="/slibar/slibar-newchat@2x.png" alt="新建对话" className="w-[50px] h-[50px] object-contain" />
+          <img src="/slibar/slibar-editedit@2x.png" alt="新建对话" className="w-[50px] h-[50px] object-contain" />
         )}
       </div>
 

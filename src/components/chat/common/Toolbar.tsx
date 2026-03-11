@@ -91,39 +91,14 @@ export default function Toolbar({
   return (
     <TooltipProvider>
       <div className="flex items-center justify-between">
-        {/* Add file icon - 文件夹对话模式下隐藏 */}
         <div className='flex items-center gap-5'>
-          {!isFolderChat && (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <img
-                  src="/chat-page/chat-page-add-file@2x.png"
-                  alt="添加文件"
-                  className={`w-10 h-10 transition-opacity ${
-                    isSending || isFileUploadDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80'
-                  }`}
-                  onClick={isFileUploadDisabled ? undefined : handleAddFile}
-                  onMouseDown={(e) => e.preventDefault()}
-                />
-              </TooltipTrigger>
-              {!isSending && (
-                <TooltipContent>
-                  <p>{isFileUploadDisabled
-                    ? '每个会话文件总数不得超过五个'
-                    : '添加文件'
-                  }</p>
-                </TooltipContent>
-              )}
-            </Tooltip>
-          )}
-
       {/* DeepThink button */}
       <button
         onClick={handleToggleDeepThink}
         onMouseDown={(e) => e.preventDefault()}
         className={`w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
           isDeepThinkActive
-            ? 'bg-[#2672FF] opacity-80 text-white'
+            ? 'bg-[#0D9488] opacity-80 text-white'
             : 'bg-white border border-[#C8C9CC] text-[#666666]'
         } ${
           isControlDisabled
@@ -160,7 +135,7 @@ export default function Toolbar({
               onMouseDown={(e) => e.preventDefault()}
               className={`w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
                 isPaperSearchActive
-                  ? 'bg-[#2672FF] opacity-80 text-white'
+                  ? 'bg-[#0D9488] opacity-80 text-white'
                   : 'bg-white border border-[#C8C9CC] text-[#666666]'
               } ${
                 isPaperSearchDisabled

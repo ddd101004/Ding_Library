@@ -711,11 +711,8 @@ export default function ChatHome() {
             >
               {[
                 { key: "quickQA", icon: "chat-page-qqqa.png", label: "快问快答" },
-                { key: "deepStudy", icon: "chat-page-deep-study.png", label: "深度学习" },
-                { key: "aiReading", icon: isAiReadingActive ? "chat-page-alreadyreading@2x.png" : "chat-page-reading@2x.png", label: "AI伴读" },
-                { key: "more", icon: "chat-page-more.png", label: "更多" }
+                { key: "deepStudy", icon: "chat-page-deep-study.png", label: "深度学习" }
               ].map(({ key, icon, label }) => {
-                // 判断按钮是否应该禁用（快问快答和深度学习在文件解析时禁用）
                 const isButtonDisabled = isFileParsing && (key === 'quickQA' || key === 'deepStudy');
 
                 const buttonContent = (
@@ -723,9 +720,7 @@ export default function ChatHome() {
                     className={`w-[160px] h-10 rounded-[20px] border flex items-center px-7 transition-colors duration-200 ${
                       isButtonDisabled
                         ? 'bg-[#F5F5F5] border-[#E0E0E0] cursor-not-allowed opacity-60'
-                        : key === 'aiReading' && isAiReadingActive
-                          ? 'bg-[#F5F5F5] border-[#C8C9CC] cursor-pointer'
-                          : 'bg-white border-[#C8C9CC] hover:border-[#679CFF] cursor-pointer'
+                        : 'bg-white border-[#C8C9CC] hover:border-[#6FCF97] hover:text-[#6FCF97] cursor-pointer'
                     }`}
                   >
                     <img
@@ -734,15 +729,8 @@ export default function ChatHome() {
                       className="w-[22px] h-[22px] mr-3"
                     />
                     <span
-                      className={
-                        key === 'aiReading' && isAiReadingActive ? 'text-[#F5F5F5]' : ''
-                      }
                       style={{
-                        color: isButtonDisabled
-                          ? '#999999'
-                          : key === 'aiReading' && isAiReadingActive
-                            ? '#999999'
-                            : 'inherit'
+                        color: isButtonDisabled ? '#999999' : 'inherit'
                       }}
                     >{label}</span>
                   </div>
@@ -750,20 +738,7 @@ export default function ChatHome() {
 
                 return (
                   <div key={key} className="relative">
-                    {key === 'more' ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <div onClick={() => !isButtonDisabled && key !== 'more' && handleNavigate(key)}>
-                              {buttonContent}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>更多功能开发中</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : isButtonDisabled ? (
+                    {isButtonDisabled ? (
                       <TooltipProvider>
                         <Tooltip>
                           <TooltipTrigger asChild>
@@ -777,7 +752,7 @@ export default function ChatHome() {
                         </Tooltip>
                       </TooltipProvider>
                     ) : (
-                      <div onClick={() => !isButtonDisabled && key !== 'more' && handleNavigate(key)}>
+                      <div onClick={() => !isButtonDisabled && handleNavigate(key)}>
                         {buttonContent}
                       </div>
                     )}
