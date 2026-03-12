@@ -306,7 +306,7 @@ export default function CitationModal({
               >
                 {downloadFormat === format ? (
                   <img
-                    src="/chat-page/chat-page-shinychatthink@2x.png"
+                    src="/chat-page/point1.png"
                     alt="选中"
                     width={20}
                     height={20}
@@ -335,7 +335,7 @@ export default function CitationModal({
           {/* 确认按钮 */}
           <button
             onClick={handleConfirm}
-            className="flex items-center justify-center w-[128px] h-[40px] bg-[#3B80FF] rounded-[20px] text-base text-white border-none cursor-pointer"
+            className="flex items-center justify-center w-[128px] h-[40px] bg-[#0D9488] rounded-[20px] text-base text-white border-none cursor-pointer"
           >
             确认
           </button>

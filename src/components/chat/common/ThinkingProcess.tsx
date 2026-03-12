@@ -107,7 +107,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
               {isStreaming ? (
                 // 正在生成时显示旋转的加载图标
                 <img
-                  src="/chat-page/chat-page-loading@2x.png"
+                  src="/chat-page/think1.png"
                   alt="思考中"
                   className="w-7 h-7 animate-spin"
                   style={{ width: "28px", height: "30px" }}
@@ -115,7 +115,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
               ) : (
                 // 生成完成时显示静态图标
                 <img
-                  src="/chat-page/chat-page-loading@2x.png"
+                  src="/chat-page/think1.png"
                   alt="思考过程"
                   className="w-7 h-7"
                   style={{ width: "28px", height: "30px" }}
@@ -187,7 +187,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 }}
               >
                 <img
-                  src="/chat-page/chat-page-shinychatthink@2x.png"
+                  src="/chat-page/point1.png"
                   alt="思考装饰"
                   className="w-4 h-4"
                 />

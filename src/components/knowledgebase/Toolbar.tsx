@@ -41,12 +41,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <img
             src={
               viewMode === "list"
-                ? "/slibar/slibar-shinylist@2x.png"
+                ? "/slibar/list1.png"
                 : "/slibar/slibar-list@2x.png"
             }
             alt="列表视图"
-            width={20}
-            height={16}
+            width={24}
+            height={25}
             className="w-[20px] h-[16px]"
           />
         </button>
@@ -63,12 +63,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
           <img
             src={
               viewMode === "grid"
-                ? "/slibar/slibar-shinyphotolist@2x.png"
+                ? "/slibar/photolist1.png"
                 : "/slibar/slibar-photolist@2x.png"
             }
             alt="网格视图"
-            width={20}
-            height={20}
+            width={25}
+            height={25}
             className="w-[20px] h-[20px]"
           />
         </button>
