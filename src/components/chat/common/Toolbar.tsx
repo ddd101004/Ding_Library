@@ -174,7 +174,7 @@ export default function Toolbar({
           <button
             onClick={() => onNavigateFunction('quickQA')}
             onMouseDown={(e) => e.preventDefault()}
-            className={`w-[100px] h-10 rounded-[20px] border flex items-center justify-center gap-2 transition-all ${
+            className={`w-[120px] h-10 rounded-[20px] border flex items-center justify-center gap-2 transition-all ${
               isControlDisabled
                 ? 'bg-[#F5F5F5] border-[#E0E0E0] cursor-not-allowed opacity-60'
                 : 'bg-white border-[#C8C9CC] hover:border-[#6FCF97] hover:text-[#6FCF97] cursor-pointer'
@@ -192,7 +192,7 @@ export default function Toolbar({
           <button
             onClick={() => onNavigateFunction('deepStudy')}
             onMouseDown={(e) => e.preventDefault()}
-            className={`w-[100px] h-10 rounded-[20px] border flex items-center justify-center gap-2 transition-all ${
+            className={`w-[120px] h-10 rounded-[20px] border flex items-center justify-center gap-2 transition-all ${
               isControlDisabled
                 ? 'bg-[#F5F5F5] border-[#E0E0E0] cursor-not-allowed opacity-60'
                 : 'bg-white border-[#C8C9CC] hover:border-[#6FCF97] hover:text-[#6FCF97] cursor-pointer'

@@ -566,11 +566,10 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                             <div
                               key={index}
                               className={`w-[70px] xs:w-[85px] sm:w-[100px] lg:w-[140px] h-[35px] sm:h-[40px] bg-white rounded-[20px] border flex items-center justify-center text-gray-700 cursor-pointer transition-colors text-xs sm:text-sm px-1 flex-shrink-0 ${
-                                selectedTopic === topic && isGeneratingQuestion
-                                  ? "border-gray-300 bg-gray-50 cursor-wait"
-                                  : selectedTopic === topic
-                                  ? "border-gray-300 bg-gray-50 cursor-wait"
-                                  : "border-[#0D9488] bg-[#e8f8f0]"
+                                selectedTopic === topic
+                                  ? isGeneratingQuestion
+                                    ? "border-gray-300 bg-gray-50 cursor-wait"
+                                    : "border-[#0D9488] bg-[#e8f8f0]"
                                   : "border-[#C8C9CC] hover:border-[#d4ede4] hover:bg-[#f0faf6]"
                               }`}
                               onClick={() =>
@@ -617,11 +616,10 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                             <div
                               key={index + 6}
                               className={`w-[70px] xs:w-[85px] sm:w-[100px] lg:w-[140px] h-[35px] sm:h-[40px] bg-white rounded-[20px] border flex items-center justify-center text-gray-700 cursor-pointer transition-colors text-xs sm:text-sm px-1 flex-shrink-0 ${
-                                selectedTopic === topic && isGeneratingQuestion
-                                  ? "border-gray-300 bg-gray-50 cursor-wait"
-                                  : selectedTopic === topic
-                                  ? "border-gray-300 bg-gray-50 cursor-wait"
-                                  : "border-[#0D9488] bg-[#e8f8f0]"
+                                selectedTopic === topic
+                                  ? isGeneratingQuestion
+                                    ? "border-gray-300 bg-gray-50 cursor-wait"
+                                    : "border-[#0D9488] bg-[#e8f8f0]"
                                   : "border-[#C8C9CC] hover:border-[#d4ede4] hover:bg-[#f0faf6]"
                               }`}
                               onClick={() =>
@@ -693,7 +691,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                 </span>
               </div>
             )}
-          </div>
+            </div>
         </div>
       </div>
     </>

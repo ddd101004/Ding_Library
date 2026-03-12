@@ -14,7 +14,7 @@ export default function WithSidebarLayout({
   isChatHome = false,
   isCheckedChat = false,
   backgroundImage,
-  backgroundColor = "#F0FDF4", // 修改为更浅的浅绿色（主背景色）
+  backgroundColor = "#f3f5f3ff", // 修改为更浅的浅绿色（主背景色）
   functionType,
   skipMainContent = false,
   isKnowledgeBase = false,
@@ -220,13 +220,13 @@ export default function WithSidebarLayout({
       sessionStorage.removeItem(`hasLoaded_${conversationId}`);
 
       // 根据对话类型跳转到不同页面
+      // AI伴读功能已移除，阻止跳转到AI伴读页面
       if (conversation_type === "paper_reading") {
-        // AI伴读对话跳转到伴读页面
+        // 普通对话跳转到普通对话页面
         router.push({
-          pathname: "/ai-reading-chat",
+          pathname: "/chatconversation",
           query: {
-            conversation_id: conversationId,
-            uploadedPaperId: uploaded_paper_id,
+            conversationId,
             fromHistory: "true"
           },
         });
@@ -326,15 +326,15 @@ export default function WithSidebarLayout({
         {/* 侧边栏外层容器 - 小屏幕时保持70px，大屏幕时可展开 */}
         <div
           ref={sidebarOuterRef}
-          className={`flex flex-col items-center transition-all duration-300 ease-in-out h-full overflow-hidden relative flex-shrink-0 ${
+          className={`flex flex-col items-center transition-all duration-300 ease-in-out h-full  rounded-[2%] overflow-hidden relative flex-shrink-0 ${
             isSmallScreen
-              ? "w-[50px] sm:w-[60px]" // 小屏幕50-60px宽度，节省空间
+              ? "w-[49px] sm:w-[59px]" // 小屏幕50-60px宽度，节省空间
               : isSidebarOpen
                 ? "w-48 sm:w-52 md:w-56" // 展开时自适应宽度：192-224px
-                : "w-[75px] sm:w-[80px]" // 收起时75-80px，节省空间
+                : "w-[74px] sm:w-[79px]" // 收起时75-80px，节省空间
           }`}
           // 侧边栏背景也调整为稍深一点的浅绿，保持层次感
-          style={{ backgroundColor: '#e8f8f0' }}
+          style={{ backgroundColor: '#ceebdcff' }}
         >
           {/* 侧边栏内容容器 */}
           <div

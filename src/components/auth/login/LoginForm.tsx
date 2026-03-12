@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useFormValidation } from '@/hooks/use-form-validation';
 import { useCountdown } from '@/hooks/use-countdown';
 import { useAuth } from '@/hooks/use-auth';
@@ -24,10 +24,21 @@ export function LoginForm({
   const [verificationCode, setVerificationCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [rememberPassword, setRememberPassword] = useState(false);
 
   const { validatePhone } = useFormValidation();
   const { countdown, isRunning, start: startCountdown } = useCountdown(60);
   const { login, sendVerificationCode, checkPhone } = useAuth();
+
+  useEffect(() => {
+    const savedPhone = localStorage.getItem('rememberedPhone');
+    const savedPassword = localStorage.getItem('rememberedPassword');
+    if (savedPhone && savedPassword) {
+      setPhone(savedPhone);
+      setPassword(savedPassword);
+      setRememberPassword(true);
+    }
+  }, []);
 
   /**
    * 发送验证码
@@ -118,6 +129,15 @@ export function LoginForm({
 
       // 登录成功会自动跳转，失败会自动 toast + throw
       await login(credentials);
+
+      if (loginType === 'password' && rememberPassword) {
+        localStorage.setItem('rememberedPhone', phone);
+        localStorage.setItem('rememberedPassword', password);
+      } else if (loginType === 'password' && !rememberPassword) {
+        localStorage.removeItem('rememberedPhone');
+        localStorage.removeItem('rememberedPassword');
+      }
+
       onSuccess?.();
     } catch (err) {
       // 错误已自动 toast，这里只需静默处理
@@ -144,7 +164,7 @@ export function LoginForm({
 
         {/* 密码登录 */}
         {loginType === 'password' ? (
-          <div>
+          <div className="flex flex-col gap-4">
             <PasswordInput
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -153,6 +173,22 @@ export function LoginForm({
               disabled={loading}
               className="w-[360px] h-[40px] border border-[#C8C9CC] rounded-[10px] focus-visible:ring-[#0D9488] focus-visible:border-[#0D9488]"
             />
+            <div className="flex items-center">
+              <input
+                type="checkbox"
+                id="rememberPassword"
+                checked={rememberPassword}
+                onChange={(e) => setRememberPassword(e.target.checked)}
+                disabled={loading}
+                className="w-4 h-4 accent-[#0D9488] cursor-pointer"
+              />
+              <label
+                htmlFor="rememberPassword"
+                className="ml-2 text-gray-600 cursor-pointer font-['Source_Han_Sans_CN'] text-[14px]"
+              >
+                记住密码
+              </label>
+            </div>
           </div>
         ) : (
           /* 验证码登录 */
