@@ -596,17 +596,52 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                           className="relative cursor-pointer hover:shadow-lg transition-shadow w-full h-48 sm:h-52 md:h-56 lg:h-64 rounded-lg overflow-hidden"
                           onClick={() => handleFolderClick(folder)}
                         >
-                          {/* 文件夹图片 - 如果有用户上传的封面则显示，否则显示默认图片 */}
-                          <img
-                            src={
-                              folder.cover_image_url ||
-                              (folder.cover_image
-                                ? `https://library-cos.century-cloud.com/${folder.cover_image}`
-                                : "/slibar/slibar-directoryedit@2x.png")
-                            }
-                            alt={folder.folder_name}
-                            className="w-full h-full object-cover"
-                          />
+                          {/* 文件夹图片 - 如果有用户上传的封面则显示，否则显示默认浅绿色背景 */}
+                          {folder.cover_image_url || folder.cover_image ? (
+                            <img
+                              src={
+                                folder.cover_image_url ||
+                                (folder.cover_image
+                                  ? `https://library-cos.century-cloud.com/${folder.cover_image}`
+                                  : "")
+                              }
+                              alt={folder.folder_name}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <div
+                              className="w-full h-full flex flex-col items-center justify-center"
+                              style={{ backgroundColor: "#5bc77bff" }}
+                            >
+                              <div
+                                className="absolute"
+                                style={{
+                                  left: "12px",
+                                  bottom: "45px",
+                                  color: "#333333",
+                                  fontWeight: 500,
+                                  fontSize: "14px",
+                                  lineHeight: "30px",
+                                  textShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                                }}
+                              >
+                         
+                              </div>
+                              <div
+                                className="absolute top-1/5 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                                style={{
+                                  color: "#dfd9d9ff",
+                                  fontWeight: 500,
+                                  fontSize: "65px",
+                                  lineHeight: "25px",
+                                  textShadow: "0 1px 2px rgba(0,0,0,0.1)",
+                                }}
+                              >
+                                library
+                              </div>
+                              </div>
+                            
+                          )}
 
                           {/* 文件夹名称 */}
                           <div
@@ -614,10 +649,10 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                             style={{
                               left: "12px",
                               bottom: "45px",
-                              color: "#333333",
+                              color: "#031507ff",
                               fontWeight: 500,
-                              fontSize: "14px",
-                              lineHeight: "30px",
+                              fontSize: "16px",
+                              lineHeight: "40px",
                               textShadow: "0 1px 2px rgba(0,0,0,0.1)",
                             }}
                           >
@@ -632,7 +667,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                             style={{
                               left: "12px",
                               bottom: "20px",
-                              color: "#999999",
+                              color: "#086311ff",
                               fontSize: "12px",
                               lineHeight: "25px",
                               textShadow: "0 1px 2px rgba(0,0,0,0.1)",
@@ -647,7 +682,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                             style={{
                               right: "60px",
                               bottom: "20px",
-                              color: "#999999",
+                              color: "#086311ff",
                               fontSize: "12px",
                               lineHeight: "25px",
                               textShadow: "0 1px 2px rgba(0,0,0,0.1)",

@@ -83,7 +83,7 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
       };
 
       if (isEditMode) {
-        requestData.color = "#7934F6";
+        requestData.color = "#6FCF97";
       }
 
       if (cosKey) {
