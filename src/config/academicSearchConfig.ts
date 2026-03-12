@@ -78,7 +78,7 @@ export const ACADEMIC_SEARCH_CONFIG = {
 export const SEARCH_TABS = ["综合", "中文发现", "外文发现"];
 
 // 居中显示的标签列表
-export const CENTER_TABS = ["中文发现", "外文发现"];
+export const CENTER_TABS = ["综合", "中文发现", "外文发现"];
 
 // 学者姓名检测正则
 export const SCHOLAR_NAME_PATTERNS = {

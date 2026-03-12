@@ -48,9 +48,6 @@ export default function AcademicSearchPage() {
     useState<ComprehensiveSearchResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // 相关标签状态（从综合搜索响应中获取）
-  const [relatedTags, setRelatedTags] = useState<string[]>([]);
-
   // 搜索结果缓存 - 使用 sessionStorage 持久化存储（只保留最近一次搜索）
   const getSearchCache = (tab: string): ComprehensiveSearchResponse | null => {
     try {
@@ -74,26 +71,6 @@ export default function AcademicSearchPage() {
     }
   };
 
-  const getRelatedTagsCache = (): string[] => {
-    try {
-      const cached = sessionStorage.getItem('relatedTagsCache');
-      if (cached) {
-        return JSON.parse(cached);
-      }
-    } catch (error) {
-      console.warn('读取相关标签缓存失败:', error);
-    }
-    return [];
-  };
-
-  const setRelatedTagsCache = (tags: string[]) => {
-    try {
-      sessionStorage.setItem('relatedTagsCache', JSON.stringify(tags));
-    } catch (error) {
-      console.warn('保存相关标签缓存失败:', error);
-    }
-  };
-
   // 防重复调用标志
   const searchInProgressRef = useRef<Set<string>>(new Set());
 
@@ -105,11 +82,6 @@ export default function AcademicSearchPage() {
 
   // 标签列表
   const tabs = SEARCH_TABS;
-
-  // 清空标签函数
-  const clearRelatedTags = () => {
-    setRelatedTags([]);
-  };
 
   // 根据当前标签发起不同的API请求
   const performSearch = async (keyword: string) => {
@@ -130,15 +102,6 @@ export default function AcademicSearchPage() {
     // 检查缓存（只有关键词相同时才使用缓存）
     if (cachedResult && cachedResult.keyword === keyword.trim()) {
       setSearchResults(cachedResult);
-
-      // 恢复相关标签（仅综合搜索）
-      if (currentTab === "综合") {
-        const cachedTags = getRelatedTagsCache();
-        if (cachedTags.length > 0) {
-          setRelatedTags(cachedTags);
-        }
-      }
-
       setLoading(false);
       return;
     }
@@ -166,13 +129,6 @@ export default function AcademicSearchPage() {
             abortController.signal
           );
           response = apiResponse.data; // 提取实际的数据部分
-          // 从响应中提取标签，显示所有标签
-          if (response.tags) {
-            const tags = response.tags.slice(0, 15); // 最多显示15个标签
-            setRelatedTags(tags);
-            // 缓存相关标签
-            setRelatedTagsCache(tags);
-          }
           break;
 
         case "中文发现":
@@ -325,9 +281,6 @@ export default function AcademicSearchPage() {
 
     if (!keywordToSearch.trim()) {
       setSearchResults(null);
-      if (currentTab === "综合") {
-        clearRelatedTags();
-      }
       return;
     }
 
@@ -344,13 +297,6 @@ export default function AcademicSearchPage() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialKeyword, currentTab]); // 仅依赖 initialKeyword 和 currentTab
-
-  // 当搜索关键词变化时，清空标签（将在搜索时更新）
-  useEffect(() => {
-    if (!searchKeyword.trim()) {
-      clearRelatedTags();
-    }
-  }, [searchKeyword]);
 
   // 处理输入变化
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -411,7 +357,7 @@ export default function AcademicSearchPage() {
   // 处理标签切换
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
-    
+
     // 如果有关键词，更新URL
     if (searchKeyword.trim()) {
       router.push({
@@ -504,14 +450,8 @@ export default function AcademicSearchPage() {
     }
   };
 
-  // 五种背景颜色
-  const tagColors = ACADEMIC_SEARCH_CONFIG.TAG_COLORS;
-
   // 检查是否是需要居中显示的标签页
   const isCenterTab = CENTER_TABS.includes(currentTab);
-
-  // 检查是否是固定宽度布局的标签页（中文发现、外文发现）
-  const isFixedWidthTab = currentTab === "中文发现" || currentTab === "外文发现";
 
   return (
     <>
@@ -522,16 +462,10 @@ export default function AcademicSearchPage() {
     <div
         className={`
           px-2 sm:px-3 md:px-4 py-4 sm:py-6 md:py-8 min-h-full
-          ${isCenterTab
-            ? "w-full" // 居中标签页使用全宽度
-            : "w-full min-w-0" // 其他标签页确保充分利用剩余空间
-          }
         `}
       >
-        {/* 搜索框区域 - 根据标签页类型使用不同布局 */}
-        {isFixedWidthTab ? (
-          // 固定宽度布局（中文发现、外文发现）：居中显示，固定宽度1199px
-          <div className="mx-auto w-[1199px]">
+        {/* 搜索框区域 - 所有标签页统一布局：居中显示，固定宽度1199px */}
+        <div className="mx-auto w-[1199px]">
             <div
               ref={headerRef}
               className={`${isScrolled ? "fixed top-0 left-0 right-0 z-50 bg-white shadow-lg py-4" : "mb-8"} transition-all duration-300`}
@@ -587,77 +521,9 @@ export default function AcademicSearchPage() {
               />
             )}
           </div>
-        ) : (
-          // 固定宽度布局（综合）：搜索框固定宽度1810px，左对齐，不居中
-          <div className="flex gap-3 sm:gap-4 md:gap-6 lg:gap-8 min-w-0">
-            {/* 搜索框区域 - 固定宽度1810px */}
-            <div className="w-[1810px] min-w-0">
-              <div
-                ref={headerRef}
-                className={`${isScrolled ? "fixed top-0 left-0 right-0 z-50 bg-white shadow-lg py-4" : "mb-8"} transition-all duration-300`}
-              >
-                <div className="mb-4 h-[60px]">
-                  <div
-                    className="flex items-center gap-3 w-full h-full bg-[#F7F8FA] rounded-[20px] border border-[#C8C9CC]"
-                  >
-                    <img
-                      src="/slibar/slibar-questions-answers.png"
-                      alt="学术搜索"
-                      className="w-5 h-5 ml-6"
-                    />
-                    <input
-                      type="text"
-                      value={searchKeyword}
-                      onChange={handleInputChange}
-                      onKeyPress={handleKeyPress}
-                      placeholder="一站式学术搜索-文献/期刊/学者/用户"
-                      className="flex-1 h-full p-4 text-lg focus:outline-none border-none bg-transparent"
-                    />
-                  </div>
-                </div>
 
-                {/* 标签栏和排序切换 - 严格的左对齐布局 */}
-                <div className={`flex items-center justify-between ${isScrolled ? "mb-4" : "mb-6"}`}>
-                  {/* 导航标签 */}
-                  <div className="flex items-center">
-                    {tabs.map((tab, index) => (
-                      <button
-                        key={tab}
-                        onClick={() => handleTabChange(tab)}
-                        className={`relative flex items-center justify-center font-medium text-xl ${
-                          currentTab === tab ? "text-[#0D9488]" : "text-[#333333]"
-                        } ${
-                          index < tabs.length - 1 ? "mr-[50px]" : "mr-0"
-                        } border-none bg-transparent cursor-pointer pb-[5px]`}
-                      >
-                        {tab}
-                        {currentTab === tab && (
-                          <div className="absolute bottom-[-5px] w-[30px] h-[4px] bg-[#0D9488] rounded-[2px]" />
-                        )}
-                      </button>
-                    ))}
-                  </div>
-
-                </div>
-              </div>
-
-              {/* 占位元素，当头部固定时防止内容上移 */}
-              {isScrolled && (
-                <div
-                  style={{
-                    height: headerRef.current ? headerRef.current.offsetHeight : 0
-                  }}
-                  className="block"
-                />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* 搜索结果和标签区域 - 根据标签页类型使用不同布局 */}
-        {isFixedWidthTab ? (
-          // 固定宽度布局（中文发现、外文发现）：居中显示，固定宽度1199px
-          <div className="mx-auto w-[1199px]">
+        {/* 搜索结果区域 - 居中显示，固定宽度1199px */}
+        <div className="mx-auto w-[1199px]">
             {/* 中文发现 */}
             {currentTab === "中文发现" && (
               <ChineseDiscoveryTab
@@ -677,58 +543,18 @@ export default function AcademicSearchPage() {
                 onLoadMore={handleLoadMoreForeignPapers}
               />
             )}
-          </div>
-        ) : (
-          // 固定宽度布局（综合）：搜索框和内容固定宽度1810px，左对齐，不居中
-          <div className="flex gap-3 sm:gap-4 md:gap-6 lg:gap-8 min-w-0">
-            {/* 主要搜索结果区域 - 固定宽度1810px */}
-            <div className="w-[1810px] min-w-0">
-              {/* 综合搜索 */}
-              {currentTab === "综合" && (
-                <ComprehensiveSearchTab
-                  searchResults={searchResults}
-                  loading={loading}
-                  searchKeyword={searchKeyword}
-                  onViewMorePapers={handleViewMorePapers}
-                  onPaperClick={handlePaperClick}
-                />
-              )}
-            </div>
 
-            {/* 相关标签区域 - 只在综合选项下显示，响应式宽度 */}
+            {/* 综合搜索 */}
             {currentTab === "综合" && (
-              <div className="w-[100px] sm:w-[150px] md:w-[220px] lg:w-[320px] xl:w-[300px] min-w-[100px] flex-shrink-0 mt-0 overflow-hidden">
-                <div className="font-medium text-base sm:text-lg md:text-xl text-gray-700 flex items-center mb-[12px] sm:mb-[15px] md:mb-[20px] lg:mb-[25px] xl:mb-[30px] w-full whitespace-nowrap">
-                  相关标签
-                </div>
-                {relatedTags.length > 0 ? (
-                  <div className="flex flex-wrap gap-[6px] sm:gap-[8px] md:gap-[10px] lg:gap-[12px] xl:gap-[20px]">
-                    {relatedTags.map((tag, index) => {
-                      // 基于标签文本生成一致的颜色索引，确保每次渲染颜色相同
-                      const colorIndex = tag.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) % tagColors.length;
-                      const colorClass = tagColors[colorIndex];
-
-                      return (
-                        <span
-                          key={index}
-                          onClick={() => handleTagClick(tag)}
-                          title={tag}
-                          className={`inline-block h-[28px] sm:h-[30px] md:h-[32px] lg:h-[36px] xl:h-[40px] max-w-[70px] sm:max-w-[90px] md:max-w-[120px] lg:max-w-[150px] xl:max-w-[180px] ${colorClass} rounded-[12px] sm:rounded-[14px] md:rounded-[16px] lg:rounded-[18px] xl:rounded-[20px] px-[12px] py-[2px] text-xs sm:text-xs md:text-sm lg:text-sm xl:text-base text-[#333333] whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer transition-colors flex-shrink-0 hover:opacity-80 leading-[24px] sm:leading-[26px] md:leading-[28px] lg:leading-[32px] xl:leading-[36px] box-border`}
-                        >
-                          {tag}
-                        </span>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-4 text-gray-400 text-sm">
-                    暂无标签
-                  </div>
-                )}
-              </div>
+              <ComprehensiveSearchTab
+                searchResults={searchResults}
+                loading={loading}
+                searchKeyword={searchKeyword}
+                onViewMorePapers={handleViewMorePapers}
+                onPaperClick={handlePaperClick}
+              />
             )}
           </div>
-        )}
       </div>
     </>
   );
