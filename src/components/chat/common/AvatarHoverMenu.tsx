@@ -112,7 +112,7 @@ export default function AvatarHoverMenu({
 
           {isHovered && (
             <div
-              className="absolute top-full right-0 mt-2 w-[160px] bg-[#0D9488] rounded-[12px] border border-[#c6d7ff] shadow-lg overflow-hidden"
+              className="absolute top-full right-0 mt-2 w-[160px] bg-[#f8fcf9] rounded-[12px] border border-[#d4ede4] shadow-lg overflow-hidden"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
             >
@@ -151,7 +151,7 @@ export default function AvatarHoverMenu({
             onClick={handleClosePersonalDialog}
           />
           <div
-            className="relative bg-[#0D9488] rounded-[20px] border border-[#c6d7ff] shadow-[0px_10px_29px_1px_rgba(198,242,224,0.15)] overflow-hidden"
+            className="relative bg-[#f8fcf9] rounded-[20px] border border-[#d4ede4] shadow-[0px_10px_29px_1px_rgba(198,242,224,0.15)] overflow-hidden"
             style={{
               width: "450px",
               height: "320px",
@@ -237,7 +237,7 @@ export default function AvatarHoverMenu({
 
             <div className="absolute bottom-[49px] left-0 right-0 flex justify-center">
               <button
-                className="w-[128px] h-[40px] bg-[#f0faf6] border border-[#d4ede4] rounded-[20px] text-[16px] text-[#2d3748] hover:bg-[#f0faf6] transition-colors"
+                className="w-[128px] h-[40px] bg-[#f0faf6] border border-[#d4ede4] rounded-[20px] text-[16px] text-[#2d3748] hover:bg-[#e8f8f0] transition-colors"
                 onClick={(e) => {
                   e.stopPropagation();
                   setShowLogoutDialog(false);
