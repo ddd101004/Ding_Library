@@ -88,7 +88,7 @@ const FullTextDeliveryToast: React.FC = () => {
       <div className="
         flex items-center justify-between
         min-w-[450px] px-8 py-5
-        bg-[#f0f4ff]
+        bg-[#0D9488]
         border border-[#c6d7ff]
         rounded-[24px]
         shadow-sm
@@ -107,7 +107,7 @@ const FullTextDeliveryToast: React.FC = () => {
         <button
           className="
             ml-12 px-7 py-2.5
-            bg-[#4382f6] hover:bg-[#3b75e0]
+            bg-[#0D9488] hover:bg-[#0F766E]
             text-white text-[16px] font-medium
             rounded-full
             transition-colors duration-200

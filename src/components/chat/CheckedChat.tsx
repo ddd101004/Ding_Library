@@ -569,7 +569,8 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                                 selectedTopic === topic && isGeneratingQuestion
                                   ? "border-gray-300 bg-gray-50 cursor-wait"
                                   : selectedTopic === topic
-                                  ? "border-[#679CFF] bg-[#e8f8f0]" // 选中状态改为浅绿背景
+                                  ? "border-gray-300 bg-gray-50 cursor-wait"
+                                  : "border-[#0D9488] bg-[#e8f8f0]"
                                   : "border-[#C8C9CC] hover:border-[#d4ede4] hover:bg-[#f0faf6]"
                               }`}
                               onClick={() =>
@@ -619,7 +620,8 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                                 selectedTopic === topic && isGeneratingQuestion
                                   ? "border-gray-300 bg-gray-50 cursor-wait"
                                   : selectedTopic === topic
-                                  ? "border-[#679CFF] bg-[#e8f8f0]" // 选中状态改为浅绿背景
+                                  ? "border-gray-300 bg-gray-50 cursor-wait"
+                                  : "border-[#0D9488] bg-[#e8f8f0]"
                                   : "border-[#C8C9CC] hover:border-[#d4ede4] hover:bg-[#f0faf6]"
                               }`}
                               onClick={() =>

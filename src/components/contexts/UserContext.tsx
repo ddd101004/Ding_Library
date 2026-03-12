@@ -55,6 +55,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
           });
         } else {
           console.warn("用户信息不完整，无法设置用户状态");
+          setUserInfo(null);
         }
         setIsLoading(false);
       }

@@ -14,7 +14,7 @@ export default function WithSidebarLayout({
   isChatHome = false,
   isCheckedChat = false,
   backgroundImage,
-  backgroundColor = "#f0faf6", // 修改为更浅的浅绿色（主背景色）
+  backgroundColor = "#F0FDF4", // 修改为更浅的浅绿色（主背景色）
   functionType,
   skipMainContent = false,
   isKnowledgeBase = false,

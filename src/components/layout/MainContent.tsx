@@ -78,7 +78,7 @@ const MainContent: React.FC<MainContentProps> = ({
         // 调整背景色逻辑：知识库透明，其他情况使用传入的背景色（默认浅绿）
         backgroundColor: isKnowledgeBase 
           ? "transparent" 
-          : (backgroundColor || "#f0faf6"), // 默认浅绿 #f0faf6
+          : (backgroundColor || "#F0FDF4"), // 默认浅绿 #F0FDF4
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",

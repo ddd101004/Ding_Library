@@ -55,7 +55,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
           <span
             key={index}
             style={{
-              color: "#3b82f6",
+              color: "#0D9488",
               fontWeight: 600,
               cursor: "pointer",
               textDecoration: "none",
@@ -91,7 +91,7 @@ const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({
       <style jsx global>{`
         /* 强制引用标记样式 */
         .reference-mark {
-          color: #3b82f6 !important;
+          color: #0D9488 !important;
           font-weight: 600 !important;
           cursor: pointer !important;
           text-decoration: none !important;

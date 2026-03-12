@@ -1,8 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { apiPost } from "@/api/request";
 import CitationModal from "@/components/academicsearch/tabs/CitationModal";
-import { toast } from "sonner";
 
 interface Author {
   name: string;
@@ -21,13 +19,6 @@ interface RelatedPaper {
   doi?: string;
   source: string;
   source_id: string;
-  doc_delivery_status?: {
-    request_id: string;
-    status: number;
-    status_text: string | null;
-    fulltext_url: string | null;
-    create_time: string;
-  };
 }
 
 interface RelatedPapersProps {
@@ -52,50 +43,6 @@ export default function RelatedPapers({
   // 引用弹窗状态
   const [isCitationModalOpen, setIsCitationModalOpen] = useState(false);
   const [selectedPaper, setSelectedPaper] = useState<RelatedPaper | null>(null);
-
-  // 请求传递加载状态
-  const [loadingPaperIds, setLoadingPaperIds] = useState<Set<string>>(new Set());
-
-  // 请求成功完成的论文 ID 集合
-  const [requestedPaperIds, setRequestedPaperIds] = useState<Set<string>>(new Set());
-
-  // 判断论文是否已请求传递（检查本地状态或后端状态）
-  const isPaperRequested = (paper: RelatedPaper): boolean => {
-    const statusText = paper.doc_delivery_status?.status_text;
-    return requestedPaperIds.has(paper.id) || statusText === "提交中";
-  };
-
-  // 处理请求传递点击
-  const handleRequestDelivery = async (paperId: string) => {
-    try {
-      // 添加到加载状态
-      setLoadingPaperIds(prev => new Set(prev).add(paperId));
-
-      await apiPost("/api/doc-delivery/request", { paper_id: paperId });
-
-      // 移除加载状态
-      setLoadingPaperIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(paperId);
-        return newSet;
-      });
-
-      // 添加到请求成功状态
-      setRequestedPaperIds(prev => new Set(prev).add(paperId));
-
-      toast.success("请求传递成功");
-    } catch (error) {
-      // 移除加载状态
-      setLoadingPaperIds(prev => {
-        const newSet = new Set(prev);
-        newSet.delete(paperId);
-        return newSet;
-      });
-
-      console.error("请求传递失败:", error);
-      toast.error("请求传递失败，请稍后重试");
-    }
-  };
 
   // 处理引用点击
   const handleCitationClick = (paper: RelatedPaper) => {
@@ -138,11 +85,11 @@ export default function RelatedPapers({
                   <div
                     data-message-id={messageId && messageId !== "undefined" && messageId !== "unknown" ? messageId : null}
                     data-paper-index={paper.index}
-                    className="paper-card paper-card-bg mb-2.5 w-full max-w-[530px]"
+                    className="paper-card paper-card-bg mb-7 w-full max-w-[500px] h-full max-h-[280px]"
                   >
                     {/* 论文内容 */}
                     <div className="px-4 sm:px-6" style={{ paddingTop: '16px' }}>
-                      <div className="flex items-start">
+                      <div className="flex items-start mt-3">
                         {/* 蓝色圆点 */}
                         <div className="blue-dot mt-2 ml-2.5 mr-2.5" />
 
@@ -193,66 +140,17 @@ export default function RelatedPapers({
                       </div>
 
                       {/* 分隔线 - 在摘要下方10px */}
-                      <div className="divider-horizontal ml-2.5 mt-5 w-[calc(100%-50px)]" />
+                      <div className="divider-horizontal  mt-5 w-[calc(100%-50px)]" />
 
                       {/* 按钮组 - 在分隔线下方10px */}
                       <div className="flex items-center gap-2.5 ml-2.5 mt-5">
-                        {/* 请求按钮 */}
-                        <div
-                          onClick={() => !loadingPaperIds.has(paper.id) && !isPaperRequested(paper) && handleRequestDelivery(paper.id)}
-                          className="action-button flex-shrink-0"
-                          style={{
-                            cursor: (loadingPaperIds.has(paper.id) || isPaperRequested(paper)) ? 'not-allowed' : 'pointer',
-                            opacity: (loadingPaperIds.has(paper.id) || isPaperRequested(paper)) ? 0.7 : 1
-                          }}
-                        >
-                          {loadingPaperIds.has(paper.id) ? (
-                            <>
-                              <svg
-                                className="animate-spin icon-sm"
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <circle
-                                  className="opacity-25"
-                                  cx="12"
-                                  cy="12"
-                                  r="10"
-                                  stroke="currentColor"
-                                  strokeWidth="4"
-                                ></circle>
-                                <path
-                                  className="opacity-75"
-                                  fill="currentColor"
-                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                ></path>
-                              </svg>
-                              <span className="ml-2.5 text-base text-gray-500">
-                                请求中
-                              </span>
-                            </>
-                          ) : (
-                            <>
-                              <img
-                                src={isPaperRequested(paper) ? "/paper/peper-ok.png" : "/paper/paper-pull.png"}
-                                alt="pull"
-                                className="icon-sm"
-                              />
-                              <span className="ml-2.5 text-base text-gray-500">
-                                {isPaperRequested(paper) ? "请求完成" : "请求传递"}
-                              </span>
-                            </>
-                          )}
-                        </div>
-
                         {/* 引用按钮 */}
                         <div
                           onClick={() => handleCitationClick(paper)}
-                          className="action-button flex-shrink-0"
+                          className="action-button flex-shrink-0 pr-4"
                         >
                           <img
-                            src="/paper/paper-shinyquote.png"
+                            src="/paper/quote1.png"
                             alt="quote"
                             className="icon-sm"
                           />
