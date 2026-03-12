@@ -68,7 +68,7 @@ export function useConversationData(params: UseConversationDataParams) {
   } = params;
 
   const router = useRouter();
-  const { getCurrentTime, formatMessage } = useMessageFormatter();
+  const { getCurrentTime } = useMessageFormatter();
   const { extractPapersFromHistoryMessages } = useRelatedPapers({
     showRelatedPapers: false,
     setShowRelatedPapers: () => {},
@@ -135,6 +135,69 @@ export function useConversationData(params: UseConversationDataParams) {
   }, []);
 
   /**
+   * 格式化消息数据
+   */
+  const formatMessageData = useCallback((msg: any, index: number): Message => {
+    let filesToDisplay: any[] = [];
+
+    if (
+      msg.attachments &&
+      Array.isArray(msg.attachments) &&
+      msg.attachments.length > 0
+    ) {
+      filesToDisplay = msg.attachments.map((attachment: any) => ({
+        file: {
+          name: attachment.file_name || "未知文件",
+          type: attachment.file_type || "",
+          size: attachment.file_size || 0,
+        },
+      }));
+    }
+
+    if ((msg as any).files && Array.isArray((msg as any).files)) {
+      const legacyFiles = (msg as any).files.map((fileData: any) => ({
+        file: {
+          name: fileData.name || fileData.fileName || "未知文件",
+          type: fileData.type || fileData.fileType || "",
+          size: fileData.size || fileData.fileSize || 0,
+        },
+      }));
+      filesToDisplay = [...filesToDisplay, ...legacyFiles];
+    }
+
+    let thinkingContent = "";
+    let finalContent = msg.content || "";
+
+    if (msg.role === "assistant" && msg.content) {
+      if (
+        msg.reasoning_content &&
+        msg.reasoning_content.trim() !== ""
+      ) {
+        thinkingContent = msg.reasoning_content;
+      }
+    }
+
+    const hasThinking =
+      !!thinkingContent && thinkingContent.trim() !== "";
+
+    return {
+      id: msg.message_id || `msg-${index}-${Date.now()}`,
+      role: msg.role,
+      content: finalContent,
+      timestamp: formatMessageTime(msg.create_time),
+      files: filesToDisplay,
+      thinking: thinkingContent,
+      isThinkingCollapsed: msg.role === "assistant" && hasThinking,
+      backendId: msg.message_id,
+      isStreaming: false,
+      totalVersions: 1,
+      currentVersion: 1,
+      isLiked: (msg as any).is_liked || false,
+      isDisliked: (msg as any).is_disliked || false,
+    };
+  }, [formatMessageTime, containsReferences]);
+
+  /**
    * 加载会话详情
    */
   const loadConversationDetail = useCallback(
@@ -191,7 +254,13 @@ export function useConversationData(params: UseConversationDataParams) {
       );
       const currentIsFromHistory = checkFromHistory();
 
+      // 如果已经加载过消息，且不是从历史记录进入，且当前已有消息，则跳过
       if (hasLoadedMessages && !currentIsFromHistory && messages.length > 0) {
+        return messages.length > 0;
+      }
+
+      // 如果正在发送初始消息，跳过历史消息加载，避免覆盖正在流式输出的消息
+      if (hasSentInitialMessageRef.current && !currentIsFromHistory) {
         return messages.length > 0;
       }
 
@@ -260,96 +329,29 @@ export function useConversationData(params: UseConversationDataParams) {
 
           if (messagesData.length === 0) {
             const currentIsFromHistory = checkFromHistory();
+
             if (currentIsFromHistory) {
               setMessages([]);
               toast.info("该会话没有历史消息");
             }
+
             return false;
           }
 
-          const formattedMessages: Message[] = messagesData.map(
-            (msg, index) => {
-              let filesToDisplay: any[] = [];
-
-              if (
-                msg.attachments &&
-                Array.isArray(msg.attachments) &&
-                msg.attachments.length > 0
-              ) {
-                filesToDisplay = msg.attachments.map((attachment) => ({
-                  file: {
-                    name: attachment.file_name || "未知文件",
-                    type: attachment.file_type || "",
-                    size: attachment.file_size || 0,
-                  },
-                }));
-              }
-
-              if ((msg as any).files && Array.isArray((msg as any).files)) {
-                const legacyFiles = (msg as any).files.map((fileData: any) => ({
-                  file: {
-                    name: fileData.name || fileData.fileName || "未知文件",
-                    type: fileData.type || fileData.fileType || "",
-                    size: fileData.size || fileData.fileSize || 0,
-                  },
-                }));
-                filesToDisplay = [...filesToDisplay, ...legacyFiles];
-              }
-
-              let thinkingContent = "";
-              let finalContent = msg.content || "";
-
-              if (msg.role === "assistant" && msg.content) {
-                if (
-                  msg.reasoning_content &&
-                  msg.reasoning_content.trim() !== ""
-                ) {
-                  thinkingContent = msg.reasoning_content;
-                }
-              }
-
-              let referenceCountValue = 0;
-
-              if ((msg as any).reference_count && (msg as any).reference_count > 0) {
-                referenceCountValue = (msg as any).reference_count;
-              } else if (msg.citations && Array.isArray(msg.citations)) {
-                referenceCountValue = msg.citations.length;
-              } else if (msg.content && containsReferences(msg.content)) {
-                referenceCountValue = 2;
-              } else {
-                referenceCountValue = 2;
-              }
-
-              const hasThinking =
-                !!thinkingContent && thinkingContent.trim() !== "";
-
-              return {
-                id: msg.message_id || `msg-${index}-${Date.now()}`,
-                role: msg.role,
-                content: finalContent,
-                timestamp: formatMessageTime(msg.create_time),
-                files: filesToDisplay,
-                thinking: thinkingContent,
-                isThinkingCollapsed: msg.role === "assistant" && hasThinking,
-                referenceCount: referenceCountValue,
-                backendId: msg.message_id,
-                isStreaming: false,
-                totalVersions: 1,
-                currentVersion: 1,
-                isLiked: (msg as any).is_liked || false,
-                isDisliked: (msg as any).is_disliked || false,
-              };
-            }
+          const formattedMessages: Message[] = messagesData.map((msg, index) =>
+            formatMessageData(msg, index)
           );
 
           setMessages(formattedMessages);
 
-          const lastAiMessage = formattedMessages
-            .slice()
-            .reverse()
-            .find((msg) => msg.role === "assistant");
-          if (lastAiMessage?.backendId) {
-            setLatestAiMessageId(lastAiMessage.backendId);
+          if (formattedMessages.length > 0) {
+            const lastAiMessage = formattedMessages
+              .slice()
+              .reverse()
+              .find((msg) => msg.role === "assistant");
+            if (lastAiMessage?.backendId) {
+              setLatestAiMessageId(lastAiMessage.backendId);
+            }
           }
 
           if (scrollToBottom) {
@@ -487,10 +489,10 @@ export function useConversationData(params: UseConversationDataParams) {
       onLoadBatchMessageVersions,
       scrollToBottom,
       clearUserInfo,
-      formatMessageTime,
-      containsReferences,
+      formatMessageData,
       extractPapersFromHistoryMessages,
       isLoadingHistoryRef,
+      hasSentInitialMessageRef,
     ]
   );
 

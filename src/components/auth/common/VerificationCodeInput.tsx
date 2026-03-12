@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface VerificationCodeInputProps {
   value: string;
@@ -17,9 +17,19 @@ export function VerificationCodeInput({
   error,
   autoSubmit = false,
 }: VerificationCodeInputProps) {
+  const hasCompleted = useRef(false);
+
   // 自动提交逻辑
   useEffect(() => {
-    if (autoSubmit && value.length === 6 && /^\d{6}$/.test(value) && onComplete) {
+    // 重置完成状态，当验证码长度小于6时允许再次触发
+    if (value.length < 6) {
+      hasCompleted.current = false;
+      return;
+    }
+
+    // 只有验证码长度为6且之前未触发过时才调用onComplete
+    if (autoSubmit && value.length === 6 && /^\d{6}$/.test(value) && onComplete && !hasCompleted.current) {
+      hasCompleted.current = true;
       onComplete(value);
     }
   }, [value, autoSubmit, onComplete]);

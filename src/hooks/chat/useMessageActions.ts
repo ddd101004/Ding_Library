@@ -100,6 +100,7 @@ export function useMessageActions(params: UseMessageActionsParams) {
 
   /**
    * 复制消息内容
+   * 注意：CopyButton 组件已内置 toast 提示，此处不需要重复显示
    */
   const copyMessageContent = useCallback(
     async (messageId: string) => {
@@ -114,7 +115,6 @@ export function useMessageActions(params: UseMessageActionsParams) {
 
       try {
         await navigator.clipboard.writeText(message.content);
-        toast.success("已复制到剪贴板");
       } catch (err) {
         console.error("复制失败:", err);
         toast.error("复制失败，请重试");

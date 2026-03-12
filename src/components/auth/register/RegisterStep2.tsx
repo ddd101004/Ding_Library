@@ -24,6 +24,7 @@ export function RegisterStep2({
   const [verificationCode, setVerificationCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const isSubmitting = useRef(false);
 
   const { countdown, isRunning, start: startCountdown } = useCountdown(60);
   const { register, sendVerificationCode } = useAuth();
@@ -55,20 +56,21 @@ export function RegisterStep2({
   };
 
   /**
-   * 完成注册
+   * 提交注册的核心逻辑
    */
-  const handleSubmit = async (e?: React.FormEvent | string) => {
-    // 如果传入的是字符串（自动提交），则阻止默认行为
-    if (typeof e === 'string') {
-      // 已经是6位验证码，直接提交
-    } else {
-      e?.preventDefault();
+  const submitRegistration = async () => {
+    // 防止重复提交
+    if (isSubmitting.current) {
+      return;
     }
+
+    isSubmitting.current = true;
 
     setError("");
 
     if (verificationCode.length !== 6) {
       toast.error("请输入完整的6位验证码");
+      isSubmitting.current = false;
       return;
     }
 
@@ -94,7 +96,24 @@ export function RegisterStep2({
       // 错误已自动 toast，这里只需静默处理
     } finally {
       setLoading(false);
+      isSubmitting.current = false;
     }
+  };
+
+  /**
+   * 验证码自动完成时的提交
+   */
+  const handleAutoSubmit = () => {
+    submitRegistration();
+  };
+
+  /**
+   * 表单提交时的处理
+   */
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    submitRegistration();
   };
 
   /**
@@ -127,7 +146,7 @@ export function RegisterStep2({
             onChange={setVerificationCode}
             disabled={loading}
             autoSubmit={true}
-            onComplete={handleSubmit}
+            onComplete={handleAutoSubmit}
           />
         </div>
 
