@@ -20,18 +20,6 @@ export const ACADEMIC_SEARCH_CONFIG = {
       method: 'POST' as const,
       params: { source: 'wanfang_en', sort_type: '外文发现', page_size: 10 },
       pageSize: 10
-    },
-    '全球专利': {
-      api: '/api/search/patents',
-      method: 'POST' as const,
-      params: { page_size: 10 },
-      pageSize: 10
-    },
-    '学者': {
-      api: '/api/search/scholars',
-      method: 'POST' as const,
-      params: { size: 10 },
-      pageSize: 10
     }
   },
 
@@ -87,10 +75,10 @@ export const ACADEMIC_SEARCH_CONFIG = {
 };
 
 // 搜索标签列表
-export const SEARCH_TABS = ["综合", "中文发现", "外文发现", "全球专利", "学者"];
+export const SEARCH_TABS = ["综合", "中文发现", "外文发现"];
 
 // 居中显示的标签列表
-export const CENTER_TABS = ["中文发现", "外文发现", "全球专利"];
+export const CENTER_TABS = ["中文发现", "外文发现"];
 
 // 学者姓名检测正则
 export const SCHOLAR_NAME_PATTERNS = {

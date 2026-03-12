@@ -8,18 +8,13 @@ import {
   ComprehensiveSearchTab,
   ChineseDiscoveryTab,
   ForeignDiscoveryTab,
-  GlobalPatentsTab,
-  ScholarsTab,
   SearchResult,
-  ScholarResult,
-  PatentResult,
   ComprehensiveSearchResponse,
 } from "./tabs";
 import {
   ACADEMIC_SEARCH_CONFIG,
   SEARCH_TABS,
-  CENTER_TABS,
-  SCHOLAR_NAME_PATTERNS
+  CENTER_TABS
 } from "../../config/academicSearchConfig";
 
 export default function AcademicSearchPage() {
@@ -110,38 +105,6 @@ export default function AcademicSearchPage() {
 
   // 标签列表
   const tabs = SEARCH_TABS;
-
-  // 检测是否可能是学者姓名
-  const isScholarName = (keyword: string): boolean => {
-    const trimmedKeyword = keyword.trim();
-
-    // 如果关键词包含空格，可能是"姓 名"格式
-    if (trimmedKeyword.includes(" ")) {
-      const parts = trimmedKeyword.split(" ").filter((part) => part.length > 0);
-      if (parts.length >= 2 && parts.length <= 4) {
-        // 检查每个部分是否以大写字母开头（常见英文姓名格式）
-        const isNameFormat = parts.every((part) => /^[A-Z][a-z]+/.test(part));
-        if (isNameFormat) return true;
-      }
-    }
-
-    // 中文姓名检测（通常2-4个中文字符）
-    if (/^[\u4e00-\u9fa5]{2,4}$/.test(trimmedKeyword)) {
-      return true;
-    }
-
-    // 英文姓名检测（常见格式）
-    if (/^[A-Z][a-z]+ [A-Z][a-z]+$/.test(trimmedKeyword)) {
-      return true;
-    }
-
-    // 带连字符的姓名
-    if (/^[A-Z][a-z]+-[A-Z][a-z]+$/.test(trimmedKeyword)) {
-      return true;
-    }
-
-    return false;
-  };
 
   // 清空标签函数
   const clearRelatedTags = () => {
@@ -308,111 +271,6 @@ export default function AcademicSearchPage() {
           };
           break;
 
-        case "全球专利":
-          // 专利搜索
-          const patentsApiResponse = await apiPost<any>("/api/search/patents", {
-            keyword: keyword.trim(),
-            page_size: 10,
-          }, abortController.signal);
-          const patentsData = patentsApiResponse.data;
-          // 转换为综合搜索响应格式
-          response = {
-            keyword: keyword.trim(),
-            tags: [],
-            papers_zh: {
-              total: 0,
-              page: 1,
-              page_size: 5,
-              total_pages: 0,
-              items: [],
-              source: "wanfang",
-            },
-            papers_en: {
-              total: 0,
-              page: 1,
-              page_size: 5,
-              total_pages: 0,
-              items: [],
-              source: "wanfang_en",
-            },
-            scholars: {
-              total: 0,
-              page: 1,
-              page_size: 5,
-              total_pages: 0,
-              items: [],
-              source: "aminer",
-            },
-            patents: {
-              total: patentsData.total || 0,
-              page: patentsData.page || 1,
-              page_size: patentsData.size || 10,
-              total_pages: patentsData.totalPages || 1,
-              items: patentsData.items || [],
-              source: "aminer",
-            },
-          };
-          break;
-
-        case "学者":
-          // 学者搜索
-          // 动态计算初始加载的学者数量，确保能填满屏幕
-          const initialLoadSize = 10; // 固定50个学者
-
-          const scholarsApiResponse = await apiPost<any>(
-            "/api/search/scholars",
-            {
-              name: keyword.trim(),
-              size: initialLoadSize,
-            },
-            abortController.signal
-          );
-          const scholarsData = scholarsApiResponse.data;
-
-          // 修复：确保正确获取 total
-          const scholarTotal = scholarsData.total > 0 ? scholarsData.total :
-                              (scholarsData.items && scholarsData.items.length > 0 ?
-                               scholarsData.items.length : 0);
-
-          // 转换为综合搜索响应格式
-          response = {
-            keyword: keyword.trim(),
-            tags: [],
-            papers_zh: {
-              total: 0,
-              page: 1,
-              page_size: 5,
-              total_pages: 0,
-              items: [],
-              source: "wanfang",
-            },
-            papers_en: {
-              total: 0,
-              page: 1,
-              page_size: 5,
-              total_pages: 0,
-              items: [],
-              source: "wanfang_en",
-            },
-            scholars: {
-              total: scholarTotal, // 使用修复后的总数
-              page: scholarsData.page || 1,
-              page_size: scholarsData.size || 10,
-              total_pages: scholarsData.totalPages || 1,
-              items: scholarsData.items || [],
-              source: "aminer",
-            },
-            patents: {
-              total: 0,
-              page: 1,
-              page_size: 5,
-              total_pages: 0,
-              items: [],
-              source: "aminer",
-            },
-          };
-          break;
-
         default:
           response = null;
       }
@@ -550,24 +408,6 @@ export default function AcademicSearchPage() {
     });
   };
 
-  // 处理学者点击
-  const handleScholarClick = (scholar: ScholarResult) => {
-    // 跳转到学者详情页
-    router.push(`/scholar/${scholar.id}`);
-  };
-
-  // 处理专利点击
-  const handlePatentClick = (patent: PatentResult) => {
-    // 跳转到专利详情页，带上当前标签和搜索关键词
-    router.push({
-      pathname: `/patent/${patent.id}`,
-      query: {
-        tab: currentTab,
-        q: searchKeyword
-      }
-    });
-  };
-
   // 处理标签切换
   const handleTabChange = (tab: string) => {
     setCurrentTab(tab);
@@ -592,30 +432,6 @@ export default function AcademicSearchPage() {
       query: {
         q: searchKeyword,
         tab: "外文发现",
-      },
-    });
-  };
-
-  // 处理学者查看更多点击
-  const handleViewMoreScholars = () => {
-    // 跳转到学者页面
-    router.push({
-      pathname: "/academic-search",
-      query: {
-        q: searchKeyword,
-        tab: "学者",
-      },
-    });
-  };
-
-  // 处理专利查看更多点击
-  const handleViewMorePatents = () => {
-    // 跳转到全球专利页面
-    router.push({
-      pathname: "/academic-search",
-      query: {
-        q: searchKeyword,
-        tab: "全球专利",
       },
     });
   };
@@ -688,49 +504,14 @@ export default function AcademicSearchPage() {
     }
   };
 
-  // 处理加载更多专利
-  const handleLoadMorePatents = async (page: number) => {
-    if (!searchKeyword.trim()) return;
-
-    try {
-      const response = await apiPost<any>("/api/search/patents", {
-        keyword: searchKeyword.trim(),
-        page: page,
-        size: 10,
-      });
-
-      const newPatents = response.data.items || [];
-
-      // 更新搜索结果中的专利数据，追加新专利而不是替换
-      setSearchResults(prev => {
-        if (!prev) return prev;
-        const updatedItems = [...prev.patents.items, ...newPatents];
-        return {
-          ...prev,
-          patents: {
-            ...prev.patents,
-            items: updatedItems,
-            // 更新当前页，总数保持不变
-            page: response.data.page || page,
-          }
-        };
-      });
-    } catch (error: any) {
-      console.error("加载更多专利失败:", error);
-    }
-  };
-
   // 五种背景颜色
   const tagColors = ACADEMIC_SEARCH_CONFIG.TAG_COLORS;
 
   // 检查是否是需要居中显示的标签页
   const isCenterTab = CENTER_TABS.includes(currentTab);
 
-  // 检查是否是学者标签页（需要特殊宽度）
-  const isScholarTab = currentTab === "学者";
-
-  // 检查是否是固定宽度布局的标签页（中文发现、外文发现、全球专利、学者）
-  const isFixedWidthTab = currentTab === "中文发现" || currentTab === "外文发现" || currentTab === "全球专利" || currentTab === "学者";
+  // 检查是否是固定宽度布局的标签页（中文发现、外文发现）
+  const isFixedWidthTab = currentTab === "中文发现" || currentTab === "外文发现";
 
   return (
     <>
@@ -749,7 +530,7 @@ export default function AcademicSearchPage() {
       >
         {/* 搜索框区域 - 根据标签页类型使用不同布局 */}
         {isFixedWidthTab ? (
-          // 固定宽度布局（中文发现、外文发现、全球专利）：居中显示，固定宽度1199px
+          // 固定宽度布局（中文发现、外文发现）：居中显示，固定宽度1199px
           <div className="mx-auto w-[1199px]">
             <div
               ref={headerRef}
@@ -807,7 +588,7 @@ export default function AcademicSearchPage() {
             )}
           </div>
         ) : (
-          // 固定宽度布局（综合、学者）：搜索框固定宽度1810px，左对齐，不居中
+          // 固定宽度布局（综合）：搜索框固定宽度1810px，左对齐，不居中
           <div className="flex gap-3 sm:gap-4 md:gap-6 lg:gap-8 min-w-0">
             {/* 搜索框区域 - 固定宽度1810px */}
             <div className="w-[1810px] min-w-0">
@@ -875,7 +656,7 @@ export default function AcademicSearchPage() {
 
         {/* 搜索结果和标签区域 - 根据标签页类型使用不同布局 */}
         {isFixedWidthTab ? (
-          // 固定宽度布局（中文发现、外文发现、全球专利、学者）：居中显示，固定宽度1199px
+          // 固定宽度布局（中文发现、外文发现）：居中显示，固定宽度1199px
           <div className="mx-auto w-[1199px]">
             {/* 中文发现 */}
             {currentTab === "中文发现" && (
@@ -896,25 +677,6 @@ export default function AcademicSearchPage() {
                 onLoadMore={handleLoadMoreForeignPapers}
               />
             )}
-
-            {/* 全球专利 */}
-            {currentTab === "全球专利" && (
-              <GlobalPatentsTab
-                searchResults={searchResults?.patents || null}
-                loading={loading}
-                onPatentClick={handlePatentClick}
-                onLoadMore={handleLoadMorePatents}
-              />
-            )}
-
-            {/* 学者搜索 */}
-            {currentTab === "学者" && (
-              <ScholarsTab
-                searchResults={searchResults?.scholars || null}
-                loading={loading}
-                onScholarClick={handleScholarClick}
-              />
-            )}
           </div>
         ) : (
           // 固定宽度布局（综合）：搜索框和内容固定宽度1810px，左对齐，不居中
@@ -928,11 +690,7 @@ export default function AcademicSearchPage() {
                   loading={loading}
                   searchKeyword={searchKeyword}
                   onViewMorePapers={handleViewMorePapers}
-                  onViewMoreScholars={handleViewMoreScholars}
-                  onViewMorePatents={handleViewMorePatents}
                   onPaperClick={handlePaperClick}
-                  onScholarClick={handleScholarClick}
-                  onPatentClick={handlePatentClick}
                 />
               )}
             </div>
