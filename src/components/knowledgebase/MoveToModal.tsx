@@ -240,7 +240,7 @@ export default function MoveToModal({
                     {/* 选中状态显示蓝色圆点 */}
                     {selectedFolder === folder.folder_id && (
                       <div
-                        className="w-[8px] h-[8px] bg-[#3B80FF] rounded-[50%]"
+                        className="w-[8px] h-[8px] bg-[#0D9488] rounded-[50%]"
                       />
                     )}
                   </div>
@@ -282,7 +282,7 @@ export default function MoveToModal({
           <button
             onClick={handleConfirmMove}
             disabled={isMoving}
-            className="w-[128px] h-[40px] rounded-[20px] border-0 text-[16px] text-[#FFFFFF] disabled:cursor-not-allowed disabled:opacity-60 transition-all duration-200 ease bg-[#3B80FF] disabled:bg-[#999999] hover:bg-[#2E6EFF]"
+            className="w-[128px] h-[40px] rounded-[20px] border-0 text-[16px] text-[#FFFFFF] disabled:cursor-not-allowed disabled:opacity-60 transition-all duration-200 ease bg-[#0D9488] disabled:bg-[#999999] hover:bg-[#0F766E]"
           >
             {isMoving ? "移动中..." : "确认"}
           </button>

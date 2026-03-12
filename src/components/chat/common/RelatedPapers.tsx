@@ -140,17 +140,8 @@ export default function RelatedPapers({
                     data-paper-index={paper.index}
                     className="paper-card paper-card-bg mb-2.5 w-full max-w-[530px]"
                   >
-                    {/* 右上角图片 */}
-                    <div className="absolute right-[3%] top-[-2%] w-[113px] h-[123px] z-1">
-                      <img
-                        src="/paper/paper-paper@2x.png"
-                        alt="paper"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-
                     {/* 论文内容 */}
-                    <div className="px-4 sm:px-6" style={{ paddingTop: '40px' }}>
+                    <div className="px-4 sm:px-6" style={{ paddingTop: '16px' }}>
                       <div className="flex items-start">
                         {/* 蓝色圆点 */}
                         <div className="blue-dot mt-2 ml-2.5 mr-2.5" />
@@ -161,7 +152,7 @@ export default function RelatedPapers({
                         </span>
 
                         <div className="flex-1 min-w-0">
-                          <h4 className="mb-4 truncate font-semibold text-[clamp(14px,2.5vw,18px)] text-text-primary leading-[1.4] max-w-[calc(100%-110px)]">
+                          <h4 className="mb-4 truncate font-semibold text-[clamp(14px,2.5vw,18px)] text-text-primary leading-[1.4]">
                             {paper.title}
                           </h4>
 

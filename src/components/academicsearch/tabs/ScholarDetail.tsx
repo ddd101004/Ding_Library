@@ -421,7 +421,7 @@ export default function ScholarDetail({ scholar, onBack, isSidebarOpen, isSmallS
             {/* 加载状态 - 首次加载 */}
             {(papersData.loading || patentsData.loading) && (
               <div className="flex items-center justify-center py-8">
-                <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
                 <span className="ml-2 text-gray-500">加载中...</span>
               </div>
             )}
@@ -451,7 +451,7 @@ export default function ScholarDetail({ scholar, onBack, isSidebarOpen, isSmallS
                       {papersData.loadingMore && (
                         <div className="flex items-center justify-center py-4">
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                            <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
                             <div className="text-gray-500">加载更多论文中...</div>
                           </div>
                         </div>
@@ -527,7 +527,7 @@ export default function ScholarDetail({ scholar, onBack, isSidebarOpen, isSmallS
                       {patentsData.loadingMore && (
                         <div className="flex items-center justify-center py-4">
                           <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                            <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
                             <div className="text-gray-500">加载更多专利中...</div>
                           </div>
                         </div>

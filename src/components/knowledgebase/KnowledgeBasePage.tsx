@@ -400,7 +400,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                       <span
                         className={`${
                           selectedFolder?.folder_id === folder.folder_id
-                            ? "text-[#3B80FF] font-medium"
+                            ? "text-[#0D9488] font-medium"
                             : "text-gray-700"
                         } text-[12px] sm:text-[14px] xs:text-[16px] leading-[32px] sm:leading-[40px] whitespace-nowrap overflow-hidden text-ellipsis`}
                         style={{ maxWidth: "60px" }}

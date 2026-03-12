@@ -199,7 +199,7 @@ export default function ForeignDiscoveryTab({
                     return title;
                   })()}
                 </h4>
-                <h5 className="font-normal text-[18px] text-[#3B80FF] leading-tight mt-1 flex items-center">
+                <h5 className="font-normal text-[18px] text-[#0D9488] leading-tight mt-1 flex items-center">
                   {(() => {
                     const title = paper.title_zh || paper.title;
                     if (title && title.includes('/')) {
@@ -242,7 +242,7 @@ export default function ForeignDiscoveryTab({
             className="flex justify-center items-center py-2 min-h-[40px]"
           >
             {isLoadingMore && (
-              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
             )}
           </div>
         )}

@@ -198,7 +198,7 @@ export default function ChineseDiscoveryTab({
             className="flex justify-center items-center py-2 min-h-[40px]"
           >
             {isLoadingMore && (
-              <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+              <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"></div>
             )}
           </div>
         )}

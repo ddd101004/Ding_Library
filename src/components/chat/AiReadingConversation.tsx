@@ -1061,7 +1061,7 @@ export default function AiReadingConversation({
                 {isPdfLoading ? (
                   <div className="flex items-center justify-center min-h-[calc(100vh-200px)] bg-gray-50 rounded-lg">
                     <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
                       <p className="text-gray-500">正在加载PDF文件...</p>
                     </div>
                   </div>
@@ -1092,7 +1092,7 @@ export default function AiReadingConversation({
                 ) : allUploadedFiles.length > 0 ? (
                   <div className="flex items-center justify-center min-h-[calc(100vh-200px)] bg-gray-50 rounded-lg">
                     <div className="text-center">
-                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-4"></div>
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-teal-500 mx-auto mb-4"></div>
                       <p className="text-gray-500">正在获取文件信息...</p>
                     </div>
                   </div>

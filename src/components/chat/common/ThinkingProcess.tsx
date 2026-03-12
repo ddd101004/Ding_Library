@@ -220,7 +220,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
             >
               {thinking}
               {isStreaming && (
-                <span className="inline-block w-2 h-4 ml-1 bg-[#679CFF] animate-bounce"></span> // 调整为主题蓝色
+                <span className="inline-block w-2 h-4 ml-1 bg-[#0D9488] animate-bounce"></span> // 调整为主题绿色
               )}
             </div>
           </div>

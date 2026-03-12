@@ -390,7 +390,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                         href={paper.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center text-[#3B80FF] no-underline hover:underline"
+                        className="flex items-center text-[#0D9488] no-underline hover:underline"
                       >
                         <img
                           src="/paper/paper-shinyoffitialwebsite@2x.png"
@@ -451,7 +451,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                     onClick={() => setTranslateMode("zh")}
                   >
                     <span className={`font-medium text-base select-none ${
-                      translateMode === "zh" ? "text-[#3B80FF]" : "text-[#999999]"
+                      translateMode === "zh" ? "text-[#0D9488]" : "text-[#999999]"
                     }`}>
                       中文
                     </span>
@@ -467,7 +467,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                     onClick={() => setTranslateMode("en")}
                   >
                     <span className={`font-medium text-base select-none ${
-                      translateMode === "en" ? "text-[#3B80FF]" : "text-[#999999]"
+                      translateMode === "en" ? "text-[#0D9488]" : "text-[#999999]"
                     }`}>
                       英文
                     </span>

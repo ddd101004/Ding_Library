@@ -194,11 +194,11 @@ export default function AvatarHoverMenu({
                 {/* 用户信息 */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-center">
-                    <span className="text-[#718096] w-20">昵称:</span>
+                    <span className="text-[#718096] w-14">昵称:</span>
                     <span className="text-[#2d3748] font-medium">{userInfoData.nickname || "-"}</span>
                   </div>
                   <div className="flex items-center justify-center">
-                    <span className="text-[#718096] w-20">手机:</span>
+                    <span className="text-[#718096] w-14">手机:</span>
                     <span className="text-[#2d3748] font-medium">{userInfoData.phone_number || "-"}</span>
                   </div>
                 </div>

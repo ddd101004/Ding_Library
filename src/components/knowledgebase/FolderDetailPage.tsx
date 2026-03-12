@@ -485,9 +485,9 @@ export default function FolderDetailPage({
                 className={cn(
                   "w-5 h-5 bg-white rounded border relative transition-colors",
                   selectedItems.size === folderContents.length && folderContents.length > 0
-                    ? "border-[#3B80FF] bg-[#3B80FF]"
+                    ? "border-[#0D9488] bg-[#0D9488]"
                     : "border-[#666666] bg-white",
-                  isDeleting || isMoving || isImporting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-[#3B80FF]'
+                  isDeleting || isMoving || isImporting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-[#0D9488]'
                 )}
               >
                 {selectedItems.size === folderContents.length && folderContents.length > 0 && (
@@ -540,7 +540,7 @@ export default function FolderDetailPage({
         {isLoading ? (
           <div className="text-center py-8 sm:py-10 md:py-12 text-gray-500">
             <div className="flex items-center justify-center">
-              <div className="w-4 h-4 sm:w-5 h-5 border-3 sm:border-4 border-blue-500 border-t-transparent rounded-full animate-spin mr-2 sm:mr-3"></div>
+              <div className="w-4 h-4 sm:w-5 h-5 border-3 sm:border-4 border-teal-500 border-t-transparent rounded-full animate-spin mr-2 sm:mr-3"></div>
               <span className="text-[12px] sm:text-[14px] md:text-[16px]">加载中...</span>
             </div>
           </div>
@@ -561,9 +561,9 @@ export default function FolderDetailPage({
                       className={cn(
                         "w-5 h-5 bg-white rounded border relative transition-colors",
                         selectedItems.has(item.item_id)
-                          ? "border-[#3B80FF] bg-[#3B80FF]"
+                          ? "border-[#0D9488] bg-[#0D9488]"
                           : "border-[#666666] bg-white",
-                        isDeleting || isMoving || isImporting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-[#3B80FF]'
+                        isDeleting || isMoving || isImporting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-[#0D9488]'
                       )}
                     >
                       {selectedItems.has(item.item_id) && (
@@ -623,7 +623,7 @@ export default function FolderDetailPage({
                 {/* 左侧：复选框、选择计数和操作按钮 */}
                 <div className="flex items-center">
                   {/* 选中的复选框（不可点击） */}
-                  <div className="w-5 h-5 bg-[#3B80FF] rounded border border-[#3B80FF] relative flex-shrink-0">
+                  <div className="w-5 h-5 bg-[#0D9488] rounded border border-[#0D9488] relative flex-shrink-0">
                     <div
                       className="absolute left-[5px] w-[8px] h-[14px] border-2 border-white border-t-0 border-l-0 transform rotate-45"
                     />
@@ -637,7 +637,7 @@ export default function FolderDetailPage({
                   <button
                     onClick={() => setShowMoveToModal(true)}
                     disabled={isDeleting || isMoving}
-                    className="bg-[#3B80FF] text-white rounded-full text-base border-none cursor-pointer hover:bg-[#2E6EFF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-[128px] h-[40px]"
+                    className="bg-[#0D9488] text-white rounded-full text-base border-none cursor-pointer hover:bg-[#0F766E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed w-[128px] h-[40px]"
                   >
                     移动到
                   </button>

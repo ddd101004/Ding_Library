@@ -49,7 +49,7 @@ export default function PaperCard({
             <h4 className="text-lg font-semibold text-[18px] font-[600] leading-[1.4] max-h-[50px] overflow-hidden text-ellipsis line-clamp-2">
               {englishTitle}
             </h4>
-            <h5 className="font-normal text-[16px] text-[#3B80FF] leading-[1.4] max-h-[50px] overflow-hidden text-ellipsis line-clamp-2 mt-1 flex items-center">
+            <h5 className="font-normal text-[16px] text-[#0D9488] leading-[1.4] max-h-[50px] overflow-hidden text-ellipsis line-clamp-2 mt-1 flex items-center">
               <img
                 src="/paper/paper-changelanguage.png"
                 alt="中文标题"

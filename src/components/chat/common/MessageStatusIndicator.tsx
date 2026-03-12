@@ -23,7 +23,7 @@ const MessageStatusIndicator: React.FC<MessageStatusIndicatorProps> = ({
         {onStopStreaming && (
           <button
             onClick={onStopStreaming}
-            className="text-blue-500 hover:underline"
+            className="text-teal-500 hover:underline"
           >
             重试
           </button>

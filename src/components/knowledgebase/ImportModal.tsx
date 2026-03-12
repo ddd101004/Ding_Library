@@ -449,7 +449,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
         <div
           className="absolute top-[-35px] right-[280px] flex items-center z-[62] whitespace-nowrap"
         >
-          <div className="w-5 h-5 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mr-3"></div>
+          <div className="w-5 h-5 border-4 border-teal-500 border-t-transparent rounded-full animate-spin mr-3"></div>
           <p className="text-sm text-gray-700 font-medium">正在导入...</p>
         </div>
       )}
@@ -553,7 +553,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
                         {/* 复选框 */}
                         <div className={cn(
                           "w-[14px] h-[14px] rounded-[2px] border mr-[12px] flex-shrink-0 flex items-center justify-center",
-                          isSelected ? "bg-[#3B80FF] border-[#3B80FF]" : "bg-[#FFFFFF] border-[#666666]",
+                          isSelected ? "bg-[#0D9488] border-[#0D9488]" : "bg-[#FFFFFF] border-[#666666]",
                           isExisting ? "cursor-not-allowed" : "cursor-pointer"
                         )}>
                           {/* 选中状态显示白色勾号 */}
@@ -567,7 +567,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
                         {/* 会话标题 */}
                         <div className={cn(
                           "text-[14px] flex-1 overflow-hidden text-ellipsis whitespace-nowrap",
-                          isExisting ? "text-[#999999]" : (isSelected ? "text-[#3B80FF]" : "text-[#666666]")
+                          isExisting ? "text-[#999999]" : (isSelected ? "text-[#0D9488]" : "text-[#666666]")
                         )}>
                           {conversation.title || `对话 ${index + 1}`}
                           {isExisting && (
@@ -714,7 +714,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
                   setIsProcessing(false);
                 }
               }}
-              className="w-[128px] h-[40px] bg-[#3B80FF] rounded-[20px] border-0 text-[16px] text-[#FFFFFF] transition-all duration-200 ease hover:bg-[#2E6EFF]"
+              className="w-[128px] h-[40px] bg-[#0D9488] rounded-[20px] border-0 text-[16px] text-[#FFFFFF] transition-all duration-200 ease hover:bg-[#0F766E]"
             >
               确认
             </button>

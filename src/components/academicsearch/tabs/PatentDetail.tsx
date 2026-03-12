@@ -46,10 +46,10 @@ export default function PatentDetail({ patent, onBack }: PatentDetailProps) {
   // 专利标签组件
   const PatentTag = () => (
     <div className="relative w-[36px] sm:w-[40px] md:w-[42px] h-[18px] sm:h-[20px] flex-shrink-0">
-      {/* 蓝色底色背景 */}
-      <div className="absolute top-0 left-0 w-full h-full bg-[#3B80FF] rounded-[3px] sm:rounded-[4px] opacity-20" />
+      {/* 绿色底色背景 */}
+      <div className="absolute top-0 left-0 w-full h-full bg-[#0D9488] rounded-[3px] sm:rounded-[4px] opacity-20" />
       {/* 专利文字 */}
-      <span className="absolute top-0 left-0 w-full h-full inline-flex items-center justify-center font-medium text-xs sm:text-sm text-[#3B80FF]">
+      <span className="absolute top-0 left-0 w-full h-full inline-flex items-center justify-center font-medium text-xs sm:text-sm text-[#0D9488]">
         专利
       </span>
     </div>
