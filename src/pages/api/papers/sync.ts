@@ -2,7 +2,7 @@
  * 手动触发同步任务API
  *
  * 功能：
- * - POST - 手动触发论文同步或PDF下载任务
+ * - POST - 手动触发论文同步
  * - GET - 获取最近的同步日志
  */
 
@@ -15,7 +15,6 @@ import {
 } from "@/helper/responseHelper";
 import {
   triggerSyncManually,
-  triggerDownloadManually,
 } from "@/scripts/scheduleTasks";
 import { getSyncLogsByType } from "@/db/ebscoSyncLog";
 import { parsePageNumber, parseLimitParam } from "@/utils/parsePageParams";
@@ -30,7 +29,7 @@ const handlePost = async (
 ) => {
   const { type } = req.query;
 
-  const validTypes = ["wanfang_papers", "wanfang_en_papers", "pdfs"];
+  const validTypes = ["wanfang_papers", "wanfang_en_papers"];
   if (validTypes.indexOf(type as string) === -1) {
     throw new Error(`无效的同步类型，只支持 ${validTypes.join("、")}`);
   }
@@ -40,9 +39,6 @@ const handlePost = async (
   if (type === "wanfang_papers") {
     result = await triggerSyncManually("zh");
   } else if (type === "wanfang_en_papers") {
-    result = await triggerSyncManually("en");
-  } else if (type === "pdfs") {
-    result = await triggerDownloadManually();
   }
 
   sendSuccessResponse(res, "同步任务已触发", result);
@@ -61,7 +57,7 @@ const handleGet = async (
   const limitNum = parseLimitParam(limit, 10);
   const pageNum = parsePageNumber(page);
 
-  const validTypes = ["wanfang_papers", "wanfang_en_papers", "pdfs"];
+  const validTypes = ["wanfang_papers", "wanfang_en_papers"];
   const syncType = type && validTypes.indexOf(type as string) !== -1 ? (type as string) : undefined;
 
   const { logs, total } = await getSyncLogsByType({

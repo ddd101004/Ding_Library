@@ -30,9 +30,10 @@ model User {
   disabled_time      DateTime?
   deleted_status     Int?      @default(0)
   deleted_time       DateTime?
-  code_send_time     DateTime?
-  code_attempt_count Int?      @default(0)
-  code_locked_until  DateTime?
+  code_send_time          DateTime?
+  code_send_count_minute   Int?      @default(0)  // 当前分钟内的发送次数
+  code_attempt_count       Int?      @default(0)
+  code_locked_until        DateTime?
   create_time        DateTime? @default(now())
   update_time        DateTime  @updatedAt
   operate_time       DateTime?

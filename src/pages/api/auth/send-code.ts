@@ -1,5 +1,9 @@
 // pages/api/auth/send-code.ts
-import { ACCOUNT_NAME, VERIFICATION_CODE_INTERVAL } from "@/constants";
+import {
+  ACCOUNT_NAME,
+  VERIFICATION_CODE_INTERVAL,
+  VERIFICATION_CODE_MAX_COUNT_PER_MINUTE,
+} from "@/constants";
 import {
   generateVerificationCode,
   upsertVerificationCode,
@@ -59,41 +63,24 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  // 检查发送间隔（只对已存在的用户检查）
+  // 检查发送频率（1分钟内最多发送5次）
   const now = new Date();
   if (existingUser) {
-    const createTime = existingUser.create_time;
-    const isNewUser =
-      createTime && Math.abs(now.getTime() - createTime.getTime()) < 60000;
-    const isUnverifiedUser = !existingUser.phone_verified;
     const codeSendTime = existingUser.code_send_time;
+    const currentCount = existingUser.code_send_count_minute || 0;
 
     // 计算时间差（毫秒）
-    const baseTimeDiff = codeSendTime
+    const timeDiff = codeSendTime
       ? now.getTime() - codeSendTime.getTime()
       : Infinity;
 
-    // 如果时间差为负数（时间异常），允许发送
-    if (baseTimeDiff < 0) {
-      logger.warn(
-        `时间异常：code_send_time 晚于当前时间，手机号: ${phone_number}`
-      );
-      // 允许发送，跳过间隔检查
-    } else {
-      // 对于未验证用户或新用户，如果距离上次发送不到60秒，不限制
-      const timeDiff =
-        (isUnverifiedUser || isNewUser) && baseTimeDiff < 60000
-          ? Infinity
-          : baseTimeDiff;
-
-      // 检查是否超过发送间隔
-      if (timeDiff < VERIFICATION_CODE_INTERVAL * 1000) {
-        const remainingSeconds = Math.ceil(
-          (VERIFICATION_CODE_INTERVAL * 1000 - timeDiff) / 1000
-        );
+    // 如果在1分钟内
+    if (timeDiff < VERIFICATION_CODE_INTERVAL * 1000 && timeDiff >= 0) {
+      // 检查是否达到最大发送次数
+      if (currentCount >= VERIFICATION_CODE_MAX_COUNT_PER_MINUTE) {
         sendWarnningResponse(
           res,
-          `操作过于频繁，请${remainingSeconds}秒后再试`
+          `1分钟内最多只能发送${VERIFICATION_CODE_MAX_COUNT_PER_MINUTE}次验证码`
         );
         return;
       }

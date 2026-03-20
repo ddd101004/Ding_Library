@@ -299,12 +299,27 @@ export const upsertVerificationCode = async (
 ) => {
   try {
     const hashedCode = await hashVerificationCode(verification_code);
-    
+    const now = new Date();
+
+    // 获取现有用户以确定发送次数
+    const existingUser = await getUserByPhoneNumber(phone_number);
+
+    // 计算新的发送次数
+    let newSendCount = 1; // 默认为1（新用户或超过1分钟）
+    if (existingUser && existingUser.code_send_time) {
+      const timeDiff = now.getTime() - existingUser.code_send_time.getTime();
+      // 如果在1分钟内，次数+1；否则重置为1
+      if (timeDiff < 60000 && timeDiff >= 0) {
+        newSendCount = (existingUser.code_send_count_minute || 0) + 1;
+      }
+    }
+
     const user = await prisma.user.upsert({
       where: { phone_number },
       update: {
         verification_code: hashedCode,
-        code_send_time: new Date(),
+        code_send_time: now,
+        code_send_count_minute: newSendCount,
         code_attempt_count: 0,
         code_locked_until: null,
       },
@@ -313,9 +328,10 @@ export const upsertVerificationCode = async (
         username: `user_${phone_number.slice(-4)}`,
         hashed_password: '', // 空密码
         verification_code: hashedCode,
-        code_send_time: new Date(),
+        code_send_time: now,
+        code_send_count_minute: 1,
         phone_verified: false,
-        
+
         deleted_status: 0,
       },
     });

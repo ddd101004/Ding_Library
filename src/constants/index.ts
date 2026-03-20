@@ -14,6 +14,7 @@ export const REGISTER_TYPE = "phone";
 export const ACCOUNT_NAME = "手机";
 
 export const VERIFICATION_CODE_INTERVAL = 60; // 验证码发送间隔(秒)
+export const VERIFICATION_CODE_MAX_COUNT_PER_MINUTE = 5; // 每分钟内最大发送次数
 
 // 对话最大支持的 token 数
 export const CONVERSATION_MAX_TOKENS = 64000;

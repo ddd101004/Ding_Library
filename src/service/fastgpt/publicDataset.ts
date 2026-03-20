@@ -14,12 +14,63 @@ import {
   createFileCollection,
 } from "./collection";
 import { createDataset, findDatasetByIntro } from "./dataset";
-import { downloadFile } from "@/lib/cos/cosClient";
 import prisma from "@/utils/prismaProxy";
 import type { Paper } from "@prisma/client";
 import fs from "fs";
 import path from "path";
 import os from "os";
+
+
+/**
+ * 从本地存储复制文件到目标路径
+ * @param sourcePath 源文件路径（本地相对路径或完整 URL）
+ * @param targetPath 目标文件路径
+ * @returns 是否成功
+ */
+async function copyLocalFile(
+  sourcePath: string,
+  targetPath: string
+): Promise<boolean> {
+  try {
+    // 判断是否为本地路径
+    if (sourcePath.startsWith('papers/') || sourcePath.startsWith('avatars/') || sourcePath.startsWith('covers/')) {
+      // 本地存储路径
+      const uploadsDir = path.join(process.cwd(), 'uploads');
+      const fullSourcePath = path.join(uploadsDir, sourcePath);
+
+      // 检查源文件是否存在
+      if (!fs.existsSync(fullSourcePath)) {
+        logger.error("[本地文件] 源文件不存在", { sourcePath: fullSourcePath });
+        return false;
+      }
+
+      // 确保目标目录存在
+      const targetDir = path.dirname(targetPath);
+      if (!fs.existsSync(targetDir)) {
+        fs.mkdirSync(targetDir, { recursive: true });
+      }
+
+      // 复制文件
+      fs.copyFileSync(fullSourcePath, targetPath);
+      return true;
+    }
+
+    // 如果是完整 URL（COS 或其他），尝试下载
+    if (sourcePath.startsWith('http://') || sourcePath.startsWith('https://')) {
+      // 注意：这里需要使用 fetch 或 axios 下载文件
+      // 由于 COS 客户端已移除，暂不支持从 URL 下载
+      logger.error("[本地文件] 不支持从 URL 下载文件", { sourcePath });
+      return false;
+    }
+
+    // 旧的 COS 路径格式（无 https:// 前缀）
+    logger.error("[本地文件] 不支持的 COS 路径格式", { sourcePath });
+    return false;
+  } catch (error) {
+    logger.error("[本地文件] 复制文件失败", { sourcePath, targetPath, error });
+    return false;
+  }
+}
 
 // ==================== 配置与工具函数 ====================
 
@@ -650,7 +701,7 @@ export async function updatePaperFulltextInDataset(
       return { success: false, error: "论文 PDF 尚未下载" };
     }
 
-    // 3. 从 COS 下载 PDF 到临时目录
+    // 3. 从本地存储复制 PDF 到临时目录
     const tempDir = os.tmpdir();
     const tempFileName = `paper_${paper.id}_${Date.now()}.pdf`;
     const tempFilePath = path.join(tempDir, tempFileName);
@@ -660,12 +711,12 @@ export async function updatePaperFulltextInDataset(
       cosKey: paper.pdf_file_path,
     });
 
-    const downloadSuccess = await downloadFile(
+    const downloadSuccess = await copyLocalFile(
       paper.pdf_file_path,
       tempFilePath
     );
     if (!downloadSuccess) {
-      return { success: false, error: "从 COS 下载 PDF 失败" };
+      return { success: false, error: "从本地存储复制 PDF 失败" };
     }
 
     try {

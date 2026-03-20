@@ -13,15 +13,28 @@ import {
   verifyFolderOwner,
 } from "@/db/paperFolder";
 import { validateString, validateId } from "@/utils/validateString";
-import {
-  getCoverImageSignedUrl,
-  deleteCoverImage,
-} from "@/lib/cos/cosClient";
 import { Prisma } from "@prisma/client";
 
 /**
- * GET - 获取文件夹详情
+ * 生成封面图 URL（兼容本地和 COS）
  */
+function getCoverImageUrl(coverImage: string | null): string | null {
+  if (!coverImage) return null;
+
+  // 本地存储路径
+  if (coverImage.startsWith('covers/') || coverImage.startsWith('avatars/')) {
+    return `/api/uploads/${coverImage}`;
+  }
+
+  // 完整 URL（COS 或其他）
+  if (coverImage.startsWith('http://') || coverImage.startsWith('https://')) {
+    return coverImage;
+  }
+
+  // 旧的 COS 路径格式
+  return `https://library-cos.centum-cloud.com/${coverImage}`;
+}
+
 const handleGet = async (
   req: NextApiRequest,
   res: NextApiResponse,
@@ -36,7 +49,7 @@ const handleGet = async (
 
   // 生成封面图的签名 URL
   const cover_image_url = folder.cover_image
-    ? getCoverImageSignedUrl(folder.cover_image)
+    ? getCoverImageUrl(folder.cover_image)
     : null;
 
   return sendSuccessResponse(res, "获取成功", {
@@ -126,14 +139,10 @@ const handlePatch = async (
     throw new Error("更新失败");
   }
 
-  // 如果封面图被更新或删除，删除旧的封面图
-  if (cover_image !== undefined && oldCoverImage && oldCoverImage !== cover_image) {
-    await deleteCoverImage(oldCoverImage);
-  }
 
   // 生成新封面图的签名 URL
   const cover_image_url = folder.cover_image
-    ? getCoverImageSignedUrl(folder.cover_image)
+    ? getCoverImageUrl(folder.cover_image)
     : null;
 
   return sendSuccessResponse(res, "更新成功", {
@@ -167,10 +176,6 @@ const handleDelete = async (
     throw new Error("删除失败");
   }
 
-  // 删除封面图
-  if (oldCoverImage) {
-    await deleteCoverImage(oldCoverImage);
-  }
 
   return sendSuccessResponse(res, "删除成功");
 };

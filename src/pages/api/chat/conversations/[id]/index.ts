@@ -13,7 +13,25 @@ import {
   verifyConversationOwner,
 } from "@/db/chatConversation";
 import { getConversationPapers } from "@/db/messageAttachment";
-import { getFileUrl } from "@/lib/cos/cosClient";
+
+// getFileUrl 已移除，使用本地路径
+// 生成文件访问 URL（兼容本地和 COS）
+function getFileUrl(filePath: string | null): string | null {
+  if (!filePath) return null;
+
+  // 本地存储路径（papers/, covers/, avatars/）
+  if (filePath.startsWith("papers/") || filePath.startsWith("covers/") || filePath.startsWith("avatars/")) {
+    return `/api/uploads/${filePath}`;
+  }
+
+  // 完整 URL
+  if (filePath.startsWith("http://") || filePath.startsWith("https://")) {
+    return filePath;
+  }
+
+  // 旧的 COS 路径格式
+  return `https://library-cos.centum-cloud.com/${filePath}`;
+}
 import { validateId, validateString } from "@/utils/validateString";
 
 /**

@@ -5,7 +5,8 @@
       "mcp__zai-mcp-server__analyze_image",
       "Bash(rm:*)",
       "Bash(npx next build:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(pnpm prisma generate:*)"
     ],
     "deny": [],
     "ask": []
