@@ -21,13 +21,12 @@ interface ChatInputAreaProps {
   onCloseFunction: () => void;
   isFromOtherPage: boolean;
   onAddFile: () => void;
-  totalFileCount?: number; // 会话中的文件总数
-  showRelatedPapers?: boolean; // 是否显示相关论文面板
-  isAiReadingActive?: boolean; // AI伴读激活状态
-  isFolderChat?: boolean; // 是否为文件夹对话模式
-  isFileParsing?: boolean; // 文件解析状态
-  style?: React.CSSProperties; // 自定义样式
-  hideFileTags?: boolean; // 是否隐藏文件标签
+  totalFileCount?: number;
+  showRelatedPapers?: boolean;
+  isFolderChat?: boolean;
+  isFileParsing?: boolean;
+  style?: React.CSSProperties;
+  hideFileTags?: boolean;
 }
 
 const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
@@ -49,13 +48,12 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
   onCloseFunction,
   isFromOtherPage,
   onAddFile,
-  totalFileCount = uploadedFiles.length, // 默认值为当前上传的文件数量
-  showRelatedPapers = false, // 默认不显示相关论文面板
-  isAiReadingActive = false, // 默认AI伴读未激活
-  isFolderChat = false, // 默认非文件夹对话模式
-  isFileParsing = false, // 默认文件未在解析
-  style, // 自定义样式
-  hideFileTags = false, // 默认显示文件标签
+  totalFileCount = uploadedFiles.length,
+  showRelatedPapers = false,
+  isFolderChat = false,
+  isFileParsing = false,
+  style,
+  hideFileTags = false,
 }, ref) => {
   // 计算样式类 - 响应式布局
   const inputAreaStyle = {
@@ -96,7 +94,6 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
           onAddFile={onAddFile}
           totalFileCount={totalFileCount}
           showRelatedPapers={showRelatedPapers}
-          isAiReadingActive={isAiReadingActive}
           isFolderChat={isFolderChat}
           isFileParsing={isFileParsing}
           hideFileTags={hideFileTags}

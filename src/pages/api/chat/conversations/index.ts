@@ -10,10 +10,6 @@ import {
   createConversation,
   getConversationsByUserId,
 } from "@/db/chatConversation";
-import {
-  findUploadedPaperById,
-  incrementPaperStats,
-} from "@/db/ai-reading/uploadedPaper";
 import { createUserMessage } from "@/db/chatMessage/crud";
 import { createAttachmentsFromPaperIds } from "@/db/messageAttachment";
 import { parsePageNumber, parseLimitParam } from "@/utils/parsePageParams";
@@ -66,49 +62,10 @@ const handlePost = async (
     }
   }
 
-  // 如果是伴读对话，验证所有论文存在且属于当前用户
-  type PaperInfo = NonNullable<Awaited<ReturnType<typeof findUploadedPaperById>>>;
-  let papers: PaperInfo[] = [];
-  let primaryPaper: PaperInfo | null = null;
-
-  if (conversation_type === "paper_reading") {
-    if (paperIds.length === 0) {
-      return sendWarnningResponse(res, "伴读对话必须指定论文 ID");
-    }
-
-    // 验证所有论文
-    for (const paperId of paperIds) {
-      const paper = await findUploadedPaperById(paperId);
-      if (!paper) {
-        return sendWarnningResponse(res, `论文不存在: ${paperId}`);
-      }
-      if (paper.userId !== userId) {
-        return sendWarnningResponse(res, "无权访问该论文");
-      }
-      papers.push(paper);
-    }
-
-    // 第一篇论文作为主论文（用于会话标题等）
-    primaryPaper = papers[0];
-
-    // 增加所有论文的阅读次数
-    for (const paper of papers) {
-      await incrementPaperStats({
-        id: paper.id,
-        read_count: 1,
-        update_last_read: true,
-      });
-    }
-  }
-
   // 生成对话标题
   let conversationTitle = title;
   if (!conversationTitle) {
-    if (conversation_type === "paper_reading" && primaryPaper) {
-      conversationTitle = `${primaryPaper.title.substring(0, 30)} 伴读`;
-    } else {
-      conversationTitle = "新对话";
-    }
+    conversationTitle = "新对话";
   }
 
   const conversation = await createConversation({
@@ -119,8 +76,7 @@ const handlePost = async (
     context_window: context_window || 10,
     max_tokens: max_tokens || CONVERSATION_MAX_TOKENS,
     conversation_type,
-    uploaded_paper_id:
-      conversation_type === "paper_reading" && paperIds.length > 0 ? paperIds[0] : undefined,
+    uploaded_paper_id: undefined,
     context_mode,
   });
 
@@ -128,26 +84,9 @@ const handlePost = async (
     throw new Error("创建会话失败");
   }
 
-  // 为伴读对话创建初始消息和附件，将所有论文存入 MessageAttachment
-  // 注意：此消息仅用于关联论文，前端消息列表会过滤掉 content_type 为 paper_upload 的消息
-  if (conversation_type === "paper_reading" && papers.length > 0) {
-    const paperTitles = papers.map((p) => p.title).join("、");
-    const initialMessage = await createUserMessage({
-      conversation_id: conversation.conversation_id,
-      content: `开始阅读论文：${paperTitles}`,
-      message_order: 0,
-      content_type: "paper_upload",
-    });
-
-    if (initialMessage) {
-      await createAttachmentsFromPaperIds(initialMessage.message_id, paperIds);
-    }
-  }
-
   logger.info("创建对话成功", {
     conversationId: conversation.conversation_id,
     conversationType: conversation_type,
-    paperIds: paperIds,
     userId,
   });
 
@@ -170,40 +109,6 @@ const handlePost = async (
     context_mode: conversation.contextMode,
   };
 
-  // 如果是伴读对话，返回论文信息
-  if (conversation_type === "paper_reading" && papers.length > 0) {
-    // 返回所有论文信息
-    const papersInfo = papers.map((paper) => {
-      // 解析 JSON 字段
-      let authors: string[] = [];
-      let keywords: string[] = [];
-      try {
-        if (paper.authors) authors = JSON.parse(paper.authors);
-        if (paper.keywords) keywords = JSON.parse(paper.keywords);
-      } catch {
-        // JSON 解析失败，保持默认空数组
-      }
-
-      return {
-        id: paper.id,
-        title: paper.title,
-        authors,
-        abstract: paper.abstract || "",
-        keywords,
-        file_name: paper.fileName,
-        file_size: Number(paper.fileSize),
-        file_type: paper.fileType,
-        parse_status: paper.parseStatus,
-        page_count: paper.pageCount,
-        word_count: paper.wordCount,
-      };
-    });
-
-    responseData.papers = papersInfo;
-    // 保持向后兼容：paper_info 返回第一篇论文
-    responseData.paper_info = papersInfo[0];
-  }
-
   sendSuccessResponse(res, "会话创建成功", responseData);
 };
 
@@ -216,18 +121,7 @@ const handleGet = async (
   res: NextApiResponse,
   userId: string
 ) => {
-  const { page, limit, search, conversation_type, uploaded_paper_id } = req.query;
-
-  // 如果指定了论文 ID，验证论文归属
-  if (uploaded_paper_id && typeof uploaded_paper_id === "string") {
-    const paper = await findUploadedPaperById(uploaded_paper_id);
-    if (!paper) {
-      return sendWarnningResponse(res, "论文不存在");
-    }
-    if (paper.userId !== userId) {
-      return sendWarnningResponse(res, "无权访问该论文");
-    }
-  }
+  const { page, limit, search, conversation_type } = req.query;
 
   const result = await getConversationsByUserId({
     user_id: userId,
@@ -238,7 +132,7 @@ const handleGet = async (
       | "general"
       | "paper_reading"
       | undefined,
-    uploaded_paper_id: uploaded_paper_id as string | undefined,
+    uploaded_paper_id: undefined,
   });
 
   if (!result) {

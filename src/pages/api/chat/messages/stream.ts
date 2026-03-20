@@ -2,7 +2,6 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { withAuth } from "@/middleware/auth/withAuth";
 import { sendMethodNotAllowedResponse } from "@/helper/responseHelper";
 import { createAssistantMessage, updateMessage } from "@/db/chatMessage";
-import { upsertReadingRecord } from "@/db/ai-reading/readingRecord";
 import {
   validateConversation,
   prepareUserMessage,
@@ -206,14 +205,6 @@ const handlePost = async (
           params.conversation_id,
           messageCount + 2
         );
-
-        if (isPaperReading && conversation.uploadedPaperId) {
-          await upsertReadingRecord({
-            user_id: userId,
-            uploaded_paper_id: conversation.uploadedPaperId,
-            ai_question_asked: 1,
-          });
-        }
 
         const formattedPapers = await formatRelatedPapers(searchResult, userId);
         if (formattedPapers) {

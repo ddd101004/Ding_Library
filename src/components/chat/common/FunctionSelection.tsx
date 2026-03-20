@@ -17,10 +17,6 @@ const functionConfig = {
     icon: '/chat-page/deepstudy1.png',
     label: '深度学习'
   },
-  aiReading: {
-    icon: '/chat-page/chat-page-reading@2x.png',
-    label: 'AI伴读'
-  },
   more: {
     icon: '/chat-page/chat-page-more.png',
     label: '更多'

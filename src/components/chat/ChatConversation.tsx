@@ -4,12 +4,10 @@ import { flushSync } from "react-dom";
 import { useRouter } from "next/router";
 import { apiGet, apiPost } from "@/api/request";
 import Head from "next/head";
-import FileUploadModal from "./common/FileUploadModal";
 import { useAudioRecorder } from "@/hooks/use-audio-recorder";
 import { useUser } from "@/components/contexts/UserContext";
 import { toast } from "sonner";
 import { useConversation } from "@/hooks/use-conversation";
-import { useFileHandler } from "@/hooks/use-file-handler";
 import { useTopicManager } from "@/hooks/use-topic-manager";
 import useChatScroll from "@/hooks/use-chat-scroll";
 import useMessageFormatter from "@/hooks/use-message-formatter";
@@ -94,21 +92,6 @@ export default function ChatConversation({
     toggleThinkingCollapse,
     isAiResponding,
   } = chatState;
-
-  // 文件处理
-  const {
-    uploadedFiles,
-    setUploadedFiles,
-    showUploadModal,
-    setShowUploadModal,
-    handleFileUpload,
-    handleFileCompleted,
-    handleRemoveFile,
-    formatFileContent,
-    saveFilesToSession,
-    loadFilesFromSession,
-    clearUploadedFiles,
-  } = useFileHandler();
 
   // 对话处理
   const { handleSendMessage: handleSendConversation, isSending } =
@@ -198,14 +181,14 @@ export default function ChatConversation({
     currentVersionMessageIds,
     setCurrentVersionMessageIds,
     onLoadBatchMessageVersions: messageVersionsHook.loadBatchMessageVersions as any,
-    onFilesCleared: clearUploadedFiles,
+    onFilesCleared: () => {},
     getToken,
     clearUserInfo,
     getCurrentTime,
     checkFromHistory,
-    uploadedFiles,
-    pendingFiles,
-    setPendingFiles,
+    uploadedFiles: [],
+    pendingFiles: [],
+    setPendingFiles: () => {},
     userDisplayMessage,
     initialMessage,
     setRelatedPapersList,
@@ -312,11 +295,6 @@ export default function ChatConversation({
       return;
     }
 
-    if (!isInitial && uploadedFiles.some((file) => file.isUploading)) {
-      toast.warning("文件解析中，请稍后再试");
-      return;
-    }
-
     const requestId = `${conversationId}-${Date.now()}-${
       isInitial ? "initial" : "manual"
     }`;
@@ -364,76 +342,6 @@ export default function ChatConversation({
     const controller = new AbortController();
     currentStreamControllerRef.current = controller;
 
-    let fullContent = content;
-    let filesToDisplay: any[] = [];
-    let attachmentIds: string[] = [];
-
-    let filesToUse: any[] = [];
-
-    if (isInitial) {
-      const possibleKeys = [
-        "transferredFiles_checked",
-        "transferredFiles_home",
-        "transferredFiles_nav",
-        "transferredFiles",
-      ];
-
-      for (const key of possibleKeys) {
-        const data = sessionStorage.getItem(key);
-        if (data) {
-          try {
-            const filesData = JSON.parse(data);
-
-            filesToUse = filesData.map((fileData: any) => ({
-              file: {
-                name: fileData.file?.name || fileData.name || "未知文件",
-                type: fileData.file?.type || fileData.type || "",
-                size: fileData.file?.size || fileData.size || 0,
-              },
-              content: fileData.content || "",
-              fileId: fileData.fileId || fileData.uploadedPaperId || null,
-              uploadedPaperId: fileData.uploadedPaperId || null,
-            }));
-
-            break;
-          } catch (error) {
-            console.error(`解析 ${key} 失败:`, error);
-          }
-        }
-      }
-
-      if (filesToUse.length === 0 && pendingFiles.length > 0) {
-        filesToUse = [...pendingFiles];
-      }
-
-      filesToDisplay = [...filesToUse];
-
-      attachmentIds = filesToUse
-        .filter((file) => file.fileId)
-        .map((file) => file.fileId!);
-
-      if (attachmentIds.length === 0) {
-        attachmentIds = filesToUse
-          .filter((file) => file.uploadedPaperId)
-          .map((file) => file.uploadedPaperId!);
-      }
-
-      fullContent = content;
-    } else if (!isInitial) {
-      fullContent = content;
-      filesToDisplay = [...uploadedFiles];
-
-      attachmentIds = uploadedFiles
-        .filter((file) => file.fileId)
-        .map((file) => file.fileId!);
-
-      if (attachmentIds.length === 0) {
-        attachmentIds = uploadedFiles
-          .filter((file) => file.uploadedPaperId)
-          .map((file) => file.uploadedPaperId!);
-      }
-    }
-
     let userDisplayContent = "";
     if (isInitial) {
       if (userDisplayMessage) {
@@ -450,7 +358,6 @@ export default function ChatConversation({
       role: "user",
       content: userDisplayContent,
       timestamp: getCurrentTime(),
-      files: filesToDisplay,
     };
 
     setMessages((prev) => {
@@ -480,21 +387,6 @@ export default function ChatConversation({
 
     if (!isInitial) {
       setInputText("");
-      clearUploadedFiles();
-    }
-
-    if (isInitial && pendingFiles.length > 0) {
-      setPendingFiles([]);
-    }
-
-    if (isInitial) {
-      const possibleKeys = [
-        "transferredFiles_checked",
-        "transferredFiles_home",
-        "transferredFiles_nav",
-        "transferredFiles",
-      ];
-      possibleKeys.forEach((key) => sessionStorage.removeItem(key));
     }
 
     try {
@@ -509,7 +401,6 @@ export default function ChatConversation({
         content: content,
         is_deep_think: isDeepThinkActiveRef.current,
         auto_search_papers: isPaperSearchActiveRef.current ? true : undefined,
-        attachment_ids: attachmentIds.length > 0 ? attachmentIds : undefined,
       };
 
       const response = await fetch(apiUrl, {
@@ -591,18 +482,13 @@ export default function ChatConversation({
     hasSentInitialMessageRef,
     currentStreamControllerRef,
     checkFromHistory,
-    uploadedFiles,
     currentRequestRef,
     setIsLoading,
     setLatestAiMessageId,
-    pendingFiles,
-    setPendingFiles,
-    userDisplayMessage,
     setMessages,
     getCurrentTime,
     scrollToBottom,
     setInputText,
-    clearUploadedFiles,
     getToken,
     isDeepThinkActiveRef,
     isPaperSearchActiveRef,
@@ -672,68 +558,12 @@ export default function ChatConversation({
     return () => clearTimeout(timer);
   }, [conversationId, messages.length, scrollToBottom]);
 
-  // 监听上传弹窗关闭，自动聚焦到输入框
-  useEffect(() => {
-    if (!showUploadModal) {
-      const timer = setTimeout(() => {
-        if (messageInputRef.current) {
-          messageInputRef.current.focusToEnd();
-        }
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showUploadModal]);
-
   // 监听语音转文字
   useEffect(() => {
     if (transcribedText) {
       setInputText((prev) => prev + transcribedText);
     }
   }, [transcribedText, setInputText]);
-
-  // ============ 文件上传处理 ============
-  const handleUploadStart = () => {
-    parsingFileCountRef.current += 1;
-    flushSync(() => {
-      setIsFileParsing(true);
-    });
-  };
-
-  const handleUploadEnd = () => {
-    parsingFileCountRef.current -= 1;
-
-    if (parsingFileCountRef.current === 0) {
-      setIsFileParsing(false);
-    }
-  };
-
-  const handleFilesAdding = (files: any[]) => {
-    setUploadedFiles((prev) => [...prev, ...files]);
-  };
-
-  const wrappedHandleFileUpload = async (files: any[]) => {
-    await handleFileUpload(files);
-  };
-
-  // ============ 计算文件总数 ============
-  const calculateTotalFileCount = useCallback(() => {
-    const historyFilesCount = messages.reduce(
-      (count, message) => count + (message.files?.length || 0),
-      0
-    );
-
-    const currentFilesCount = uploadedFiles.length;
-
-    return historyFilesCount + currentFilesCount;
-  }, [messages, uploadedFiles]);
-
-  const [totalFileCount, setTotalFileCount] = useState(0);
-
-  useEffect(() => {
-    const newTotalFileCount = calculateTotalFileCount();
-    setTotalFileCount(newTotalFileCount);
-  }, [calculateTotalFileCount, messages.length, conversationId]);
 
   // ============ UI交互处理 ============
   const handleSendMessage = () => {
@@ -819,8 +649,7 @@ export default function ChatConversation({
     const handleNewChatRequest = () => {
       const hasContent =
         messages.length > 0 ||
-        inputText.trim() !== "" ||
-        uploadedFiles.length > 0;
+        inputText.trim() !== "";
 
       if (hasContent) {
         createNewConversationAndRedirect();
@@ -832,7 +661,7 @@ export default function ChatConversation({
     return () => {
       window.removeEventListener("newChatRequest", handleNewChatRequest);
     };
-  }, [messages, inputText, uploadedFiles]);
+  }, [messages, inputText]);
 
   // 组件卸载时清理标记
   useEffect(() => {
@@ -920,17 +749,6 @@ export default function ChatConversation({
         }
       `}</style>
 
-      <FileUploadModal
-        show={showUploadModal}
-        onClose={() => setShowUploadModal(false)}
-        onFileUpload={wrappedHandleFileUpload}
-        totalFileCount={totalFileCount}
-        onUploadStart={handleUploadStart}
-        onUploadEnd={handleUploadEnd}
-        onFilesAdding={handleFilesAdding}
-        onFileCompleted={handleFileCompleted}
-      />
-
       <UserAvatarSection />
 
       {/* 主容器添加浅绿背景和边框样式 */}
@@ -1008,8 +826,8 @@ export default function ChatConversation({
       inputOnChange={setInputText}
       onKeyDown={handleKeyDown}
       onSend={handleSendMessage}
-      uploadedFiles={uploadedFiles}
-      onRemoveFile={handleRemoveFile}
+      uploadedFiles={[]}
+      onRemoveFile={() => {}}
       isRecording={isRecording}
       toggleRecording={toggleRecording}
       isDeepThinkActive={isDeepThinkActive}
@@ -1020,14 +838,14 @@ export default function ChatConversation({
       currentFunction={currentFunction}
       onCloseFunction={handleCloseFunction}
       isFromOtherPage={false}
-      onAddFile={() => setShowUploadModal(true)}
-      totalFileCount={totalFileCount}
+      onAddFile={() => {}}
+      totalFileCount={0}
       showRelatedPapers={showRelatedPapers}
-      isAiReadingActive={currentFunction === "aiReading"}
-      isFileParsing={isFileParsing}
-      hideFileTags={false}
+      isFolderChat={false}
+      isFileParsing={false}
+      hideFileTags={true}
       style={{
-        backgroundColor: '#d5f4cf', // 修正 7 位颜色值为 6 位
+        backgroundColor: '#d5f4cf',
         borderTop: '1px solid #d4ede4'
       }}
     />

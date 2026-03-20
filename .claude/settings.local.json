@@ -4,7 +4,8 @@
       "Bash(npx tsc:*)",
       "mcp__zai-mcp-server__analyze_image",
       "Bash(rm:*)",
-      "Bash(npx next build:*)"
+      "Bash(npx next build:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

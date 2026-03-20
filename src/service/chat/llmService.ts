@@ -1,6 +1,6 @@
 import logger from "@/helper/logger";
 import { getConversationById } from "@/db/chatConversation";
-import { findUploadedPaperById } from "@/db/ai-reading/uploadedPaper";
+// import { findUploadedPaperById } from "@/db/ai-reading/uploadedPaper";
 import { getAIChatApi } from "@/lib/ai/client";
 import { pushBill } from "@/utils/pushBill";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
@@ -561,36 +561,6 @@ export async function callPaperReadingLLMStream(params: {
             paperCount: allPapers.length,
             paperTitles: allPapers.map((p) => p.title || p.file_name),
           });
-        }
-      } else if (conversation.uploadedPaperId) {
-        // 如果没有附件但有关联的单个论文（兼容旧逻辑）
-        const paper = await findUploadedPaperById(conversation.uploadedPaperId);
-        if (paper) {
-          const authors = paper.authors
-            ? JSON.parse(paper.authors).join(", ")
-            : "未知作者";
-          systemPrompt += `
-
-当前阅读论文信息：
-- 标题：${paper.title}
-- 作者：${authors}
-- 摘要：${paper.abstract || "无"}
-- 关键词：${paper.keywords || "无"}
-- 发表年份：${paper.publicationYear || "未知"}
-- 来源：${paper.source || "未知"}`;
-
-          // 如果有解析内容，也添加到上下文
-          if (paper.parsedContent) {
-            const maxContentLength = 30000;
-            if (paper.parsedContent.length > maxContentLength) {
-              systemPrompt += `\n\n---论文全文内容---\n${paper.parsedContent.substring(
-                0,
-                maxContentLength
-              )}\n...(内容已截断)\n---论文内容结束---`;
-            } else {
-              systemPrompt += `\n\n---论文全文内容---\n${paper.parsedContent}\n---论文内容结束---`;
-            }
-          }
         }
       }
 

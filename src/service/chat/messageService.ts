@@ -24,7 +24,7 @@ import {
   AutoRelatedPapersResult,
   RelatedPaper,
 } from "@/service/chat/autoRelatedPapers";
-import { findUploadedPapersByIds } from "@/db/ai-reading/uploadedPaper";
+// import { findUploadedPapersByIds } from "@/db/ai-reading/uploadedPaper";
 import {
   batchGetDocDeliveryStatusByPaperIds,
   DocDeliveryStatus,
@@ -483,20 +483,8 @@ export interface AttachmentContent {
 export async function getAttachmentContents(
   attachmentIds: string[]
 ): Promise<AttachmentContent[]> {
-  if (!attachmentIds || attachmentIds.length === 0) {
-    return [];
-  }
-
-  const papers = await findUploadedPapersByIds(attachmentIds);
-
-  return papers
-    .filter((paper) => paper.parsedContent) // 只返回有内容的
-    .map((paper) => ({
-      id: paper.id,
-      title: paper.title,
-      content: paper.parsedContent || "",
-      file_name: paper.fileName,
-    }));
+  // AI伴读功能已移除,不再返回上传的论文内容
+  return [];
 }
 
 /**

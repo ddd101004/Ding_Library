@@ -1,16 +1,12 @@
 "use client";
-import React, { useState, useRef, useEffect, useCallback } from "react";
-import { flushSync } from "react-dom";
+import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import FunctionSelection from "./common/FunctionSelection";
 import AvatarHoverMenu from "./common/AvatarHoverMenu";
-import FileUploadModal from "./common/FileUploadModal";
 import ChatInput, { ChatInputRef } from "./common/ChatInput";
 import Toolbar from "./common/Toolbar";
-import FileTags from "./common/FileTags";
 import { useAudioRecorder } from "@/hooks/use-audio-recorder";
-import { useFileHandler } from "@/hooks/use-file-handler";
 import { useConversation } from "@/hooks/use-conversation";
 import { useTopicManager } from "@/hooks/use-topic-manager";
 import { toast } from "sonner";
@@ -30,91 +26,14 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
   const [selectedTopicType, setSelectedTopicType] = useState<string | null>(
     null
   );
-  const [isAnyModalOpen, setIsAnyModalOpen] = useState(false);
-  const [currentFileCount, setCurrentFileCount] = useState(0); // 当前文件数量
-  const [isFileParsing, setIsFileParsing] = useState(false); // 文件解析状态
-  const parsingFileCountRef = useRef(0); // 正在解析的文件数量计数器
-  const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false); // 生成问题加载状态
+  const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
 
   const textareaRef = useRef<ChatInputRef>(null);
   const avatarPopupRef = useRef<HTMLDivElement>(null);
 
   const { isRecording, toggleRecording, transcribedText } = useAudioRecorder();
 
-  const {
-    uploadedFiles,
-    showUploadModal,
-    setShowUploadModal,
-    handleFileUpload,
-    handleFileCompleted,
-    handleRemoveFile,
-    handleRemoveFileWithStorage,
-    formatFileContent,
-    saveFilesToSession,
-    loadFilesFromSession,
-    setUploadedFiles,
-  } = useFileHandler();
-
-  // 适配器函数：将 FileWithId[] 转换为 FileWithContent[]
-  const handleFileUploadAdapter = (
-    filesWithId: {
-      file: { name: string; type: string; size: number };
-      fileId?: string;
-    }[]
-  ) => {
-    const filesWithContent = filesWithId.map((fileWithId) => ({
-      file: fileWithId.file,
-      content: `[文件内容](${fileWithId.file.name})`, // 为上传的文件生成默认内容
-      fileId: fileWithId.fileId,
-    }));
-    handleFileUpload(filesWithContent);
-  };
-
   const { handleSendMessage, isSending } = useConversation();
-
-  // 处理文件上传开始
-  const handleUploadStart = () => {
-    // 增加计数器
-    parsingFileCountRef.current += 1;
-
-    flushSync(() => {
-      setIsFileParsing(true);
-    });
-
-  };
-
-  // 处理文件上传结束
-  const handleUploadEnd = () => {
-    // 减少计数器
-    parsingFileCountRef.current -= 1;
-
-
-    // 只有当所有文件都解析完成时，才恢复发送按钮
-    if (parsingFileCountRef.current === 0) {
-      setIsFileParsing(false);
-
-    }
-  };
-
-  // 处理文件添加（上传开始前立即显示文件卡片）
-  const handleFilesAdding = (files: any[]) => {
-    // 将上传中的文件添加到列表
-    setUploadedFiles((prev) => [...prev, ...files]);
-
-  };
-
-  // 专门为CheckedChat设计的文件删除处理函数
-  const handleCheckedChatRemoveFile = useCallback(
-    (index: number, onAllFilesRemoved?: () => void) => {
-      // 使用新的函数，指定要同步的sessionStorage键
-      handleRemoveFileWithStorage(
-        index,
-        ["transferredFiles_nav", "transferredFiles_checked"],
-        onAllFilesRemoved
-      );
-    },
-    [handleRemoveFileWithStorage]
-  );
 
   const {
     topics,
@@ -128,9 +47,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
 
   const router = useRouter();
   const { query } = useRouter();
-
-  // 计算白色背景层和layer-3背景的高度偏移量
-  const backgroundOffset = uploadedFiles.length > 0 ? 80 : 0;
 
   // 根据功能类型计算额外高度
   const getAdditionalHeight = () => {
@@ -174,71 +90,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
     handleTopicButtonClick,
   ]);
 
-  // 监听上传弹窗关闭，自动聚焦到输入框
-  useEffect(() => {
-    if (!showUploadModal) {
-      // 弹窗关闭后延迟聚焦，确保 DOM 更新完成
-      const timer = setTimeout(() => {
-
-        textareaRef.current?.focusToEnd();
-      }, 300);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showUploadModal]);
-
-  // 从sessionStorage加载文件
-  useEffect(() => {
-    // 首先尝试从导航用的键名加载文件（从ChatHome传递的）
-    const navFilesStr = sessionStorage.getItem("transferredFiles_nav");
-
-    if (navFilesStr) {
-      try {
-        const navFiles = JSON.parse(navFilesStr);
-
-        // 检查是否是空数组或无效数据
-        if (!Array.isArray(navFiles) || navFiles.length === 0) {
-          sessionStorage.removeItem("transferredFiles_nav");
-          return;
-        }
-
-        const formattedFiles = navFiles.map((item: any) => ({
-          file: {
-            name: item.file?.name || item.name,
-            type: item.file?.type || item.type,
-            size: item.file?.size || item.size || 0,
-          },
-          content:
-            item.content || `[文件内容](${item.file?.name || item.name})`,
-          fileId: item.fileId || null,
-          uploadedPaperId: item.uploadedPaperId || null,
-        }));
-
-        // 检查格式化后的数据是否包含有效文件
-        const hasValidFiles = formattedFiles.some(
-          (f) => f.file?.name || f.content
-        );
-
-        if (hasValidFiles) {
-          setUploadedFiles(formattedFiles);
-        } else {
-          sessionStorage.removeItem("transferredFiles_nav");
-        }
-
-        return;
-      } catch (error) {
-        console.error("Failed to load files from transferredFiles_nav", error);
-        sessionStorage.removeItem("transferredFiles_nav");
-      }
-    }
-
-    // 如果没有找到，尝试从默认键名加载
-    const files = loadFilesFromSession();
-    if (files.length > 0) {
-      setUploadedFiles(files);
-    }
-  }, [loadFilesFromSession, setUploadedFiles]);
-
   // Update input text when voice transcription is complete
   useEffect(() => {
     if (transcribedText) {
@@ -265,43 +116,16 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
     }
   }, [selectedTopic, currentFunction, selectedTopicType]);
 
-  // 发送消息 - 关键修改：保存文件到sessionStorage用于传递
+  // 发送消息
   const handleSend = async () => {
-    // 检查要发送的文件是否正在上传或解析
-    if (uploadedFiles.some(file => file.isUploading)) {
-      toast.warning("文件解析中，请稍后再试");
-      return;
-    }
-
-    // 保存文件到 sessionStorage（用于跳转到对话页面）
-    if (uploadedFiles.length > 0) {
-      // 确保保存完整的文件信息
-      const filesToSave = uploadedFiles.map((file) => ({
-        file: {
-          name: file.file.name,
-          type: file.file.type,
-          size: file.file.size,
-        },
-        fileId: file.fileId || null,
-        uploadedPaperId: file.uploadedPaperId || null,
-      }));
-
-      // 使用特定的键名保存文件
-      sessionStorage.setItem(
-        "transferredFiles_checked",
-        JSON.stringify(filesToSave)
-      );
-
-    }
-
     await handleSendMessage({
       inputText,
-      uploadedFiles,
+      uploadedFiles: [],
       isDeepThinkActive,
       isPaperSearchActive,
       currentFunction,
-      formatFileContent,
-      saveFilesToSession,
+      formatFileContent: () => "",
+      saveFilesToSession: () => {},
     });
   };
 
@@ -319,11 +143,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
   const togglePaperSearch = () => {
     setIsPaperSearchActive(!isPaperSearchActive);
 
-  };
-
-  // 文件数量变化回调
-  const handleFileCountChange = (count: number) => {
-    setCurrentFileCount(count);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -405,18 +224,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
         <title>AI智慧学术交互系统-AI对话</title>
       </Head>
 
-      {/* 文件上传弹窗 */}
-      <FileUploadModal
-        show={showUploadModal}
-        onClose={() => setShowUploadModal(false)}
-        onFileUpload={handleFileUploadAdapter}
-        totalFileCount={currentFileCount}
-        onUploadStart={handleUploadStart}
-        onUploadEnd={handleUploadEnd}
-        onFilesAdding={handleFilesAdding}
-        onFileCompleted={handleFileCompleted}
-      />
-
       {/* 用户头像 */}
       <AvatarHoverMenu />
 
@@ -426,7 +233,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
           <div
             className="relative w-full transition-all duration-300"
             style={{
-              height: `${300 + backgroundOffset + getAdditionalHeight()}px`,
+              height: `${300 + getAdditionalHeight()}px`,
               marginTop: "-20px",
             }}
           >
@@ -434,7 +241,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
             <div
               className="absolute inset-0 rounded-[20px] z-10 transition-all duration-300 overflow-hidden"
               style={{
-                height: `${280 + backgroundOffset + getAdditionalHeight()}px`,
+                height: `${280 + getAdditionalHeight()}px`,
                 top: "0px",
                 backgroundColor: '#c6f2e0ff', // 浅绿色背景
                 // 移除背景图片
@@ -447,31 +254,18 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
             <div
               className="absolute w-full max-w-[calc(100%-20px)] mx-auto rounded-[20px] top-[10px] left-0 right-0 pt-[10px] z-20 px-2 sm:px-4 transition-all duration-300"
               style={{
-                height: `${180 + backgroundOffset}px`,
+                height: `180px`,
                 margin: "0 10px",
                 backgroundColor: 'rgba(255, 255, 255, 0.9)', // 半透明白色
                 border: '1px solid #d4ede4', // 浅绿色边框
               }}
             >
-              {/* 上传的文件标签 */}
-              <div
-                className="relative top-[30px] z-30"
-                style={{ marginLeft: "-10px" }}
-              >
-                <FileTags
-                  files={uploadedFiles}
-                  onRemoveFile={handleCheckedChatRemoveFile}
-                  maxFiles={5}
-                  onFileCountChange={handleFileCountChange}
-                />
-              </div>
-
               <div className="flex flex-col h-full">
                 {/* 输入框区域 */}
                 <div
                   className="ml-5 flex items-center transition-all duration-300"
                   style={{
-                    marginTop: `${1 + (backgroundOffset > 0 ? 80 : 0)}px`,
+                    marginTop: "1px",
                   }}
                 >
                   {/* 功能标签 */}
@@ -480,7 +274,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                       <FunctionSelection
                         functionType={currentFunction}
                         onClose={handleCloseFunction}
-                        isFileParsing={isFileParsing}
                       />
                       <div className="w-[1px] h-[30px] bg-[#E0E1E5] rounded-[1px] mx-3"></div>
                     </>
@@ -503,7 +296,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                 {/* 按钮区域 */}
                 <div
                   className="absolute left-2 right-2 sm:left-5 sm:right-5 transition-all duration-300 px-2"
-                  style={{ top: `${113 + backgroundOffset}px` }}
+                  style={{ top: "113px" }}
                 >
                   <Toolbar
                     isDeepThinkActive={isDeepThinkActive}
@@ -514,11 +307,11 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                     onToggleRecording={toggleRecording}
                     sendButtonHover={sendButtonHover}
                     onSendButtonHover={setSendButtonHover}
-                    onAddFile={() => setShowUploadModal(true)}
+                    onAddFile={() => {}}
                     onSend={handleSend}
                     isSending={isSending}
-                    totalFileCount={currentFileCount}
-                    isFileParsing={isFileParsing}
+                    totalFileCount={0}
+                    isFileParsing={false}
                   />
                 </div>
               </div>
@@ -531,8 +324,8 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                 style={{
                   top:
                     currentFunction === "quickQA"
-                      ? `${343 + backgroundOffset + getAdditionalHeight()}px`
-                      : `${353 + backgroundOffset + getAdditionalHeight()}px`,
+                      ? `${343 + getAdditionalHeight()}px`
+                      : `${353 + getAdditionalHeight()}px`,
                   left: "0",
                   right: "0",
                 }}
@@ -673,8 +466,8 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                 style={{
                   top:
                     currentFunction === "quickQA"
-                      ? `${300 + backgroundOffset + getAdditionalHeight()}px`
-                      : `${310 + backgroundOffset + getAdditionalHeight()}px`,
+                      ? `${300 + getAdditionalHeight()}px`
+                      : `${310 + getAdditionalHeight()}px`,
                   left: "40px",
                   color: "#666",
                   fontSize: "14px",
