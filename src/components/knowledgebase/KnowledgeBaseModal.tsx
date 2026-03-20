@@ -39,13 +39,25 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
         setFolderName(folder.folder_name || "");
         setDescription(folder.description || "");
 
-        if (folder.cover_image_url || folder.cover_image) {
-          const coverUrl = folder.cover_image_url || `https://library-cos.century-cloud.com/${folder.cover_image}`;
-          setCoverImageUrl(coverUrl);
-          setImageLoaded(false); // 重置加载状态
-        } else {
+     if (folder.cover_image_url || folder.cover_image) {
+    let coverUrl: string;
+
+    // 如果 cover_image 是本地路径，优先使用本地路径
+    if (folder.cover_image?.startsWith('covers/') || folder.cover_image?.startsWith('avatars/')) {
+      coverUrl = `/api/uploads/${folder.cover_image}`;
+      console.log('使用本地路径:', coverUrl);
+    } else if (folder.cover_image_url) {
+      coverUrl = folder.cover_image_url;
+      console.log('使用 cover_image_url:', coverUrl);
+    } else {
+      coverUrl = `https://library-cos.centum-cloud.com/${folder.cover_image}`;
+      console.log('使用 COS 路径:', coverUrl);
+    }
+
+    setCoverImageUrl(coverUrl);
+    setImageLoaded(false);
+  } else {
           resetCover();
-          setImageLoaded(true); // 没有图片时视为已加载
         }
       } else {
         setFolderName("");

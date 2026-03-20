@@ -57,11 +57,20 @@ const handlePost = async (
     // 解析表单数据
     const { files } = await parseForm(req);
 
-    // 获取文件
-    const file = files.file as FormidableFile | undefined;
+    // 获取文件（files.file 可能是数组）
+    const fileArray = Array.isArray(files.file) ? files.file : [files.file];
+    const file = fileArray[0] as FormidableFile | undefined;
+
     if (!file || !file.filepath) {
       return sendWarnningResponse(res, "未找到上传文件");
     }
+
+    logger.info("封面上传", {
+      userId,
+      originalFilename: file.originalFilename,
+      size: file.size,
+      mimetype: file.mimetype,
+    });
 
     // 读取文件内容
     const fs = require("fs");

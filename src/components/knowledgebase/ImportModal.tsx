@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { apiGet, apiPost } from "@/api/request";
-import { uploadFileWithNewFlow } from "@/api/upload";
+import { uploadFileToLocal } from "@/api/upload-local";
 import { cn } from "@/lib/utils";
 
 interface ImportModalProps {
@@ -68,7 +68,14 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
   // 处理文件上传
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+
     if (!files || files.length === 0) {
+      // 用户取消了文件选择，关闭整个导入弹窗
+      setIsProcessing(false);
+      if (onProcessingChange) {
+        onProcessingChange(false);
+      }
+      onClose();
       return;
     }
 
@@ -103,10 +110,10 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
     // 只在文件选择完成后关闭弹窗
 
     try {
-      // 使用现有的上传函数
-      const result = await uploadFileWithNewFlow(file, (progress) => {
-        // 上传进度回调
-      });
+  const result = await uploadFileToLocal(file, (progress) => {
+    // 上传进度回调
+  });
+
 
       if (result.id) {
         try {
@@ -151,6 +158,10 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
       toast.error(`文件 "${file.name}" 导入失败: ${errorMessage}`);
     } finally {
       setIsProcessing(false);
+      // 确保通知父组件重置状态
+      if (onProcessingChange) {
+        onProcessingChange(false);
+      }
       setShowSecondModal(false);
       // 清空 input 的值
       if (fileInputRef.current) {
@@ -302,8 +313,25 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
 
       const clickedOutsideFirstModal = firstModalRef.current && !firstModalRef.current.contains(event.target as Node);
       const clickedOutsideSecondModal = secondModalRef.current && !secondModalRef.current.contains(event.target as Node);
+      const clickedOutsideHistoryModal = historyModalRef.current && !historyModalRef.current.contains(event.target as Node);
 
+      // 如果点击历史记录弹窗外部，关闭历史记录弹窗
+      if (showHistoryModal && clickedOutsideHistoryModal) {
+        setShowHistoryModal(false);
+        setIsProcessing(false);
+        if (onProcessingChange) {
+          onProcessingChange(false);
+        }
+        onClose();
+        return;
+      }
+
+      // 关闭条件：点击了第一个弹窗外部，并且（第二个弹窗未显示 或 点击了第二个弹窗外部）
       if (clickedOutsideFirstModal && (!showSecondModal || clickedOutsideSecondModal)) {
+        setIsProcessing(false);
+        if (onProcessingChange) {
+          onProcessingChange(false);
+        }
         onClose();
         setShowSecondModal(false);
       }
@@ -316,7 +344,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen, showSecondModal, onClose]);
+  }, [isOpen, showSecondModal, showHistoryModal, onClose, onProcessingChange]);
 
   // 同步isOpen和showFirstModal
   useEffect(() => {
@@ -344,8 +372,12 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
       }
       // 重置处理状态
       setIsProcessing(false);
+      // 确保通知父组件重置状态
+      if (onProcessingChange) {
+        onProcessingChange(false);
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, onProcessingChange]);
 
   
   if (!isOpen) return null;
@@ -410,14 +442,11 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
         >
           {/* 文件选项 */}
           <button
-            onClick={() => {
-              // 关闭前两个弹窗
-              setShowSecondModal(false);
-              setShowFirstModal(false);
-              // 然后触发文件选择
-              setTimeout(() => {
-                fileInputRef.current?.click();
-              }, 100);
+            onClick={(e) => {
+              e.stopPropagation();
+              // 不关闭前两个弹窗，保持它们显示
+              // 直接触发文件选择
+              fileInputRef.current?.click();
             }}
             className="w-full text-left transition-colors text-[16px] text-[#333333] px-[16px] py-[12px] h-[48px] flex items-center rounded-t-[6px] w-[120px] bg-transparent cursor-pointer hover:bg-[#F1F6FF]"
           >
@@ -426,7 +455,10 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
 
           {/* 历史记录选项 */}
           <button
-            onClick={handleHistoryClick}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleHistoryClick();
+            }}
             className="w-full text-left transition-colors text-[16px] text-[#333333] px-[16px] py-[12px] h-[48px] flex items-center rounded-b-[6px] w-[120px] mt-[2px] bg-transparent cursor-pointer hover:bg-[#F1F6FF]"
           >
             历史记录
@@ -470,6 +502,11 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
           <button
             onClick={() => {
               setShowHistoryModal(false);
+              // 重置处理状态
+              setIsProcessing(false);
+              if (onProcessingChange) {
+                onProcessingChange(false);
+              }
               onClose();
             }}
             className="absolute top-[31px] right-[31px] w-[18px] h-[18px] flex items-center justify-center text-[18px] text-gray-500 hover:text-gray-700 bg-none border-0 cursor-pointer"
@@ -605,6 +642,11 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
             <button
               onClick={() => {
                 setShowHistoryModal(false);
+                // 重置处理状态
+                setIsProcessing(false);
+                if (onProcessingChange) {
+                  onProcessingChange(false);
+                }
                 onClose();
               }}
               className="w-[128px] h-[40px] bg-[#FFFFFF] rounded-[20px] border border-[#C8C9CC] text-[16px] text-[#666666] transition-all duration-200 ease hover:bg-[#F8F9FA]"
@@ -712,6 +754,9 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
                 } finally {
                   // 完成后重置处理状态
                   setIsProcessing(false);
+                  if (onProcessingChange) {
+                    onProcessingChange(false);
+                  }
                 }
               }}
               className="w-[128px] h-[40px] bg-[#0D9488] rounded-[20px] border-0 text-[16px] text-[#FFFFFF] transition-all duration-200 ease hover:bg-[#0F766E]"

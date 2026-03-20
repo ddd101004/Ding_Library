@@ -13,8 +13,8 @@ import {
   sendWarnningResponse,
   sendMethodNotAllowedResponse,
 } from "@/helper/responseHelper";
-import { saveFile as saveFileToLocal } from "@/lib/storage/local";
-import { upsertUploadedPaper } from "@/db/ai-reading/uploadedPaper";
+import { saveFile as saveFileToLocal, checkFileExists } from "@/lib/storage/local";
+import { upsertUploadedPaper } from "@/db/uploadedPaper";
 import logger from "@/helper/logger";
 
 // 禁用 Next.js 默认的 body parser
@@ -49,71 +49,89 @@ function parseForm(
 /**
  * POST - 上传论文并创建记录
  */
-const handlePost = async (
-  req: NextApiRequest,
-  res: NextApiResponse,
-  userId: string
-) => {
-  try {
-    const { cos_key, file_name, file_size, file_type, title, authors, keywords } = req.body;
+ const handlePost = async (
+    req: NextApiRequest,
+    res: NextApiResponse,
+    userId: string
+  ) => {
+    try {
+      // 如果有文件直接上传（multipart/form-data）
+      const contentType = req.headers["content-type"] || "";
+      logger.info("接收到的请求", { contentType, hasBody: !!req.body });
 
-    // 如果有文件直接上传（multipart/form-data）
-    const contentType = req.headers["content-type"] || "";
-    if (contentType.includes("multipart/form-data")) {
-      const { files, fields } = await parseForm(req);
-      const file = files.file as FormidableFile | undefined;
+      if (contentType.includes("multipart/form-data")) {
+        const { files, fields } = await parseForm(req);
 
-      if (!file || !file.filepath) {
-        return sendWarnningResponse(res, "未找到上传文件");
+        logger.info("解析表单结果", {
+          filesKeys: Object.keys(files),
+          fieldsKeys: Object.keys(fields),
+          file: files.file,
+        });
+
+       const fileArray = Array.isArray(files.file) ? files.file : [files.file];
+  const file = fileArray[0] as FormidableFile | undefined;
+
+  if (!file || !file.filepath) {
+    logger.warn("未找到上传文件", { files, fields });
+    return sendWarnningResponse(res, "未找到上传文件");
+  }
+
+  logger.info("文件解析成功", {
+    originalFilename: file.originalFilename,
+    size: file.size,
+    mimetype: file.mimetype,
+  });
+
+
+        // 读取文件内容
+        const fs = require("fs");
+        const fileBuffer = fs.readFileSync(file.filepath);
+
+        // 保存到本地存储
+        const result = await saveFileToLocal(
+          fileBuffer,
+          file.originalFilename || "unknown.pdf",
+          userId,
+          "paper"
+        );
+
+        if (!result.success || !result.filePath) {
+          return sendWarnningResponse(res, result.error || "文件保存失败");
+        }
+
+        // 保存到数据库
+        const paperTitle = fields.title?.toString() || file.originalFilename || "未命名论文";
+        const paper = await upsertUploadedPaper({
+          user_id: userId,
+          title: paperTitle,
+          authors: fields.authors?.toString(),
+          abstract: fields.abstract?.toString(),
+          keywords: fields.keywords?.toString(),
+          file_path: result.filePath,
+          file_name: result.fileName || file.originalFilename || "",
+          file_size: BigInt(file.size),
+          file_type: file.originalFilename?.split(".").pop() || "pdf",
+          mime_type: file.mimetype || "application/pdf",
+        });
+
+        logger.info("论文上传成功（表单方式）", {
+          userId,
+          paperId: paper.id,
+          filePath: result.filePath,
+        });
+
+        return sendSuccessResponse(res, "上传成功", {
+          id: paper.id,
+          title: paper.title,
+          file_name: paper.fileName,
+          file_size: Number(paper.fileSize),
+          file_type: paper.fileType,
+          parse_status: paper.parseStatus,
+          cos_key: result.filePath, // 兼容前端，返回文件路径
+        });
       }
-
-      // 读取文件内容
-      const fs = require("fs");
-      const fileBuffer = fs.readFileSync(file.filepath);
-
-      // 保存到本地存储
-      const result = await saveFileToLocal(
-        fileBuffer,
-        file.originalFilename || "unknown.pdf",
-        userId,
-        "paper"
-      );
-
-      if (!result.success || !result.filePath) {
-        return sendWarnningResponse(res, result.error || "文件保存失败");
-      }
-
-      // 保存到数据库
-      const paperTitle = fields.title?.toString() || file.originalFilename || "未命名论文";
-      const paper = await upsertUploadedPaper({
-        user_id: userId,
-        title: paperTitle,
-        authors: fields.authors?.toString(),
-        abstract: fields.abstract?.toString(),
-        keywords: fields.keywords?.toString(),
-        file_path: result.filePath,
-        file_name: result.fileName || file.originalFilename || "",
-        file_size: BigInt(file.size),
-        file_type: file.originalFilename?.split(".").pop() || "pdf",
-        mime_type: file.mimetype || "application/pdf",
-      });
-
-      logger.info("论文上传成功（表单方式）", {
-        userId,
-        paperId: paper.id,
-        filePath: result.filePath,
-      });
-
-      return sendSuccessResponse(res, "上传成功", {
-        id: paper.id,
-        title: paper.title,
-        file_name: paper.file_name,
-        file_size: Number(paper.file_size),
-        file_type: paper.file_type,
-        parse_status: paper.parse_status,
-        cos_key: result.filePath, // 兼容前端，返回文件路径
-      });
-    }
+      // 如果不是 multipart/form-data，则处理 JSON 数据
+      const { cos_key, file_name, file_size, file_type, title, authors, keywords } = req.body;
 
     // 如果是通过 cos_key 创建记录（已上传到COS或本地的场景）
     if (!cos_key || !file_name) {
@@ -128,7 +146,6 @@ const handlePost = async (
 
     // 如果是本地路径，验证文件是否存在
     if (isLocalPath) {
-      const { checkFileExists } = require("@/lib/storage/local");
       const fileInfo = checkFileExists(cos_key);
 
       if (!fileInfo.exists) {
@@ -157,16 +174,16 @@ const handlePost = async (
       userId,
       paperId: paper.id,
       filePath,
-      parseStatus: paper.parse_status,
+      parseStatus: paper.parseStatus,
     });
 
     return sendSuccessResponse(res, "创建成功", {
       id: paper.id,
       title: paper.title,
-      file_name: paper.file_name,
-      file_size: Number(paper.file_size),
-      file_type: paper.file_type,
-      parse_status: paper.parse_status,
+      file_name: paper.fileName,
+      file_size: Number(paper.fileSize),
+      file_type: paper.fileType,
+      parse_status: paper.parseStatus,
       cos_key: filePath, // 兼容前端
     });
   } catch (error) {

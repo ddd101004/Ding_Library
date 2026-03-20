@@ -602,7 +602,9 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                               src={
                                 folder.cover_image_url ||
                                 (folder.cover_image
-                                  ? `https://library-cos.century-cloud.com/${folder.cover_image}`
+                                  ? (folder.cover_image.startsWith('covers/') || folder.cover_image.startsWith('avatars/')
+                                    ? `/api/uploads/${folder.cover_image}`
+                                    : `https://library-cos.century-cloud.com/${folder.cover_image}`)
                                   : "")
                               }
                               alt={folder.folder_name}
