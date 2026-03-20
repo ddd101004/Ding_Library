@@ -22,13 +22,8 @@ import {
   sendSSEEvent,
   sendSSEError,
   handleStreamError,
-  prepareFolderRAGContext,
   StreamState,
 } from "@/service/chat/streamHelper";
-import type {
-  RAGSearchResultItem,
-  HistoryMessage,
-} from "@/service/chat/llm/folderRAGService";
 import logger from "@/helper/logger";
 
 /**
@@ -65,7 +60,6 @@ const handlePost = async (
   let isClientDisconnected = false;
   let conversation: ConversationValidationResult["conversation"] | null = null;
   let isPaperReading = false;
-  let isFolderRAG = false;
   const state: StreamState = {
     partialContent: "",
     reasoningContent: "",
@@ -101,7 +95,6 @@ const handlePost = async (
 
     conversation = validationResult.conversation;
     isPaperReading = validationResult.isPaperReading;
-    isFolderRAG = conversation.conversationType === "folder_rag";
 
     const userMessageResult = await prepareUserMessage(params);
     if (!userMessageResult.success) {
@@ -151,20 +144,9 @@ const handlePost = async (
         () => isClientDisconnected
       );
 
-      let ragSearchResults: RAGSearchResultItem[] = [];
-      let history: HistoryMessage[] = [];
       let attachmentContents: AttachmentContent[] = [];
 
-      if (isFolderRAG) {
-        const folderContext = await prepareFolderRAGContext({
-          conversation,
-          userInput: params.content,
-          conversationId: params.conversation_id,
-          res,
-        });
-        ragSearchResults = folderContext.ragSearchResults;
-        history = folderContext.history;
-      } else if (!isPaperReading) {
+      if (!isPaperReading) {
         attachmentContents = await getConversationAttachmentContents(
           params.conversation_id
         );
@@ -184,8 +166,6 @@ const handlePost = async (
         onToken: onTokenCallback,
         relatedPapers,
         attachmentContents,
-        ragSearchResults,
-        history,
         contextText: params.context_text,
         operationType: params.operation_type,
         targetLanguage: params.target_language,
@@ -203,13 +183,14 @@ const handlePost = async (
           messageUpdateData.reasoningContent = state.reasoningContent;
         }
 
+        if (isPaperReading && tokenStats) {
+          messageUpdateData.input_tokens = tokenStats.input_tokens;
+          messageUpdateData.output_tokens = tokenStats.output_tokens;
+          messageUpdateData.total_tokens = tokenStats.total_tokens;
+          messageUpdateData.reasoningTokens = tokenStats.reasoning_tokens;
+        }
+
         if (isPaperReading) {
-          if (tokenStats) {
-            messageUpdateData.input_tokens = tokenStats.input_tokens;
-            messageUpdateData.output_tokens = tokenStats.output_tokens;
-            messageUpdateData.total_tokens = tokenStats.total_tokens;
-            messageUpdateData.reasoningTokens = tokenStats.reasoning_tokens;
-          }
           messageUpdateData.messageType = params.operation_type;
           if (params.context_text) {
             messageUpdateData.contextText = params.context_text;

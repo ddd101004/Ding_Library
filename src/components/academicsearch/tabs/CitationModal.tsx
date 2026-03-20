@@ -335,7 +335,7 @@ export default function CitationModal({
           {/* 确认按钮 */}
           <button
             onClick={handleConfirm}
-            className="flex items-center justify-center w-[128px] h-[40px] bg-[#0D9488] rounded-[20px] text-base text-white border-none cursor-pointer"
+            className="flex items-center justify-center w-[128px] h-[40px] bg-[#0D9488] rounded-[20px] text-base text-white border-none cursor-pointer hover:bg-[#0D9488] hover:text-white hover:scale-[1.01] transition-transform"
           >
             确认
           </button>

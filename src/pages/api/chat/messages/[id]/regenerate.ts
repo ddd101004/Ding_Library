@@ -20,13 +20,8 @@ import {
   sendSSEError,
   finalizeStreamResponse,
   handleStreamError,
-  prepareFolderRAGContext,
   StreamState,
 } from "@/service/chat/streamHelper";
-import type {
-  RAGSearchResultItem,
-  HistoryMessage,
-} from "@/service/chat/llm/folderRAGService";
 import logger from "@/helper/logger";
 import { validateId } from "@/utils/validateString";
 
@@ -71,7 +66,6 @@ const handlePost = async (
   }
 
   const isPaperReading = conversation.conversationType === "paper_reading";
-  const isFolderRAG = conversation.conversationType === "folder_rag";
 
   // 同步更新会话的 is_deep_think 字段
   if (typeof is_deep_think === "boolean") {
@@ -134,28 +128,12 @@ const handlePost = async (
       () => isClientDisconnected
     );
 
-    let ragSearchResults: RAGSearchResultItem[] = [];
-    let history: HistoryMessage[] = [];
-
-    if (isFolderRAG) {
-      const folderContext = await prepareFolderRAGContext({
-        conversation,
-        userInput: lastUserMessage.content,
-        conversationId: conversation_id,
-        res,
-      });
-      ragSearchResults = folderContext.ragSearchResults;
-      history = folderContext.history;
-    }
-
     const tokenStats = await callLLMByConversationType({
       conversation,
       conversationId: conversation_id,
       userInput: lastUserMessage.content,
       userId,
       onToken: onTokenCallback,
-      ragSearchResults,
-      history,
       is_deep_think,
     });
 

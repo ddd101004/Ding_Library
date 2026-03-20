@@ -5,4 +5,3 @@
 export * from "./tokenEstimator";
 export * from "./contextBuilder";
 export * from "./streamProcessor";
-export * from "./folderRAGService";

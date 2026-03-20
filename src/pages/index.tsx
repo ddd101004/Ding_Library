@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>AI智慧学术交互图书馆</title>
+        <title>AI智慧学术交互系统</title>
         <meta
           name="description"
           content="新一代图书馆·陪你探索世界"

@@ -132,7 +132,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
                   color: "#2d3748", // 调整文字颜色
                 }}
               >
-                {isStreaming ? "稍等让ZHITU-AI思考一下" : "思考过程"}
+                {isStreaming ? "稍等让AI助手思考一下" : "思考过程"}
               </span>
             </div>
 

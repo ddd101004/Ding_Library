@@ -6,7 +6,7 @@ import {
   sendMethodNotAllowedResponse,
 } from "@/helper/responseHelper";
 import { formatCitation } from "@/db/messageCitation";
-import { findPaperById } from "@/db/aminer/paper";
+import { findPaperById } from "@/db/paper";
 import { validateId, validateString } from "@/utils/validateString";
 
 /**

@@ -23,6 +23,7 @@ interface ToolbarProps {
   isAiReadingActive?: boolean;
   isFolderChat?: boolean;
   isFileParsing?: boolean;
+  onAddFile?: () => void;
   onNavigateFunction?: (functionType: string) => void;
 }
 

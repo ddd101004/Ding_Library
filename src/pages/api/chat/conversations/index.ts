@@ -16,7 +16,6 @@ import {
 } from "@/db/ai-reading/uploadedPaper";
 import { createUserMessage } from "@/db/chatMessage/crud";
 import { createAttachmentsFromPaperIds } from "@/db/messageAttachment";
-import { getFolderById, verifyFolderOwner } from "@/db/paperFolder";
 import { parsePageNumber, parseLimitParam } from "@/utils/parsePageParams";
 import { validateString, validateId } from "@/utils/validateString";
 import logger from "@/helper/logger";
@@ -24,7 +23,7 @@ import { CONVERSATION_MAX_TOKENS } from "@/constants";
 
 /**
  * POST - 创建新会话
- * 支持普通对话、AI 伴读对话和文件夹知识库对话
+ * 支持普通对话和 AI 伴读对话
  */
 const handlePost = async (
   req: NextApiRequest,
@@ -40,7 +39,6 @@ const handlePost = async (
     // AI 伴读扩展参数
     conversation_type = "general",
     uploaded_paper_ids, // 支持多篇论文
-    folder_id,
     context_mode = "auto",
   } = req.body;
   // 参数校验
@@ -65,13 +63,6 @@ const handlePost = async (
     const paperIdResult = validateId(paperId, "论文 ID");
     if (!paperIdResult.valid) {
       return sendWarnningResponse(res, paperIdResult.error || "论文 ID 校验失败");
-    }
-  }
-
-  if (folder_id) {
-    const folderIdResult = validateId(folder_id, "文件夹 ID");
-    if (!folderIdResult.valid) {
-      return sendWarnningResponse(res, folderIdResult.error || "文件夹 ID 校验失败");
     }
   }
 
@@ -110,38 +101,11 @@ const handlePost = async (
     }
   }
 
-  // 如果是文件夹知识库对话，验证文件夹存在且属于当前用户
-  let folder = null;
-  if (conversation_type === "folder_rag") {
-    if (!folder_id) {
-      return sendWarnningResponse(res, "文件夹知识库对话必须指定文件夹 ID");
-    }
-
-    // 验证文件夹归属
-    const isOwner = await verifyFolderOwner(folder_id, userId);
-    if (!isOwner) {
-      return sendWarnningResponse(res, "无权访问该文件夹");
-    }
-
-    folder = await getFolderById(folder_id);
-    if (!folder) {
-      return sendWarnningResponse(res, "文件夹不存在");
-    }
-
-    // 检查是否有关联的 FastGPT 知识库
-    if (!folder.fastgpt_dataset_id) {
-      return sendWarnningResponse(res, "该文件夹未关联知识库，无法创建对话");
-    }
-  }
-
   // 生成对话标题
   let conversationTitle = title;
   if (!conversationTitle) {
     if (conversation_type === "paper_reading" && primaryPaper) {
       conversationTitle = `${primaryPaper.title.substring(0, 30)} 伴读`;
-    } else if (conversation_type === "folder_rag" && folder) {
-      // 文件夹知识库对话使用文件夹名称作为标题
-      conversationTitle = folder.folder_name;
     } else {
       conversationTitle = "新对话";
     }
@@ -157,8 +121,6 @@ const handlePost = async (
     conversation_type,
     uploaded_paper_id:
       conversation_type === "paper_reading" && paperIds.length > 0 ? paperIds[0] : undefined,
-    folder_id:
-      conversation_type === "folder_rag" ? folder_id : undefined,
     context_mode,
   });
 
@@ -186,7 +148,6 @@ const handlePost = async (
     conversationId: conversation.conversation_id,
     conversationType: conversation_type,
     paperIds: paperIds,
-    folderId: folder_id,
     userId,
   });
 
@@ -206,7 +167,6 @@ const handlePost = async (
     // AI 伴读扩展字段
     conversation_type: conversation.conversationType,
     uploaded_paper_id: conversation.uploadedPaperId,
-    folder_id: conversation.folderId,
     context_mode: conversation.contextMode,
   };
 
@@ -244,16 +204,6 @@ const handlePost = async (
     responseData.paper_info = papersInfo[0];
   }
 
-  // 如果是文件夹知识库对话，返回文件夹信息
-  if (conversation_type === "folder_rag" && folder) {
-    responseData.folder_info = {
-      folder_id: folder.folder_id,
-      folder_name: folder.folder_name,
-      description: folder.description,
-      fastgpt_dataset_id: folder.fastgpt_dataset_id,
-    };
-  }
-
   sendSuccessResponse(res, "会话创建成功", responseData);
 };
 
@@ -266,8 +216,7 @@ const handleGet = async (
   res: NextApiResponse,
   userId: string
 ) => {
-  const { page, limit, search, conversation_type, uploaded_paper_id, folder_id } =
-    req.query;
+  const { page, limit, search, conversation_type, uploaded_paper_id } = req.query;
 
   // 如果指定了论文 ID，验证论文归属
   if (uploaded_paper_id && typeof uploaded_paper_id === "string") {
@@ -280,14 +229,6 @@ const handleGet = async (
     }
   }
 
-  // 如果指定了文件夹 ID，验证文件夹归属
-  if (folder_id && typeof folder_id === "string") {
-    const isOwner = await verifyFolderOwner(folder_id, userId);
-    if (!isOwner) {
-      return sendWarnningResponse(res, "无权访问该文件夹");
-    }
-  }
-
   const result = await getConversationsByUserId({
     user_id: userId,
     page: parsePageNumber(page),
@@ -296,10 +237,8 @@ const handleGet = async (
     conversation_type: conversation_type as
       | "general"
       | "paper_reading"
-      | "folder_rag"
       | undefined,
     uploaded_paper_id: uploaded_paper_id as string | undefined,
-    folder_id: folder_id as string | undefined,
   });
 
   if (!result) {

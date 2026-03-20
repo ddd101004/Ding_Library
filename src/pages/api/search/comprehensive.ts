@@ -60,7 +60,6 @@ const handlePost = async (
   ) {
     const result = await processWanfangSearchResults({
       papers: wanfangZhResults.value,
-      userId,
       size: sizeNum,
     });
     papersZhItems = result.items;
@@ -76,7 +75,6 @@ const handlePost = async (
   ) {
     const result = await processWanfangSearchResults({
       papers: wanfangEnResults.value,
-      userId,
       size: sizeNum,
       isEnglish: true,
     });
@@ -98,7 +96,6 @@ const handlePost = async (
 
   return sendSuccessResponse(res, "搜索成功", {
     keyword: trimmedKeyword,
-    tags: [],
     papers_zh: {
       total: papersZhTotal,
       page: 1,
@@ -112,20 +109,6 @@ const handlePost = async (
       page_size: sizeNum,
       items: papersEnItems,
       source: "wanfang_en" as const,
-    },
-    scholars: {
-      total: 0,
-      page: 1,
-      page_size: 0,
-      items: [],
-      source: "wanfang" as const,
-    },
-    patents: {
-      total: 0,
-      page: 1,
-      page_size: 0,
-      items: [],
-      source: "wanfang" as const,
     },
   });
 };

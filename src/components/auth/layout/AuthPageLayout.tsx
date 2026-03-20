@@ -25,7 +25,7 @@ export function AuthPageLayout({ title, children }: AuthPageLayoutProps) {
       className="w-full min-h-screen bg-cover bg-center bg-no-repeat flex overflow-hidden"
     >
       <Head>
-        <title>AI智慧学术交互图书馆{title}</title>
+        <title>AI智慧学术交互系统{title}</title>
       </Head>
 
       {/* 右侧表单区域 */}

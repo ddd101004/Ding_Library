@@ -29,10 +29,6 @@ interface ConversationItem {
   message_count: number;
   create_time: string;
   last_message_preview?: string;
-  folder_info?: {
-    folder_id: string;
-    folder_name: string;
-  } | null;
   conversation_type?: "general" | "paper_reading" | "folder_rag";
   paper_info?: PaperInfo[];
 }
@@ -61,11 +57,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   exporting,
 }) => {
   const getDisplayContent = () => {
-    if (conv.conversation_type === "folder_rag" && conv.folder_info?.folder_name) {
-      const folderName = conv.folder_info.folder_name;
-      const preview = conv.last_message_preview || "";
-      return `（来自"${folderName}"知识库的对话）——${preview}`;
-    }
     return conv.last_message_preview || "";
   };
 

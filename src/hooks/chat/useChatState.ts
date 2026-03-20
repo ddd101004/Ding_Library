@@ -116,7 +116,6 @@ export function useChatState() {
       if (previousConversationIdRef.current !== null) {
         setInputText("");
         setCurrentFunction(null);
-        setIsFolderChatActive(false);
       }
 
       previousConversationIdRef.current = conversationIdStr;

@@ -7,7 +7,7 @@
 
 import logger from "@/helper/logger";
 import prisma from "@/utils/prismaProxy";
-import { Prisma } from "@prisma/client";
+import { Prisma, Paper } from "@prisma/client";
 import { paginate } from "@/utils/paginate";
 
 // ==================== 创建操作 ====================
@@ -398,6 +398,62 @@ export async function findPaperBySourceId(source: string, sourceId: string) {
       sourceId,
     });
     return null;
+  }
+}
+
+/**
+ * 批量查询论文ID（根据数据源和源ID列表）
+ * @param source 数据源
+ * @param sourceIds 源ID列表
+ * @returns 论文ID和源ID的映射
+ */
+export async function findPaperIdsBySource(
+  source: string,
+  sourceIds: string[]
+): Promise<Array<{ id: string; source_id: string }>> {
+  try {
+    const papers = await prisma.paper.findMany({
+      where: {
+        source,
+        source_id: { in: sourceIds },
+        deleted_status: 0,
+      },
+      select: {
+        id: true,
+        source_id: true,
+      },
+    });
+    return papers;
+  } catch (error: any) {
+    logger.error("批量查询论文ID失败", {
+      error: error.message,
+      source,
+      count: sourceIds.length,
+    });
+    return [];
+  }
+}
+
+/**
+ * 根据ID列表批量查询论文
+ * @param ids 论文ID列表
+ * @returns 论文列表
+ */
+export async function findPapersByIds(ids: string[]): Promise<Paper[]> {
+  try {
+    const papers = await prisma.paper.findMany({
+      where: {
+        id: { in: ids },
+        deleted_status: 0,
+      },
+    });
+    return papers;
+  } catch (error: any) {
+    logger.error("批量查询论文失败", {
+      error: error.message,
+      count: ids.length,
+    });
+    return [];
   }
 }
 

@@ -2,15 +2,8 @@ import { NextApiResponse } from "next";
 import { updateMessage } from "@/db/chatMessage";
 import { updateConversation } from "@/db/chatConversation";
 import { callChatLLMStream, callPaperReadingLLMStream } from "./llmService";
-import {
-  callFolderRAGLLMStream,
-  RAGSearchResultItem,
-  HistoryMessage,
-} from "./llm/folderRAGService";
 import { RelatedPaper } from "./autoRelatedPapers";
 import { AttachmentContent } from "./messageService";
-import { getFolderById } from "@/db/paperFolder";
-import { searchDataset } from "@/service/fastgpt/data";
 import { getRecentMessages } from "@/db/chatMessage/query";
 import logger from "@/helper/logger";
 
@@ -28,8 +21,19 @@ export interface TokenStats {
 
 export interface ConversationInfo {
   conversationType: string;
-  folderId?: string | null;
   is_deep_think?: boolean;
+}
+
+export interface RAGSearchResultItem {
+  id: string;
+  content: string;
+  score?: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface HistoryMessage {
+  role: "user" | "assistant";
+  content: string;
 }
 
 export type TokenCallback = (data: {
@@ -92,23 +96,8 @@ export async function callLLMByConversationType(params: {
     is_deep_think,
   } = params;
   const isPaperReading = conversation.conversationType === "paper_reading";
-  const isFolderRAG = conversation.conversationType === "folder_rag";
 
-  if (isFolderRAG) {
-    if (!conversation.folderId) {
-      throw new Error("文件夹知识库对话未关联文件夹");
-    }
-
-    return await callFolderRAGLLMStream({
-      user_id: userId,
-      folder_id: conversation.folderId,
-      message: userInput,
-      searchResults: params.ragSearchResults || [],
-      history: params.history || [],
-      is_deep_think,
-      onToken,
-    });
-  } else if (isPaperReading) {
+  if (isPaperReading) {
     return await callPaperReadingLLMStream({
       conversation_id: conversationId,
       userInput,
@@ -231,68 +220,4 @@ export async function handleStreamError(params: {
       })}\n\n`
     );
   }
-}
-
-export interface FolderRAGContext {
-  ragSearchResults: RAGSearchResultItem[];
-  history: HistoryMessage[];
-}
-
-export async function prepareFolderRAGContext(params: {
-  conversation: { folderId: string | null };
-  userInput: string;
-  conversationId: string;
-  res: NextApiResponse;
-}): Promise<FolderRAGContext> {
-  const { conversation, userInput, conversationId, res } = params;
-
-  if (!conversation.folderId) {
-    throw new Error("文件夹知识库对话未关联文件夹");
-  }
-
-  const folder = await getFolderById(conversation.folderId);
-  if (!folder) {
-    throw new Error("关联的文件夹不存在");
-  }
-  if (!folder.fastgpt_dataset_id) {
-    throw new Error("该文件夹未关联知识库，无法进行对话");
-  }
-
-  let ragSearchResults: RAGSearchResultItem[] = [];
-  try {
-    ragSearchResults = await searchDataset({
-      datasetId: folder.fastgpt_dataset_id,
-      text: userInput,
-      limit: 5,
-      similarity: 0.5,
-      searchMode: "embedding",
-    });
-  } catch (searchError) {
-    logger.error("知识库搜索失败", {
-      error:
-        searchError instanceof Error
-          ? searchError.message
-          : String(searchError),
-      datasetId: folder.fastgpt_dataset_id,
-      folderId: conversation.folderId,
-    });
-  }
-
-  sendSSEEvent(res, "sources", {
-    data: ragSearchResults.map((item) => ({
-      id: item.id,
-      content: item.q,
-      answer: item.a,
-      score: item.score?.[0]?.value || 0,
-      sourceName: item.sourceName,
-    })),
-  });
-
-  const recentMessages = await getRecentMessages(conversationId, 10);
-  const history = recentMessages.map((msg) => ({
-    role: msg.role as "user" | "assistant",
-    content: msg.content,
-  }));
-
-  return { ragSearchResults, history };
 }

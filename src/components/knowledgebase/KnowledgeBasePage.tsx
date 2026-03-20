@@ -391,7 +391,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                       <img
                         src={
                           selectedFolder?.folder_id === folder.folder_id
-                            ? "/slibar/slibar-shinycreatebase@2x.png"
+                            ? "/slibar/folderpng1.png"
                             : "/slibar/slibar-createbase@2x.png"
                         }
                         alt="文件夹"

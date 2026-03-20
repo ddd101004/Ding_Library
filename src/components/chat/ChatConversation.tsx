@@ -18,7 +18,6 @@ import MessageListContainer from "./conversation-components/MessageListContainer
 import ChatInputArea from "./conversation-components/ChatInputArea";
 import MessageInput, { ChatInputRef } from "./common/MessageInput";
 import ChatSplitLayout, { Message, MessagePapers } from "./ChatSplitLayout";
-import FolderChatHeader from "./FolderChatHeader";
 import { useChatState } from "@/hooks/chat/useChatState";
 import { useMessageActions } from "@/hooks/chat/useMessageActions";
 import { useRelatedPapers } from "@/hooks/chat/useRelatedPapers";
@@ -40,7 +39,6 @@ export default function ChatConversation({
     functionType,
     folderId,
     folderName,
-    isFolderChat,
   } = router.query;
 
   const { userInfo, getToken, clearUserInfo } = useUser();
@@ -859,7 +857,7 @@ export default function ChatConversation({
   return (
     <>
       <Head>
-        <title>AI智慧学术交互图书馆-AI对话</title>
+        <title>AI智慧学术交互系统-AI对话</title>
       </Head>
 
       {/* 全局样式覆盖 - 浅绿主题 */}
@@ -943,102 +941,98 @@ export default function ChatConversation({
         borderRadius: '20px',
         boxShadow: '0 2px 8px rgba(198, 242, 224, 0.2)'
       }}>
-        <ChatSplitLayout
-          showRelatedPapers={showRelatedPapers}
-          messages={messages}
-          relatedPapersList={relatedPapersList}
-          messageError={messageError}
-          copiedMessageId={copiedMessageId}
-          userInfo={userInfo}
-          isAiResponding={isAiResponding}
-          conversationId={conversationId}
-          isFolderChatActive={isFolderChatActive}
-          folderId={folderId}
-          folderName={folderName}
-          isSidebarOpen={isSidebarOpen}
-          onToggleCollapse={toggleThinkingCollapse}
-          onCopy={copyMessageContent}
-          onRegenerate={regenerateResponse}
-          onStopStreaming={stopStreaming}
-          onPreviousVersion={handlePreviousVersion}
-          onNextVersion={handleNextVersion}
-          onReferenceClick={handleReferenceClick}
-          messagesEndRef={messagesEndRef}
-          latestAiMessageId={latestAiMessageId}
-          onFeedbackSuccess={handleFeedbackSuccess}
-          currentVersionMessageIds={currentVersionMessageIds}
-          singleColumnContent={
-            <>
-              <FolderChatHeader
-                conversationDetail={conversationDetail}
-                isFolderChat={isFolderChat}
-              />
-              <div className="flex-1 overflow-y-auto overflow-x-hidden auto-hide-scrollbar pb-[10px]"
-                style={{ backgroundColor: '#d5f4cff' }}>
-                <div className="flex justify-center items-start w-full">
-                  <div className="relative responsive-container flex justify-center w-full">
-                    <MessageListContainer
-                      messages={messages}
-                      messageError={messageError}
-                      copiedMessageId={copiedMessageId}
-                      userInfo={userInfo}
-                      onToggleCollapse={toggleThinkingCollapse}
-                      onCopy={copyMessageContent}
-                      onRegenerate={regenerateResponse}
-                      onStopStreaming={stopStreaming}
-                      isAiResponding={isAiResponding}
-                      onPreviousVersion={handlePreviousVersion}
-                      onNextVersion={handleNextVersion}
-                      messagesEndRef={messagesEndRef}
-                      relatedPapers={
-                        relatedPapersList.length > 0
-                          ? relatedPapersList[relatedPapersList.length - 1].papers
-                          : null
-                      }
-                      onReferenceClick={handleReferenceClick}
-                      onFeedbackSuccess={handleFeedbackSuccess}
-                      currentVersionMessageIds={currentVersionMessageIds}
-                      latestAiMessageId={latestAiMessageId}
-                    />
-                  </div>
-                </div>
-              </div>
-            </>
-          }
-          inputAreaContent={
-            <ChatInputArea
-              ref={messageInputRef}
-              isSidebarOpen={isSidebarOpen}
-              inputText={inputText}
-              inputOnChange={setInputText}
-              onKeyDown={handleKeyDown}
-              onSend={handleSendMessage}
-              uploadedFiles={uploadedFiles}
-              onRemoveFile={handleRemoveFile}
-              isRecording={isRecording}
-              toggleRecording={toggleRecording}
-              isDeepThinkActive={isDeepThinkActive}
-              toggleDeepThink={toggleDeepThink}
-              isPaperSearchActive={isPaperSearchActive}
-              togglePaperSearch={togglePaperSearch}
-              isLoading={isLoading}
-              currentFunction={currentFunction}
-              onCloseFunction={handleCloseFunction}
-              isFromOtherPage={false}
-              onAddFile={() => setShowUploadModal(true)}
-              totalFileCount={totalFileCount}
-              showRelatedPapers={showRelatedPapers}
-              isAiReadingActive={currentFunction === "aiReading"}
-              isFolderChat={isFolderChatActive}
-              isFileParsing={isFileParsing}
-              hideFileTags={false}
-              style={{
-                backgroundColor: '#d5f4cff',
-                borderTop: '1px solid #d4ede4'
-              }}
-            />
-          }
-        />
+  <ChatSplitLayout
+  showRelatedPapers={showRelatedPapers}
+  messages={messages}
+  relatedPapersList={relatedPapersList}
+  messageError={messageError}
+  copiedMessageId={copiedMessageId}
+  userInfo={userInfo}
+  isAiResponding={isAiResponding}
+  conversationId={conversationId}
+  isFolderChatActive={isFolderChatActive}
+  folderId={folderId}
+  folderName={folderName}
+  isSidebarOpen={isSidebarOpen}
+  onToggleCollapse={toggleThinkingCollapse}
+  onCopy={copyMessageContent}
+  onRegenerate={regenerateResponse}
+  onStopStreaming={stopStreaming}
+  onPreviousVersion={handlePreviousVersion}
+  onNextVersion={handleNextVersion}
+  onReferenceClick={handleReferenceClick}
+  messagesEndRef={messagesEndRef}
+  latestAiMessageId={latestAiMessageId}
+  onFeedbackSuccess={handleFeedbackSuccess}
+  currentVersionMessageIds={currentVersionMessageIds}
+  singleColumnContent={
+    // 移除多余的 </>，直接返回单个 div 即可（无需空标签包裹）
+    <div 
+      className="flex-1 overflow-y-auto overflow-x-hidden auto-hide-scrollbar pb-[10px]"
+      style={{ backgroundColor: '#d5f4cf' }} // 修正 7 位颜色值为 6 位
+    >
+      <div className="flex justify-center items-start w-full">
+        <div className="relative responsive-container flex justify-center w-full">
+          <MessageListContainer
+            messages={messages}
+            messageError={messageError}
+            copiedMessageId={copiedMessageId}
+            userInfo={userInfo}
+            onToggleCollapse={toggleThinkingCollapse}
+            onCopy={copyMessageContent}
+            onRegenerate={regenerateResponse}
+            onStopStreaming={stopStreaming}
+            isAiResponding={isAiResponding}
+            onPreviousVersion={handlePreviousVersion}
+            onNextVersion={handleNextVersion}
+            messagesEndRef={messagesEndRef}
+            relatedPapers={
+              relatedPapersList.length > 0
+                ? relatedPapersList.at(-1)?.papers || null // 增加可选链避免报错
+                : null
+            }
+            onReferenceClick={handleReferenceClick}
+            onFeedbackSuccess={handleFeedbackSuccess}
+            currentVersionMessageIds={currentVersionMessageIds}
+            latestAiMessageId={latestAiMessageId}
+          />
+        </div>
+      </div>
+    </div>
+  }
+  inputAreaContent={
+    <ChatInputArea
+      ref={messageInputRef}
+      isSidebarOpen={isSidebarOpen}
+      inputText={inputText}
+      inputOnChange={setInputText}
+      onKeyDown={handleKeyDown}
+      onSend={handleSendMessage}
+      uploadedFiles={uploadedFiles}
+      onRemoveFile={handleRemoveFile}
+      isRecording={isRecording}
+      toggleRecording={toggleRecording}
+      isDeepThinkActive={isDeepThinkActive}
+      toggleDeepThink={toggleDeepThink}
+      isPaperSearchActive={isPaperSearchActive}
+      togglePaperSearch={togglePaperSearch}
+      isLoading={isLoading}
+      currentFunction={currentFunction}
+      onCloseFunction={handleCloseFunction}
+      isFromOtherPage={false}
+      onAddFile={() => setShowUploadModal(true)}
+      totalFileCount={totalFileCount}
+      showRelatedPapers={showRelatedPapers}
+      isAiReadingActive={currentFunction === "aiReading"}
+      isFileParsing={isFileParsing}
+      hideFileTags={false}
+      style={{
+        backgroundColor: '#d5f4cf', // 修正 7 位颜色值为 6 位
+        borderTop: '1px solid #d4ede4'
+      }}
+    />
+  }
+/>
       </div>
     </>
   );

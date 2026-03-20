@@ -1,6 +1,5 @@
 import { batchUpsertWanfangPapers } from "@/db/wanfang/paper";
-import { findPaperIdsBySource } from "@/db/aminer/paper";
-import { batchCheckFavorites } from "@/db/aminer/favorite";
+import { findPaperIdsBySource } from "@/db/paper";
 import { WanfangPaperItem } from "@/type/paper";
 import logger from "@/helper/logger";
 
@@ -23,7 +22,6 @@ interface WanfangPaperRaw {
 
 interface ProcessWanfangResultParams {
   papers: WanfangPaperRaw[];
-  userId: string;
   size: number;
   isEnglish?: boolean;
 }
@@ -31,7 +29,6 @@ interface ProcessWanfangResultParams {
 interface ProcessWanfangResult {
   items: WanfangPaperItem[];
   total: number;
-  dbPaperIds: string[];
 }
 
 /**
@@ -41,10 +38,10 @@ interface ProcessWanfangResult {
 export async function processWanfangSearchResults(
   params: ProcessWanfangResultParams
 ): Promise<ProcessWanfangResult> {
-  const { papers, userId, size, isEnglish = false } = params;
+  const { papers, size, isEnglish = false } = params;
 
   if (!papers || papers.length === 0) {
-    return { items: [], total: 0, dbPaperIds: [] };
+    return { items: [], total: 0 };
   }
 
   // 解析 total（万方 API 可能返回字符串）
@@ -66,17 +63,6 @@ export async function processWanfangSearchResults(
     papers.map((p) => p.id)
   );
   const sourceIdToDbIdMap = new Map(dbPapers.map((p) => [p.source_id, p.id]));
-  const dbPaperIds = dbPapers.map((p) => p.id);
-
-  // 批量检查收藏状态
-  const favoriteMap =
-    dbPaperIds.length > 0
-      ? await batchCheckFavorites({
-          user_id: userId,
-          favorite_type: "paper",
-          item_ids: dbPaperIds,
-        })
-      : {};
 
   // 格式化返回数据
   const items: WanfangPaperItem[] = papers.slice(0, size).map((paper) => {
@@ -95,7 +81,7 @@ export async function processWanfangSearchResults(
       doi: paper.doi,
       issn: paper.issn,
       source_db: paper.source_db,
-      isFavorited: dbId ? favoriteMap[dbId] || false : false,
+      isFavorited: false,
       title_en: paper.title_en,
       abstract_en: paper.abstract_en,
       periodical_title_en: paper.periodical_title_en,
@@ -104,5 +90,5 @@ export async function processWanfangSearchResults(
     return baseItem;
   });
 
-  return { items, total, dbPaperIds };
+  return { items, total };
 }

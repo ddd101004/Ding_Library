@@ -379,7 +379,7 @@ export default function AiReadingConversation({ isSidebarOpen = false }) {
   return (
     <>
       <Head>
-        <title>AI智慧学术交互图书馆-AI伴读</title>
+        <title>AI智慧学术交互系统-AI伴读</title>
       </Head>
 
       {/* PDF 查看器 + 对话界面 + 输入框 */}

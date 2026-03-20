@@ -43,38 +43,6 @@ export default function FolderDetailPage({
 
   const { containerRef: scrollContainerRef } = useAutoHideScrollbar();
 
-  // 处理基础聊天图标点击 - 创建会话并跳转
-  const handleBaseChat = async () => {
-    try {
-      // 调用 API 创建会话
-      const response = await apiPost('/api/chat/conversations', {
-        conversation_type:'folder_rag',
-        folder_id: folder.folder_id,
-      });
-
-      if (response.code !== 200) {
-        toast.error('创建对话失败: ' + response.message);
-        return;
-      }
-
-      const conversationId = response.data.conversation_id;
-
-      // 跳转到对话页面
-      router.push({
-        pathname: '/chatconversation',
-        query: {
-          conversationId,
-          folderId: folder.folder_id,
-          folderName: folder.folder_name,
-          isFolderChat: 'true',
-        },
-      });
-    } catch (error: any) {
-      console.error('创建知识库对话失败:', error);
-      toast.error('创建对话失败: ' + (error.message || '未知错误'));
-    }
-  };
-
   useEffect(() => {
     // 从 localStorage 读取侧边栏状态
     const checkSidebarState = () => {
@@ -372,22 +340,6 @@ export default function FolderDetailPage({
               </TooltipProvider>
             </div>
             <div className="flex items-center flex-shrink-0 mr-[100px]">
-              {/* 基础聊天图标 */}
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <img
-                      src="/slibar/slibar-Basechat.png"
-                      alt="基础聊天"
-                      className="w-[18px] h-[16px] sm:w-[20px] sm:h-[17px] md:w-[22px] md:h-[19px] cursor-pointer mr-[20px] sm:mr-[25px] md:mr-[30px]"
-                      onClick={handleBaseChat}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>知识库对话</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
               {/* 回到主页图标 */}
               <TooltipProvider>
                 <Tooltip>

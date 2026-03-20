@@ -6,7 +6,7 @@ export default function History() {
   return (
  <>
       <Head>
-        <title>AI智慧学术交互图书馆-历史记录</title>
+        <title>AI智慧学术交互系统-历史记录</title>
       </Head>
       <WithSidebarLayout>
         <HistoryPage/>

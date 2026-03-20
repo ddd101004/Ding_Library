@@ -5,7 +5,7 @@
 /**
  * 数据源类型
  */
-export type PaperSource = "aminer" | "ebsco" | "local" | "wanfang" | "wanfang_en";
+export type PaperSource = "ebsco" | "local" | "wanfang" | "wanfang_en";
 
 /**
  * 论文基础字段（所有数据源共有）
@@ -23,45 +23,6 @@ export interface BasePaperItem {
   abstract?: string;
   /** 发表年份 */
   year?: number;
-}
-
-/**
- * AMiner 特定字段
- */
-export interface AMinerPaperFields {
-  /** 中文标题 */
-  title_zh?: string;
-  /** 中文摘要 */
-  abstract_zh?: string;
-  /** 作者列表（AMiner 格式：对象数组） */
-  authors?: Array<{
-    name?: string;
-    name_zh?: string;
-    org?: string;
-    org_zh?: string;
-  }>;
-  /** 关键词 */
-  keywords?: string[];
-  /** 中文关键词 */
-  keywords_zh?: string[];
-  /** 出版物信息 */
-  venue?: {
-    raw?: string;
-    raw_zh?: string;
-    t?: number | string;
-  };
-  /** 引用数 */
-  n_citation?: number;
-  /** DOI */
-  doi?: string;
-  /** ISSN */
-  issn?: string;
-  /** 卷号 */
-  volume?: string;
-  /** 期号 */
-  issue?: string;
-  /** 是否已收藏 */
-  isFavorited?: boolean;
 }
 
 /**
@@ -129,11 +90,6 @@ export interface WanfangPaperFields {
 }
 
 /**
- * AMiner 论文项
- */
-export type AMinerPaperItem = BasePaperItem & AMinerPaperFields;
-
-/**
  * EBSCO 论文项
  */
 export type EBSCOPaperItem = BasePaperItem & EBSCOPaperFields;
@@ -151,7 +107,7 @@ export type WanfangPaperItem = BasePaperItem & WanfangPaperFields;
 /**
  * 通用论文项（联合类型）
  */
-export type PaperItem = AMinerPaperItem | EBSCOPaperItem | LocalPaperItem | WanfangPaperItem;
+export type PaperItem = EBSCOPaperItem | LocalPaperItem | WanfangPaperItem;
 
 /**
  * 论文搜索响应数据
@@ -206,21 +162,6 @@ export interface BasePaperSearchRequest {
 }
 
 /**
- * AMiner 搜索请求参数
- */
-export interface AMinerSearchRequest extends BasePaperSearchRequest {
-  source?: "aminer";
-  /** 搜索类型 */
-  search_type?: "title" | "keyword" | "abstract" | "author" | "org" | "venue";
-  /** 排序方式（AMiner 特定） */
-  order?: "year" | "n_citation";
-  /** 起始年份 */
-  year_from?: number;
-  /** 结束年份 */
-  year_to?: number;
-}
-
-/**
  * EBSCO 搜索请求参数
  */
 export interface EBSCOSearchRequest extends BasePaperSearchRequest {
@@ -249,9 +190,16 @@ export interface LocalSearchRequest extends BasePaperSearchRequest {
 }
 
 /**
+ * Wanfang 搜索请求参数
+ */
+export interface WanfangSearchRequest extends BasePaperSearchRequest {
+  source?: "wanfang" | "wanfang_en";
+}
+
+/**
  * 论文搜索请求参数（联合类型）
  */
 export type PaperSearchRequest =
-  | AMinerSearchRequest
   | EBSCOSearchRequest
-  | LocalSearchRequest;
+  | LocalSearchRequest
+  | WanfangSearchRequest;

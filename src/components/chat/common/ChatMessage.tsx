@@ -128,7 +128,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({
           alt="AI头像"
           className="w-9 h-9 rounded-full mr-3 flex-shrink-0"
         />
-        <span className="text-sm font-medium mr-3">ZHITU-AI</span>
+        <span className="text-sm font-medium mr-3">AI助手</span>
         <span className="text-sm text-gray-600">
           {timestamp}
         </span>

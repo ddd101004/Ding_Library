@@ -7,6 +7,9 @@ import {
 } from "@/service/fastgpt";
 import { getOrCreateUserRootDataset } from "@/db/user";
 
+// 临时禁用 FastGPT 调用的开关（MongoDB 连接失败时使用）
+const DISABLE_FASTGPT = process.env.DISABLE_FASTGPT === "true";
+
 /**
  * 创建文件夹（同步创建 FastGPT 知识库）
  */
@@ -19,26 +22,34 @@ export const createFolder = async (data: {
 }) => {
   try {
     let fastgptDatasetId: string | null = null;
-    try {
-      // 获取或创建用户的根知识库
-      const rootDatasetId = await getOrCreateUserRootDataset(data.user_id);
 
-      // 在用户根知识库下创建子知识库
-      fastgptDatasetId = await createDataset({
-        name: data.folder_name,
-        intro: data.description || "",
-        type: "dataset",
-        parentId: rootDatasetId || undefined,
-      });
+    // 仅在未禁用 FastGPT 时才创建知识库
+    if (!DISABLE_FASTGPT) {
+      try {
+        // 获取或创建用户的根知识库
+        const rootDatasetId = await getOrCreateUserRootDataset(data.user_id);
+
+        // 在用户根知识库下创建子知识库
+        fastgptDatasetId = await createDataset({
+          name: data.folder_name,
+          intro: data.description || "",
+          type: "dataset",
+          parentId: rootDatasetId || undefined,
+        });
+        logger.info(
+          `[Folder] FastGPT dataset created: ${fastgptDatasetId} for folder: ${data.folder_name}, parentId: ${rootDatasetId}`
+        );
+      } catch (fastgptError) {
+        const errorMessage =
+          fastgptError instanceof Error
+            ? fastgptError.message
+            : String(fastgptError);
+        logger.error(`[Folder] FastGPT dataset creation failed: ${errorMessage}`);
+      }
+    } else {
       logger.info(
-        `[Folder] FastGPT dataset created: ${fastgptDatasetId} for folder: ${data.folder_name}, parentId: ${rootDatasetId}`
+        `[Folder] FastGPT disabled, skipping dataset creation for folder: ${data.folder_name}`
       );
-    } catch (fastgptError) {
-      const errorMessage =
-        fastgptError instanceof Error
-          ? fastgptError.message
-          : String(fastgptError);
-      logger.error(`[Folder] FastGPT dataset creation failed: ${errorMessage}`);
     }
 
     const folder = await prisma.paperFolder.create({
@@ -144,7 +155,8 @@ export const deleteFolder = async (folder_id: string) => {
       where: { folder_id },
     });
 
-    if (folder?.fastgpt_dataset_id) {
+    // 仅在未禁用 FastGPT 且存在 dataset_id 时才删除
+    if (!DISABLE_FASTGPT && folder?.fastgpt_dataset_id) {
       try {
         await deleteDataset(folder.fastgpt_dataset_id);
         logger.info(
@@ -157,6 +169,10 @@ export const deleteFolder = async (folder_id: string) => {
             : String(fastgptError);
         logger.error(`[Folder] FastGPT dataset deletion failed: ${errorMessage}`);
       }
+    } else if (DISABLE_FASTGPT && folder?.fastgpt_dataset_id) {
+      logger.info(
+        `[Folder] FastGPT disabled, skipping dataset deletion: ${folder.fastgpt_dataset_id}`
+      );
     }
 
     return deletedFolder;
