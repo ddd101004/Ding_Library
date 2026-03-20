@@ -7,8 +7,29 @@ import {
   sendMethodNotAllowedResponse,
 } from "@/helper/responseHelper";
 import { createFolder, getFoldersByUserId } from "@/db/paperFolder";
-import { getCoverImageSignedUrl } from "@/lib/cos/cosClient";
 import { validateString } from "@/utils/validateString";
+
+/**
+ * 生成封面图 URL
+ * @param coverImage 封面图路径
+ * @returns 完整的访问 URL
+ */
+function getCoverImageUrl(coverImage: string | null): string | null {
+  if (!coverImage) return null;
+
+  // 本地存储路径
+  if (coverImage.startsWith('covers/') || coverImage.startsWith('avatars/')) {
+    return `/api/uploads/${coverImage}`;
+  }
+
+  // 完整 URL（COS 或其他）
+  if (coverImage.startsWith('http://') || coverImage.startsWith('https://')) {
+    return coverImage;
+  }
+
+  // 旧的 COS 路径格式
+  return `https://library-cos.centum-cloud.com/${coverImage}`;
+}
 
 /**
  * POST - 创建文件夹
@@ -74,10 +95,8 @@ const handlePost = async (
     throw new Error("创建文件夹失败");
   }
 
-  // 如果有封面图，生成签名 URL
-  const cover_image_url = folder.cover_image
-    ? getCoverImageSignedUrl(folder.cover_image)
-    : null;
+  // 如果有封面图，生成 URL
+  const cover_image_url = getCoverImageUrl(folder.cover_image);
 
   sendSuccessResponse(res, "文件夹创建成功", {
     folder_id: folder.folder_id,
@@ -101,12 +120,10 @@ const handleGet = async (
 ) => {
   const folders = await getFoldersByUserId(userId);
 
-  // 为每个文件夹生成封面图签名 URL
+  // 为每个文件夹生成封面图 URL
   const foldersWithCoverUrl = folders.map((folder) => ({
     ...folder,
-    cover_image_url: folder.cover_image
-      ? getCoverImageSignedUrl(folder.cover_image)
-      : null,
+    cover_image_url: getCoverImageUrl(folder.cover_image),
   }));
 
   sendSuccessResponse(res, "获取成功", {
