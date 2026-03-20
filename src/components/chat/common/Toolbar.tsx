@@ -91,14 +91,14 @@ export default function Toolbar({
       <button
         onClick={handleToggleDeepThink}
         onMouseDown={(e) => e.preventDefault()}
-        className={`w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
+        className={`deep-think-btn w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
           isDeepThinkActive
             ? 'bg-[#0D9488] opacity-80 text-white'
             : 'bg-transparent border border-[#C8C9CC] text-[#666666]'
         } ${
           isControlDisabled
             ? 'opacity-50 cursor-not-allowed'
-            : 'hover:opacity-90 hover:shadow-sm cursor-pointer'
+            : 'hover:scale-[1.01] cursor-pointer'
         }`}
         disabled={isControlDisabled}
       >
@@ -128,14 +128,14 @@ export default function Toolbar({
             <button
               onClick={handleTogglePaperSearch}
               onMouseDown={(e) => e.preventDefault()}
-              className={`w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
+              className={`paper-search-btn w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
                 isPaperSearchActive
                   ? 'bg-[#0D9488] opacity-80 text-white'
                   : 'bg-transparent border border-[#C8C9CC] text-[#666666]'
               } ${
                 isPaperSearchDisabled
                   ? 'opacity-50 cursor-not-allowed'
-                  : 'hover:opacity-90 hover:shadow-sm cursor-pointer'
+                  : 'hover:scale-[1.01] cursor-pointer'
               }`}
               disabled={isPaperSearchDisabled}
             >

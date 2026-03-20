@@ -896,8 +896,8 @@ export default function ChatConversation({
           border: 1px solid #d4ede4 !important;
         }
         
-        /* 按钮hover状态 */
-        button:hover:not(:disabled), 
+        /* 按钮hover状态（排除论文搜索、DeepThink和引用确认按钮） */
+        button:hover:not(:disabled):not(.paper-search-btn):not(.deep-think-btn):not(.citation-confirm-btn),
         .btn-hover-effect:hover {
           background-color: #e8f8f0 !important;
           border-color: #d4ede4 !important;

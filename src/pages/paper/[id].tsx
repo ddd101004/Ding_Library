@@ -20,8 +20,8 @@ export default function PaperDetailPage() {
       setError(null);
 
       try {
-        // 调用 AMiner 论文详情 API
-        const response = await apiGet(`/api/aminer/papers/${id}`);
+        // 调用通用论文详情 API
+        const response = await apiGet(`/api/papers/${id}`);
 
         if (response.code === 200 && response.data) {
           const paper = response.data;
@@ -30,17 +30,22 @@ export default function PaperDetailPage() {
           const transformedData = {
             id: paper.id || id,
             title: paper.title || "",
-            title_zh: paper.title_zh || paper.title || "",
+            title_zh: paper.title || "",
             authors: paper.authors || [],
             abstract: paper.abstract || "",
-            abstract_zh: paper.abstract_zh || "",
-            year: paper.year,
+            abstract_zh: paper.abstract || "",
+            year: paper.publicationYear || paper.year,
             n_citation: paper.n_citation || 0,
-            venue: paper.venue || {},
+            venue: paper.publicationName || paper.venue || {},
             doi: paper.doi,
             keywords: paper.keywords || [],
-            source: paper.source || "aminer",
-            url: paper.url
+            source: paper.source || "wanfang",
+            url: paper.plink || paper.url,
+            publicationName: paper.publicationName,
+            publicationDate: paper.publicationDate,
+            publicationType: paper.publicationType,
+            hasFulltext: paper.hasFulltext,
+            pdfLink: paper.pdfLink
           };
 
           setPaperData(transformedData);

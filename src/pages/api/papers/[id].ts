@@ -69,17 +69,27 @@ const handleGet = async (
       // 增加查看次数
       await incrementViewCount(paper.id);
 
+      // 根据语言决定标题和摘要的优先级
+      // 中文论文优先显示中文，英文论文优先显示英文
+      const isChinese = paper.language === 'zh';
+      const displayTitle = isChinese && paper.title_zh ? paper.title_zh : paper.title;
+      const displayAbstract = isChinese && paper.abstract_zh ? paper.abstract_zh : paper.abstract;
+      // 检查 venue 是否是对象且有 raw_zh 属性
+      const venue = paper.venue as Record<string, unknown> | null;
+      const displayPublicationName = isChinese && venue?.raw_zh ? (venue.raw_zh as string) : paper.publication_name;
+
       // 格式化返回数据
       const result: Record<string, unknown> = {
         id: paper.id,
         dbId: paper.db_id,
         an: paper.an,
-        title: paper.title,
+        title: displayTitle,
+        title_zh: paper.title_zh,
         titleFull: paper.title_full,
         subtitle: paper.subtitle,
         authors: paper.authors || [],
         authorsFull: paper.authors_full || null,
-        publicationName: paper.publication_name,
+        publicationName: displayPublicationName,
         publicationType: paper.publication_type,
         publisher: paper.publisher,
         publicationDate: paper.publication_date,
@@ -91,7 +101,8 @@ const handleGet = async (
         issn: paper.issn,
         isbn: paper.isbn,
         doi: paper.doi,
-        abstract: paper.abstract,
+        abstract: displayAbstract,
+        abstract_zh: paper.abstract_zh,
         abstractFull: paper.abstract_full,
         subjects: paper.subjects || [],
         keywords: paper.keywords || [],
@@ -114,7 +125,7 @@ const handleGet = async (
         viewCount: paper.view_count,
         downloadCount: paper.download_count,
         syncTime: paper.sync_time,
-        source: "local",
+        source: paper.source || "local",
       };
 
       // 如果需要全文且本地没有，则从EBSCO获取
