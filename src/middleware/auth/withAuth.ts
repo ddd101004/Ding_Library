@@ -65,7 +65,14 @@ export const withAuth = (
         try {
           // 查询用户信息
           const userInfo = await findUserByUserIdInner(userId);
-          if (userInfo?.disabled_status) {
+
+          // 用户不存在或已禁用
+          if (!userInfo) {
+            sendUnauthorizedResponse(res, "用户不存在");
+            return;
+          }
+
+          if (userInfo.disabled_status) {
             sendUnauthorizedResponse(
               res,
               "该用户因违规使用，已被封禁，如有疑问请联系客服处理"

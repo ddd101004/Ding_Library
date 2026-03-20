@@ -26,13 +26,10 @@ export function AvatarProvider({ children }: { children: React.ReactNode }) {
       }
     } catch (error) {
       console.error("Failed to fetch avatar URL:", error);
+      // 如果获取失败（如未登录），使用默认头像
+      setAvatarUrl("/touxiang.jpg");
     }
   };
-
-  // 组件挂载时获取头像
-  useEffect(() => {
-    refreshAvatar();
-  }, []);
 
   return (
     <AvatarContext.Provider value={{ avatarUrl, setAvatarUrl, refreshAvatar }}>

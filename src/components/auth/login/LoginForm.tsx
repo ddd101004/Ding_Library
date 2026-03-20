@@ -138,7 +138,7 @@ export function LoginForm({
         localStorage.removeItem('rememberedPassword');
       }
 
-      onSuccess?.();
+      // login 函数已经处理了跳转，不需要再调用 onSuccess
     } catch (err) {
       // 错误已自动 toast，这里只需静默处理
     } finally {

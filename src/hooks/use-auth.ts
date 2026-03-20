@@ -47,8 +47,10 @@ export function useAuth() {
       localStorage.setItem("isSidebarOpen", JSON.stringify(false));
     }
 
-    // 刷新头像以获取最新头像
-    await refreshAvatar();
+    // 刷新头像（不阻塞跳转）
+    refreshAvatar().catch((err) => {
+      console.error("刷新头像失败:", err);
+    });
 
     // 处理重定向
     const redirectPath = router.query.redirect as string;
