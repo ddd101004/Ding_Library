@@ -5,16 +5,9 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development next dev -p 3007",
     "build": "cross-env NODE_ENV=production next build",
-    "build:scripts": "tsc -p tsconfig.scripts.json && tsc-alias -p tsconfig.scripts.json",
-    "build:all": "pnpm build && pnpm build:scripts",
     "start": "cross-env NODE_ENV=production next start -p 3007",
-    "start:all": "cross-env NODE_ENV=production node scripts/start-all.js",
     "lint": "next lint",
-    "prisma": "prisma",
-    "cron": "cross-env NODE_ENV=production node dist/scripts/scripts/scheduleTasks.js",
-    "cron:dev": "cross-env NODE_ENV=development ts-node src/scripts/scheduleTasks.ts",
-    "sync:once": "cross-env NODE_ENV=production ts-node src/scripts/syncPapers.ts",
-    "download:once": "cross-env NODE_ENV=production ts-node src/scripts/downloadPdfs.ts"
+    "prisma": "prisma"
   },
   "dependencies": {
     "@prisma/client": "^4.11.0",

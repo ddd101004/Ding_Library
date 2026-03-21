@@ -51,10 +51,10 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
       }`}
       style={{ height: `${160 + backgroundOffset}px` }}
     >
-      <div className="flex flex-col h-full pt-4">
+      <div className="flex flex-col h-full pt-1">
         <div
           className="ml-6 pb-[60px] flex items-center transition-all duration-300 flex-1"
-          style={{ marginTop: "0px" }}
+          style={{ marginTop: "-15px" }}
         >
           {/* 修复：添加 FunctionSelection 组件 */}
           {currentFunction && (

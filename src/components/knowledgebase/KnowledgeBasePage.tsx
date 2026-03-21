@@ -511,7 +511,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
               {/* 根据视图模式显示不同内容 */}
               {viewMode === "list" ? (
                 // 列表视图模式 - 表格
-                <div className="w-full" style={{ marginTop: '-30px' }}>
+                <div className="w-full overflow-y-auto scrollbar-thin" style={{ marginTop: '-30px', maxHeight: 'calc(100vh - 250px)' }}>
                   {/* 表头 */}
                   <div className="flex mb-4 w-full">
                     <div className="flex-1 text-[14px] sm:text-[16px] md:text-[18px] font-medium text-gray-700 min-w-80 ">

@@ -98,12 +98,8 @@ model Paper {
   id String @id @default(uuid())
 
   // 数据源标识
-  source    String @db.VarChar(20) // 数据来源: ebsco, wanfang
+  source    String @db.VarChar(20) // 数据来源: wanfang
   source_id String @db.VarChar(200) // 来源系统的唯一ID
-
-  // EBSCO 特定标识符（仅 EBSCO 来源使用）
-  db_id String? // EBSCO数据库ID (如: aph, lkh)
-  an    String? // EBSCO访问号 (Accession Number)
 
   // 基本信息
   title      String  @db.VarChar(500) // 论文标题
@@ -163,11 +159,6 @@ model Paper {
   pdf_file_size     BigInt? // PDF文件大小(字节)
   pdf_download_time DateTime? // PDF下载时间
 
-  // EBSCO原始数据
-  plink           String? @db.Text // EBSCO永久链接
-  custom_links    String? @db.Text // 自定义链接 (JSON)
-  relevancy_score Int? // 相关性评分
-
   // 额外元数据
   record_info String? @db.Text // 完整记录信息 (JSON)
   bib_entity  String? @db.Text // 书目实体信息 (JSON)
@@ -194,7 +185,6 @@ model Paper {
   browseHistory BrowseHistory[]
 
   @@unique([source, source_id]) // 联合唯一索引：数据源 + 来源ID
-  @@unique([db_id, an]) // EBSCO 特定索引（兼容现有数据）
   @@index([source])
   @@index([title])
   @@index([title_zh])
@@ -206,72 +196,6 @@ model Paper {
   @@index([language])
   @@index([n_citation])
   @@map("papers")
-}
-
-/// EBSCO同步日志表 - 记录每次同步任务的执行情况
-model EbscoSyncLog {
-  id String @id @default(uuid())
-
-  // 同步任务信息
-  sync_type     String // 同步类型: papers-论文数据, pdfs-PDF文件
-  sync_batch_no String // 批次号
-
-  // 同步参数
-  search_query String? @db.Text // 搜索查询条件
-  target_count Int? // 目标同步数量
-
-  // 执行结果
-  total_count   Int @default(0) // 总处理数量
-  success_count Int @default(0) // 成功数量
-  fail_count    Int @default(0) // 失败数量
-  skip_count    Int @default(0) // 跳过数量
-
-  // 执行状态
-  status        Int // 状态: 1-成功, 0-失败, 2-部分成功, 3-进行中
-  error_message String? @db.Text // 错误信息
-
-  // 时间信息
-  start_time       DateTime  @default(now()) // 开始时间
-  end_time         DateTime? // 结束时间
-  duration_seconds Int? // 执行时长(秒)
-
-  // 详细日志
-  detail_log String? @db.LongText // 详细日志 (JSON)
-
-  // 系统字段
-  create_time DateTime @default(now()) // 创建时间
-  update_time DateTime @updatedAt // 更新时间
-
-  @@index([sync_type])
-  @@index([sync_batch_no])
-  @@index([start_time])
-  @@map("ebsco_sync_logs")
-}
-
-/// EBSCO配置表 - 存储EBSCO相关的配置参数
-model EbscoConfig {
-  id Int @id @default(autoincrement())
-
-  // 配置信息
-  config_key   String  @unique // 配置键
-  config_value String  @db.Text // 配置值
-  config_type  String // 配置类型: string, number, boolean, json
-  description  String? @db.Text // 配置描述
-
-  // 分组和排序
-  config_group String @default("general") // 配置分组
-  sort_order   Int    @default(0) // 排序
-
-  // 状态
-  is_public       Boolean @default(false) // 是否公开 (前端可见)
-  disabled_status Int     @default(0) // 禁用状态: 0-启用, 1-禁用
-
-  // 系统字段
-  create_time DateTime @default(now()) // 创建时间
-  update_time DateTime @updatedAt // 更新时间
-
-  @@index([config_group])
-  @@map("ebsco_configs")
 }
 
 // ==================== 智能学术对话系统相关模型 ====================
