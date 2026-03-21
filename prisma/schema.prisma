@@ -212,9 +212,6 @@ model Paper {
   browseHistory BrowseHistory[]
   favorites     Favorite[]
 
-  // 关联 - 全文传递
-  docDeliveryRequests DocDeliveryRequest[]
-
   @@unique([source, source_id]) // 联合唯一索引：数据源 + 来源ID
   @@unique([db_id, an]) // EBSCO 特定索引（兼容现有数据）
   @@index([source])

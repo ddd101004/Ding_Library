@@ -28,11 +28,17 @@
   "paths": {
     "/api/user/avatar": {
       "get": {
-        "tags": ["个人中心"],
+        "tags": [
+          "个人中心"
+        ],
         "summary": "获取头像",
         "description": "获取当前用户的头像 URL（7天有效期签名 URL）及上传配置",
         "operationId": "getAvatar",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "获取成功",
@@ -41,8 +47,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "获取成功" },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -57,8 +69,16 @@
                           "properties": {
                             "allowed_types": {
                               "type": "array",
-                              "items": { "type": "string" },
-                              "example": ["jpg", "jpeg", "png", "gif", "webp"]
+                              "items": {
+                                "type": "string"
+                              },
+                              "example": [
+                                "jpg",
+                                "jpeg",
+                                "png",
+                                "gif",
+                                "webp"
+                              ]
                             },
                             "max_size": {
                               "type": "integer",
@@ -74,15 +94,23 @@
               }
             }
           },
-          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
         }
       },
       "post": {
-        "tags": ["个人中心"],
+        "tags": [
+          "个人中心"
+        ],
         "summary": "获取头像上传签名",
         "description": "获取 COS 上传签名，用于前端直传头像到腾讯云 COS。上传流程：1.调用此接口获取签名 2.前端使用签名直传文件到 COS 3.调用 PUT 接口确认上传完成",
         "operationId": "getAvatarUploadSignature",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -101,10 +129,19 @@
                   "file_type": {
                     "type": "string",
                     "description": "文件类型（可选，会自动从文件名提取）",
-                    "enum": ["jpg", "jpeg", "png", "gif", "webp"]
+                    "enum": [
+                      "jpg",
+                      "jpeg",
+                      "png",
+                      "gif",
+                      "webp"
+                    ]
                   }
                 },
-                "required": ["file_name", "file_size"]
+                "required": [
+                  "file_name",
+                  "file_size"
+                ]
               },
               "example": {
                 "file_name": "avatar.jpg",
@@ -122,8 +159,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "获取上传签名成功" },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取上传签名成功"
+                    },
                     "data": {
                       "$ref": "#/components/schemas/AvatarUploadSignature"
                     }
@@ -132,16 +175,26 @@
               }
             }
           },
-          "401": { "$ref": "#/components/responses/UnauthorizedError" },
-          "503": { "$ref": "#/components/responses/WarningResponse" }
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "503": {
+            "$ref": "#/components/responses/WarningResponse"
+          }
         }
       },
       "put": {
-        "tags": ["个人中心"],
+        "tags": [
+          "个人中心"
+        ],
         "summary": "确认头像上传完成",
         "description": "前端直传 COS 成功后，调用此接口确认上传完成并更新数据库",
         "operationId": "confirmAvatarUpload",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -154,7 +207,9 @@
                     "description": "COS 对象 key，由获取签名接口返回"
                   }
                 },
-                "required": ["cos_key"]
+                "required": [
+                  "cos_key"
+                ]
               },
               "example": {
                 "cos_key": "avatars/user123/1702345678_abc123.jpg"
@@ -170,8 +225,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "头像更新成功" },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "头像更新成功"
+                    },
                     "data": {
                       "type": "object",
                       "properties": {
@@ -190,16 +251,26 @@
               }
             }
           },
-          "401": { "$ref": "#/components/responses/UnauthorizedError" },
-          "503": { "$ref": "#/components/responses/WarningResponse" }
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "503": {
+            "$ref": "#/components/responses/WarningResponse"
+          }
         }
       },
       "delete": {
-        "tags": ["个人中心"],
+        "tags": [
+          "个人中心"
+        ],
         "summary": "删除头像",
         "description": "删除当前用户的头像（同时删除 COS 文件）",
         "operationId": "deleteAvatar",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "删除成功",
@@ -208,25 +279,41 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "头像已删除" }
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "头像已删除"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/UnauthorizedError" },
-          "503": { "$ref": "#/components/responses/WarningResponse" }
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "503": {
+            "$ref": "#/components/responses/WarningResponse"
+          }
         }
       }
     },
     "/api/user/settings/notifications": {
       "get": {
-        "tags": ["通知设置"],
+        "tags": [
+          "通知设置"
+        ],
         "summary": "获取通知设置",
         "description": "获取用户的通知偏好设置",
         "operationId": "getNotificationSettings",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "responses": {
           "200": {
             "description": "获取成功",
@@ -235,8 +322,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "获取成功" },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "获取成功"
+                    },
                     "data": {
                       "$ref": "#/components/schemas/NotificationSettings"
                     }
@@ -245,33 +338,32 @@
               }
             }
           },
-          "401": { "$ref": "#/components/responses/UnauthorizedError" }
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
         }
       },
       "patch": {
-        "tags": ["通知设置"],
+        "tags": [
+          "通知设置"
+        ],
         "summary": "更新通知设置",
         "description": "更新用户的通知偏好设置",
         "operationId": "updateNotificationSettings",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
-          "required": true,
+          "required": false,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "doc_delivery": {
-                    "type": "boolean",
-                    "description": "全文传递通知开关"
-                  }
                 }
               },
-              "example": {
-                "doc_delivery": true
-              }
-            }
-          }
         },
         "responses": {
           "200": {
@@ -281,8 +373,14 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "更新成功" },
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "更新成功"
+                    },
                     "data": {
                       "$ref": "#/components/schemas/NotificationSettings"
                     }
@@ -291,18 +389,28 @@
               }
             }
           },
-          "401": { "$ref": "#/components/responses/UnauthorizedError" },
-          "503": { "$ref": "#/components/responses/WarningResponse" }
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "503": {
+            "$ref": "#/components/responses/WarningResponse"
+          }
         }
       }
     },
     "/api/user/account": {
       "delete": {
-        "tags": ["账户管理"],
+        "tags": [
+          "账户管理"
+        ],
         "summary": "删除账户",
         "description": "软删除用户账户，需要输入确认字符串",
         "operationId": "deleteAccount",
-        "security": [{ "bearerAuth": [] }],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -315,7 +423,9 @@
                     "description": "确认字符串，必须为 DELETE"
                   }
                 },
-                "required": ["confirmation"]
+                "required": [
+                  "confirmation"
+                ]
               },
               "example": {
                 "confirmation": "DELETE"
@@ -331,15 +441,25 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "code": { "type": "integer", "example": 200 },
-                    "message": { "type": "string", "example": "账户已删除" }
+                    "code": {
+                      "type": "integer",
+                      "example": 200
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "账户已删除"
+                    }
                   }
                 }
               }
             }
           },
-          "401": { "$ref": "#/components/responses/UnauthorizedError" },
-          "503": { "$ref": "#/components/responses/WarningResponse" }
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "503": {
+            "$ref": "#/components/responses/WarningResponse"
+          }
         }
       }
     }
@@ -390,12 +510,7 @@
       },
       "NotificationSettings": {
         "type": "object",
-        "properties": {
-          "doc_delivery": {
-            "type": "boolean",
-            "description": "全文传递通知开关"
-          }
-        }
+        "properties": {}
       }
     },
     "responses": {
@@ -406,8 +521,14 @@
             "schema": {
               "type": "object",
               "properties": {
-                "code": { "type": "integer", "example": 401 },
-                "message": { "type": "string", "example": "未授权" }
+                "code": {
+                  "type": "integer",
+                  "example": 401
+                },
+                "message": {
+                  "type": "string",
+                  "example": "未授权"
+                }
               }
             }
           }
@@ -420,8 +541,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                "code": { "type": "integer", "example": 503 },
-                "message": { "type": "string" }
+                "code": {
+                  "type": "integer",
+                  "example": 503
+                },
+                "message": {
+                  "type": "string"
+                }
               }
             }
           }

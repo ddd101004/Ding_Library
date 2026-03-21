@@ -27,7 +27,9 @@
   "paths": {
     "/api/user/notifications/unread-count": {
       "get": {
-        "tags": ["用户通知"],
+        "tags": [
+          "用户通知"
+        ],
         "summary": "获取未读通知数量",
         "description": "获取当前用户的未读通知总数和按类型分组的未读数量",
         "operationId": "getUnreadNotificationCount",
@@ -72,7 +74,9 @@
     },
     "/api/user/notifications": {
       "get": {
-        "tags": ["用户通知"],
+        "tags": [
+          "用户通知"
+        ],
         "summary": "获取通知列表",
         "description": "分页获取当前用户的通知列表，支持按类型和已读状态过滤",
         "operationId": "getNotifications",
@@ -89,9 +93,13 @@
             "description": "通知类型过滤",
             "schema": {
               "type": "string",
-              "enum": ["all", "doc_delivery", "system", "account"],
+              "enum": [
+                "all",
+                "system",
+                "account"
+              ],
               "default": "all",
-              "example": "doc_delivery"
+              "example": "all"
             }
           },
           {
@@ -101,7 +109,10 @@
             "description": "已读状态过滤",
             "schema": {
               "type": "string",
-              "enum": ["true", "false"],
+              "enum": [
+                "true",
+                "false"
+              ],
               "example": "false"
             }
           },
@@ -167,7 +178,9 @@
     },
     "/api/user/notifications/{id}": {
       "patch": {
-        "tags": ["用户通知"],
+        "tags": [
+          "用户通知"
+        ],
         "summary": "标记单条通知已读",
         "description": "将指定 ID 的通知标记为已读状态",
         "operationId": "markNotificationAsRead",
@@ -235,7 +248,9 @@
     },
     "/api/user/notifications/read-all": {
       "patch": {
-        "tags": ["用户通知"],
+        "tags": [
+          "用户通知"
+        ],
         "summary": "标记全部通知已读",
         "description": "将当前用户的所有未读通知标记为已读，可选择只标记指定类型的通知",
         "operationId": "markAllNotificationsAsRead",
@@ -253,9 +268,13 @@
                 "properties": {
                   "type": {
                     "type": "string",
-                    "enum": ["all", "doc_delivery", "system", "account"],
+                    "enum": [
+                      "all",
+                      "system",
+                      "account"
+                    ],
                     "description": "可选，只标记指定类型的通知。不传或传 'all' 则标记全部类型",
-                    "example": "doc_delivery"
+                    "example": "all"
                   }
                 }
               }
@@ -309,13 +328,18 @@
     "schemas": {
       "NotificationType": {
         "type": "string",
-        "enum": ["doc_delivery", "system", "account"],
-        "description": "通知类型：doc_delivery-文献传递，system-系统通知，account-账户通知"
+        "enum": [
+          "system",
+          "account"
+        ],
+        "description": "通知类型：system-系统通知，account-账户通知"
       },
       "RelatedType": {
         "type": "string",
-        "enum": ["paper", "doc_delivery_request"],
-        "description": "关联类型：paper-论文，doc_delivery_request-文献传递请求"
+        "enum": [
+          "paper"
+        ],
+        "description": "关联类型：paper-论文"
       },
       "Notification": {
         "type": "object",
@@ -383,11 +407,6 @@
       "UnreadCountByType": {
         "type": "object",
         "properties": {
-          "doc_delivery": {
-            "type": "integer",
-            "description": "文献传递类型未读数量",
-            "example": 3
-          },
           "system": {
             "type": "integer",
             "description": "系统通知类型未读数量",

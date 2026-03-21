@@ -27,7 +27,9 @@
   "paths": {
     "/api/chat/messages/stream": {
       "post": {
-        "tags": ["消息管理"],
+        "tags": [
+          "消息管理"
+        ],
         "summary": "流式发送消息",
         "description": "发送消息并通过 SSE 流式返回 AI 回复。统一支持普通对话和 AI 伴读对话，会根据对话类型自动选择对应的 LLM 调用方式。",
         "operationId": "sendMessageStream",
@@ -42,7 +44,10 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["conversation_id", "content"],
+                "required": [
+                  "conversation_id",
+                  "content"
+                ],
                 "properties": {
                   "conversation_id": {
                     "type": "string",
@@ -62,7 +67,9 @@
                       "type": "string",
                       "format": "uuid"
                     },
-                    "example": ["660e8400-e29b-41d4-a716-446655440001"]
+                    "example": [
+                      "660e8400-e29b-41d4-a716-446655440001"
+                    ]
                   },
                   "attachment_ids": {
                     "type": "array",
@@ -71,7 +78,9 @@
                       "type": "string",
                       "format": "uuid"
                     },
-                    "example": ["770e8400-e29b-41d4-a716-446655440002"]
+                    "example": [
+                      "770e8400-e29b-41d4-a716-446655440002"
+                    ]
                   },
                   "is_deep_think": {
                     "type": "boolean",
@@ -94,14 +103,25 @@
                     "type": "object",
                     "description": "选中文本的位置信息（仅伴读对话）",
                     "properties": {
-                      "start": { "type": "integer" },
-                      "end": { "type": "integer" },
-                      "page": { "type": "integer" }
+                      "start": {
+                        "type": "integer"
+                      },
+                      "end": {
+                        "type": "integer"
+                      },
+                      "page": {
+                        "type": "integer"
+                      }
                     }
                   },
                   "operation_type": {
                     "type": "string",
-                    "enum": ["analyze", "translate", "summarize", "explain"],
+                    "enum": [
+                      "analyze",
+                      "translate",
+                      "summarize",
+                      "explain"
+                    ],
                     "description": "操作类型（仅伴读对话）：analyze-分析理解，translate-翻译，summarize-总结，explain-解释",
                     "default": "analyze"
                   },
@@ -179,13 +199,22 @@
             },
             "headers": {
               "Content-Type": {
-                "schema": { "type": "string", "example": "text/event-stream" }
+                "schema": {
+                  "type": "string",
+                  "example": "text/event-stream"
+                }
               },
               "Cache-Control": {
-                "schema": { "type": "string", "example": "no-cache" }
+                "schema": {
+                  "type": "string",
+                  "example": "no-cache"
+                }
               },
               "Connection": {
-                "schema": { "type": "string", "example": "keep-alive" }
+                "schema": {
+                  "type": "string",
+                  "example": "keep-alive"
+                }
               }
             }
           },
@@ -214,7 +243,9 @@
     },
     "/api/chat/messages/{id}": {
       "get": {
-        "tags": ["消息管理"],
+        "tags": [
+          "消息管理"
+        ],
         "summary": "获取单个消息详情",
         "description": "根据消息 ID 获取消息的完整信息，包括消息内容、引用、反馈等。需要验证用户对该消息所属会话的访问权限。",
         "operationId": "getMessageById",
@@ -280,7 +311,9 @@
         }
       },
       "patch": {
-        "tags": ["消息管理"],
+        "tags": [
+          "消息管理"
+        ],
         "summary": "更新消息内容",
         "description": "更新指定消息的内容。需要验证用户对该消息所属会话的修改权限。只能更新消息的 content 字段。",
         "operationId": "updateMessage",
@@ -356,7 +389,9 @@
         }
       },
       "delete": {
-        "tags": ["消息管理"],
+        "tags": [
+          "消息管理"
+        ],
         "summary": "删除消息",
         "description": "删除指定的消息。需要验证用户对该消息所属会话的删除权限。删除操作是硬删除，无法恢复。相关的引用和反馈会级联删除。",
         "operationId": "deleteMessage",
@@ -424,7 +459,9 @@
     },
     "/api/chat/messages/search": {
       "get": {
-        "tags": ["消息管理"],
+        "tags": [
+          "消息管理"
+        ],
         "summary": "搜索历史消息",
         "description": "在用户的历史消息中搜索关键词，支持搜索对话标题、论文标题和消息内容。搜索优先级：对话标题 > 论文标题 > 消息内容。使用 MySQL FULLTEXT 索引提升性能。",
         "operationId": "searchMessages",
@@ -539,7 +576,9 @@
     "schemas": {
       "UpdateMessageRequest": {
         "type": "object",
-        "required": ["content"],
+        "required": [
+          "content"
+        ],
         "properties": {
           "content": {
             "type": "string",
@@ -573,7 +612,11 @@
               },
               "role": {
                 "type": "string",
-                "enum": ["user", "assistant", "system"],
+                "enum": [
+                  "user",
+                  "assistant",
+                  "system"
+                ],
                 "description": "消息角色",
                 "example": "user"
               },
@@ -584,7 +627,11 @@
               },
               "content_type": {
                 "type": "string",
-                "enum": ["text", "citation", "image"],
+                "enum": [
+                  "text",
+                  "citation",
+                  "image"
+                ],
                 "description": "内容类型",
                 "example": "text"
               },
@@ -610,7 +657,12 @@
               },
               "status": {
                 "type": "string",
-                "enum": ["streaming", "completed", "stopped", "error"],
+                "enum": [
+                  "streaming",
+                  "completed",
+                  "stopped",
+                  "error"
+                ],
                 "description": "消息状态",
                 "example": "completed"
               },
@@ -682,11 +734,6 @@
                         }
                       }
                     },
-                    "doc_delivery_status": {
-                      "$ref": "#/components/schemas/DocDeliveryStatus",
-                      "nullable": true,
-                      "description": "文献传递状态（如果用户已请求过该论文的全文传递）"
-                    }
                   }
                 }
               },
@@ -701,7 +748,12 @@
                     },
                     "feedback_type": {
                       "type": "string",
-                      "enum": ["like", "dislike", "copy", "regenerate"]
+                      "enum": [
+                        "like",
+                        "dislike",
+                        "copy",
+                        "regenerate"
+                      ]
                     },
                     "create_time": {
                       "type": "string",
@@ -719,7 +771,13 @@
               },
               "message_type": {
                 "type": "string",
-                "enum": ["text", "analyze", "translate", "summarize", "explain"],
+                "enum": [
+                  "text",
+                  "analyze",
+                  "translate",
+                  "summarize",
+                  "explain"
+                ],
                 "description": "消息类型（AI伴读扩展字段）",
                 "example": "analyze"
               },
@@ -743,9 +801,15 @@
                 "nullable": true,
                 "description": "选中文本的位置信息",
                 "properties": {
-                  "start": { "type": "integer" },
-                  "end": { "type": "integer" },
-                  "page": { "type": "integer" }
+                  "start": {
+                    "type": "integer"
+                  },
+                  "end": {
+                    "type": "integer"
+                  },
+                  "page": {
+                    "type": "integer"
+                  }
                 }
               }
             }
@@ -775,7 +839,11 @@
               },
               "role": {
                 "type": "string",
-                "enum": ["user", "assistant", "system"],
+                "enum": [
+                  "user",
+                  "assistant",
+                  "system"
+                ],
                 "description": "消息角色"
               },
               "content": {
@@ -850,7 +918,11 @@
                     },
                     "role": {
                       "type": "string",
-                      "enum": ["user", "assistant", "system"],
+                      "enum": [
+                        "user",
+                        "assistant",
+                        "system"
+                      ],
                       "description": "消息角色"
                     },
                     "content": {
@@ -866,14 +938,25 @@
                       "description": "匹配的字段列表",
                       "items": {
                         "type": "string",
-                        "enum": ["conversation_title", "paper_title", "content"]
+                        "enum": [
+                          "conversation_title",
+                          "paper_title",
+                          "content"
+                        ]
                       },
-                      "example": ["conversation_title", "content"]
+                      "example": [
+                        "conversation_title",
+                        "content"
+                      ]
                     },
                     "match_priority": {
                       "type": "integer",
                       "description": "匹配优先级（3=对话标题, 2=论文标题, 1=消息内容）",
-                      "enum": [1, 2, 3],
+                      "enum": [
+                        1,
+                        2,
+                        3
+                      ],
                       "example": 3
                     },
                     "relevance_score": {
@@ -922,7 +1005,10 @@
               "search_mode": {
                 "type": "string",
                 "description": "搜索模式",
-                "enum": ["fulltext_enhanced", "like_enhanced"],
+                "enum": [
+                  "fulltext_enhanced",
+                  "like_enhanced"
+                ],
                 "example": "fulltext_enhanced"
               }
             }
@@ -988,43 +1074,13 @@
           "parse_status": {
             "type": "string",
             "description": "文件解析状态",
-            "enum": ["pending", "parsing", "completed", "failed"],
+            "enum": [
+              "pending",
+              "parsing",
+              "completed",
+              "failed"
+            ],
             "example": "completed"
-          }
-        }
-      },
-      "DocDeliveryStatus": {
-        "type": "object",
-        "description": "文献传递状态信息，用于标识论文的全文传递请求状态",
-        "properties": {
-          "request_id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "传递请求记录 ID",
-            "example": "550e8400-e29b-41d4-a716-446655440000"
-          },
-          "status": {
-            "type": "integer",
-            "description": "状态码：1提交中 2服务中 3已上传 4已下载 8完成 9无法完成",
-            "example": 8
-          },
-          "status_text": {
-            "type": "string",
-            "nullable": true,
-            "description": "状态描述文本",
-            "example": "完成"
-          },
-          "fulltext_url": {
-            "type": "string",
-            "nullable": true,
-            "description": "全文下载链接（状态为完成时有值）",
-            "example": "https://doctxm.sgst.cn/download/xxx.pdf"
-          },
-          "create_time": {
-            "type": "string",
-            "format": "date-time",
-            "description": "请求创建时间",
-            "example": "2025-01-15T10:30:00.000Z"
           }
         }
       },
@@ -1048,7 +1104,9 @@
           },
           "authors": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "type": "string"
+            },
             "description": "作者列表"
           },
           "publication_name": {
@@ -1079,11 +1137,6 @@
             "type": "string",
             "description": "来源系统中的 ID"
           },
-          "doc_delivery_status": {
-            "$ref": "#/components/schemas/DocDeliveryStatus",
-            "nullable": true,
-            "description": "文献传递状态（如果用户已请求过该论文的全文传递）"
-          }
         }
       },
       "RelatedPapersSSEEvent": {
@@ -1092,7 +1145,9 @@
         "properties": {
           "type": {
             "type": "string",
-            "enum": ["related_papers"],
+            "enum": [
+              "related_papers"
+            ],
             "description": "事件类型"
           },
           "papers": {
@@ -1118,20 +1173,16 @@
               "index": 1,
               "id": "550e8400-e29b-41d4-a716-446655440000",
               "title": "Deep Learning for Natural Language Processing",
-              "authors": ["John Smith", "Jane Doe"],
+              "authors": [
+                "John Smith",
+                "Jane Doe"
+              ],
               "publication_name": "Nature",
               "publication_year": 2023,
               "abstract": "This paper presents...",
               "doi": "10.1234/example.doi",
               "source": "ebsco",
               "source_id": "edsbas:12345",
-              "doc_delivery_status": {
-                "request_id": "660e8400-e29b-41d4-a716-446655440001",
-                "status": 8,
-                "status_text": "完成",
-                "fulltext_url": "https://doctxm.sgst.cn/download/xxx.pdf",
-                "create_time": "2025-01-15T10:30:00.000Z"
-              }
             }
           ],
           "keywords": "深度学习 自然语言处理",
