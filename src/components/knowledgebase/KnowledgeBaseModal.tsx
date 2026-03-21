@@ -94,10 +94,6 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
         description: trimmedDescription,
       };
 
-      if (isEditMode) {
-        requestData.color = "#6FCF97";
-      }
-
       if (cosKey) {
         requestData.cover_image = cosKey;
       }
@@ -109,7 +105,6 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
         });
         toast.success("知识库更新成功");
       } else {
-        requestData.color = "#7934F6";
         await apiPost("/api/folders", requestData);
         toast.success("知识库创建成功");
       }

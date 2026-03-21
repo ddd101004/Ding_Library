@@ -22,8 +22,6 @@ export async function createPaper(data: Prisma.PaperCreateInput) {
     });
     logger.info("创建论文记录成功", {
       id: paper.id,
-      dbId: paper.db_id,
-      an: paper.an,
       title: paper.title,
     });
     return paper;
@@ -66,29 +64,6 @@ export async function findPaperById(id: string) {
     return paper;
   } catch (error: any) {
     logger.error("根据ID查询论文失败", { error: error.message, id });
-    return null;
-  }
-}
-
-/**
- * 根据EBSCO标识查询论文
- */
-export async function findPaperByEbscoId(dbId: string, an: string) {
-  try {
-    const paper = await prisma.paper.findFirst({
-      where: {
-        db_id: dbId,
-        an,
-        deleted_status: 0,
-      },
-    });
-    return paper;
-  } catch (error: any) {
-    logger.error("根据EBSCO标识查询论文失败", {
-      error: error.message,
-      dbId,
-      an,
-    });
     return null;
   }
 }
@@ -302,44 +277,8 @@ export async function updatePaper(id: string, data: Prisma.PaperUpdateInput) {
 }
 
 /**
- * 更新或创建论文（Upsert）
- */
-export async function upsertPaper(
-  dbId: string,
-  an: string,
-  data: Prisma.PaperCreateInput
-) {
-  try {
-    const paper = await prisma.paper.upsert({
-      where: {
-        db_id_an: {
-          db_id: dbId,
-          an,
-        },
-      },
-      create: data,
-      update: {
-        ...data,
-        update_time: new Date(),
-      },
-    });
-
-    logger.info("Upsert论文成功", {
-      id: paper.id,
-      dbId,
-      an,
-      title: paper.title,
-    });
-    return paper;
-  } catch (error: any) {
-    logger.error("Upsert论文失败", { error: error.message, dbId, an });
-    return null;
-  }
-}
-
-/**
  * 根据 source + source_id 更新或创建论文（通用 Upsert）
- * 支持 ebsco, wanfang 等多种数据源
+ * 支持 wanfang 等多种数据源
  */
 export async function upsertPaperBySource(
   source: string,

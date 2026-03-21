@@ -322,9 +322,7 @@ model PaperFolder {
   user_id     String  @db.VarChar(36)
   folder_name String  @db.VarChar(100)
   description String? @db.Text
-  color       String? @db.VarChar(20) // 文件夹颜色标识
   cover_image String? @db.VarChar(500) // 文件夹封面图 URL
-  sort_order  Int     @default(0) // 排序权重
 
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
@@ -333,7 +331,7 @@ model PaperFolder {
   user  User         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   items FolderItem[]
 
-  @@index([user_id, sort_order])
+  @@index([user_id])
   @@map("paper_folders")
 }
 

@@ -39,7 +39,7 @@ const handlePost = async (
   res: NextApiResponse,
   userId: string
 ) => {
-  const { folder_name, description, color, cover_image } = req.body;
+  const { folder_name, description, cover_image } = req.body;
 
   // 参数校验
   const nameResult = validateString(folder_name, "文件夹名称", {
@@ -56,16 +56,6 @@ const handlePost = async (
     });
     if (!descResult.valid) {
       return sendWarnningResponse(res, descResult.error || "描述校验失败");
-    }
-  }
-
-  if (color) {
-    const colorResult = validateString(color, "颜色", {
-      limitKey: "color",
-      required: false,
-    });
-    if (!colorResult.valid) {
-      return sendWarnningResponse(res, colorResult.error || "颜色校验失败");
     }
   }
 
@@ -87,7 +77,6 @@ const handlePost = async (
     user_id: userId,
     folder_name,
     description,
-    color,
     cover_image,
   });
 
@@ -102,10 +91,8 @@ const handlePost = async (
     folder_id: folder.folder_id,
     folder_name: folder.folder_name,
     description: folder.description,
-    color: folder.color,
     cover_image: folder.cover_image,
     cover_image_url,
-    sort_order: folder.sort_order,
     create_time: folder.create_time,
   });
 };

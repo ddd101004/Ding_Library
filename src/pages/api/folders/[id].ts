@@ -56,10 +56,8 @@ const handleGet = async (
     folder_id: folder.folder_id,
     folder_name: folder.folder_name,
     description: folder.description,
-    color: folder.color,
     cover_image: folder.cover_image,
     cover_image_url,
-    sort_order: folder.sort_order,
     create_time: folder.create_time,
     update_time: folder.update_time,
   });
@@ -74,7 +72,7 @@ const handlePatch = async (
   userId: string,
   folder_id: string
 ) => {
-  const { folder_name, description, color, cover_image, sort_order } = req.body;
+  const { folder_name, description, cover_image } = req.body;
 
   // 参数校验
   if (folder_name !== undefined) {
@@ -94,16 +92,6 @@ const handlePatch = async (
     });
     if (!descResult.valid) {
       return sendWarnningResponse(res, descResult.error || "描述校验失败");
-    }
-  }
-
-  if (color !== undefined) {
-    const colorResult = validateString(color, "颜色", {
-      limitKey: "color",
-      required: false,
-    });
-    if (!colorResult.valid) {
-      return sendWarnningResponse(res, colorResult.error || "颜色校验失败");
     }
   }
 
@@ -129,9 +117,7 @@ const handlePatch = async (
 
   if (folder_name !== undefined) updateData.folder_name = folder_name;
   if (description !== undefined) updateData.description = description;
-  if (color !== undefined) updateData.color = color;
   if (cover_image !== undefined) updateData.cover_image = cover_image || null;
-  if (sort_order !== undefined) updateData.sort_order = sort_order;
 
   const folder = await updateFolder(folder_id, updateData);
 
@@ -149,10 +135,8 @@ const handlePatch = async (
     folder_id: folder.folder_id,
     folder_name: folder.folder_name,
     description: folder.description,
-    color: folder.color,
     cover_image: folder.cover_image,
     cover_image_url,
-    sort_order: folder.sort_order,
     update_time: folder.update_time,
   });
 };

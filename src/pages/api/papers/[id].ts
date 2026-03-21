@@ -117,10 +117,6 @@ const handleGet = async (
     pdfDownloaded: paper.pdf_downloaded,
     pdfFilePath: paper.pdf_file_path,
     pdfFileSize: paper.pdf_file_size?.toString(),
-    plink: paper.plink,
-    customLinks: paper.custom_links
-      ? JSON.parse(paper.custom_links)
-      : [],
     viewCount: paper.view_count,
     downloadCount: paper.download_count,
     syncTime: paper.sync_time,

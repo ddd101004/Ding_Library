@@ -9,7 +9,6 @@ export const createFolder = async (data: {
   user_id: string;
   folder_name: string;
   description?: string;
-  color?: string;
   cover_image?: string;
 }) => {
   try {
@@ -18,9 +17,7 @@ export const createFolder = async (data: {
         user_id: data.user_id,
         folder_name: data.folder_name,
         description: data.description,
-        color: data.color,
         cover_image: data.cover_image,
-        sort_order: 0,
       },
     });
     return folder;
@@ -50,9 +47,7 @@ export const getFoldersByUserId = async (user_id: string) => {
       folder_id: folder.folder_id,
       folder_name: folder.folder_name,
       description: folder.description,
-      color: folder.color,
       cover_image: folder.cover_image,
-      sort_order: folder.sort_order,
       item_count: folder._count.items,
       create_time: folder.create_time,
       update_time: folder.update_time,
