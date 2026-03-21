@@ -5,10 +5,6 @@
 import logger from "@/helper/logger";
 import { searchWanfangPapers } from "@/service/wanfang/paper";
 import { batchUpsertWanfangPapers } from "@/db/wanfang/paper";
-import {
-  syncPaperToDataset,
-  isPublicDatasetConfigured,
-} from "@/service/fastgpt/publicDataset";
 import prisma from "@/utils/prismaProxy";
 
 interface SyncWanfangPapersOptions {
@@ -31,13 +27,6 @@ export async function syncWanfangPapers(options: SyncWanfangPapersOptions) {
     { batchNo },
   );
 
-  const fastgptEnabled = isPublicDatasetConfigured();
-  if (fastgptEnabled) {
-    logger.info("FastGPT 公共数据集已配置，将同步论文元数据");
-  } else {
-    logger.warn("FastGPT 公共数据集未配置，跳过知识库同步");
-  }
-
   const syncLog = await prisma.ebscoSyncLog.create({
     data: {
       sync_type: syncType,
@@ -51,8 +40,6 @@ export async function syncWanfangPapers(options: SyncWanfangPapersOptions) {
   let successCount = 0;
   let failCount = 0;
   let skipCount = 0;
-  let fastgptSuccessCount = 0;
-  let fastgptFailCount = 0;
   const detailLogs: unknown[] = [];
 
   const dailyCount = 100;
@@ -137,54 +124,17 @@ export async function syncWanfangPapers(options: SyncWanfangPapersOptions) {
 
             successCount++;
 
-            let fastgptStatus = "skipped";
-            let fastgptCollectionId: string | undefined;
-            if (fastgptEnabled) {
-              try {
-                const syncResult = await syncPaperToDataset(
-                  dbPaper,
-                  "cron_task",
-                );
-                if (syncResult.success) {
-                  fastgptSuccessCount++;
-                  fastgptStatus = "success";
-                  fastgptCollectionId = syncResult.collectionId;
-                } else {
-                  fastgptFailCount++;
-                  fastgptStatus = "failed";
-                  logger.warn("FastGPT 同步失败", {
-                    paperId: dbPaper.id,
-                    error: syncResult.error,
-                  });
-                }
-              } catch (fastgptError: unknown) {
-                fastgptFailCount++;
-                fastgptStatus = "error";
-                const errorMsg =
-                  fastgptError instanceof Error
-                    ? fastgptError.message
-                    : String(fastgptError);
-                logger.error("FastGPT 同步异常", {
-                  paperId: dbPaper.id,
-                  error: errorMsg,
-                });
-              }
-            }
-
             detailLogs.push({
               index: totalCount,
               paperId: paper.id,
               title: paper.title,
               dbId: dbPaper.id,
               status: "success",
-              fastgptStatus,
-              fastgptCollectionId,
             });
 
             logger.info(`保存成功`, {
               paperId: dbPaper.id,
               title: paper.title,
-              fastgptStatus,
             });
 
             if (totalCount >= dailyCount) {
@@ -253,8 +203,6 @@ export async function syncWanfangPapers(options: SyncWanfangPapersOptions) {
       successCount,
       failCount,
       skipCount,
-      fastgptSuccessCount,
-      fastgptFailCount,
       duration: `${duration}秒`,
       status:
         finalStatus === 1 ? "成功" : finalStatus === 2 ? "部分成功" : "失败",
@@ -268,8 +216,6 @@ export async function syncWanfangPapers(options: SyncWanfangPapersOptions) {
       successCount,
       failCount,
       skipCount,
-      fastgptSuccessCount,
-      fastgptFailCount,
       duration,
     };
   } catch (error: any) {

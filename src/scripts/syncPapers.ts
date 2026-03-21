@@ -4,16 +4,14 @@
  * 功能：
  * 1. 从EBSCO API搜索并获取论文数据
  * 2. 批量保存到本地数据库
- * 3. 同步论文元数据到FastGPT公共知识库
- * 4. 记录同步日志
- * 5. 支持配置化（同步数量、搜索条件）
+ * 3. 记录同步日志
+ * 4. 支持配置化（同步数量、搜索条件）
  */
 
 import logger from '@/helper/logger';
 import { search, retrieve } from '@/service/ebsco';
 import { upsertPaper, getPapersStatistics } from '@/db/paper';
 import { getConfigValue } from '@/db/ebscoConfig';
-import { syncPaperToDataset, isPublicDatasetConfigured } from '@/service/fastgpt/publicDataset';
 import prisma from '@/utils/prismaProxy';
 import { Prisma } from '@prisma/client';
 
@@ -25,14 +23,6 @@ export async function syncPapers() {
   const startTime = new Date();
 
   logger.info('========== 开始同步论文数据 ==========', { batchNo });
-
-  // 检查 FastGPT 公共数据集是否配置
-  const fastgptEnabled = isPublicDatasetConfigured();
-  if (fastgptEnabled) {
-    logger.info('FastGPT 公共数据集已配置，将同步论文元数据');
-  } else {
-    logger.warn('FastGPT 公共数据集未配置，跳过知识库同步');
-  }
 
   // 创建同步日志
   const syncLog = await prisma.ebscoSyncLog.create({
@@ -48,8 +38,6 @@ export async function syncPapers() {
   let successCount = 0;
   let failCount = 0;
   let skipCount = 0;
-  let fastgptSuccessCount = 0;
-  let fastgptFailCount = 0;
   const detailLogs: unknown[] = [];
 
   try {
@@ -138,45 +126,14 @@ export async function syncPapers() {
             if (paper) {
               successCount++;
 
-              // 同步到 FastGPT 公共数据集
-              let fastgptStatus = 'skipped';
-              let fastgptCollectionId: string | undefined;
-              if (fastgptEnabled) {
-                try {
-                  const syncResult = await syncPaperToDataset(paper, "cron_task");
-                  if (syncResult.success) {
-                    fastgptSuccessCount++;
-                    fastgptStatus = 'success';
-                    fastgptCollectionId = syncResult.collectionId;
-                  } else {
-                    fastgptFailCount++;
-                    fastgptStatus = 'failed';
-                    logger.warn('FastGPT 同步失败', {
-                      paperId: paper.id,
-                      error: syncResult.error
-                    });
-                  }
-                } catch (fastgptError: unknown) {
-                  fastgptFailCount++;
-                  fastgptStatus = 'error';
-                  const errorMsg = fastgptError instanceof Error ? fastgptError.message : String(fastgptError);
-                  logger.error('FastGPT 同步异常', {
-                    paperId: paper.id,
-                    error: errorMsg
-                  });
-                }
-              }
-
               detailLogs.push({
                 index: totalCount,
                 dbId,
                 an,
                 title: paperData.title,
                 status: 'success',
-                fastgptStatus,
-                fastgptCollectionId,
               });
-              logger.info(`保存成功`, { paperId: paper.id, title: paper.title, fastgptStatus });
+              logger.info(`保存成功`, { paperId: paper.id, title: paper.title });
             } else {
               failCount++;
               detailLogs.push({
@@ -250,8 +207,6 @@ export async function syncPapers() {
       successCount,
       failCount,
       skipCount,
-      fastgptSuccessCount,
-      fastgptFailCount,
       duration: `${duration}秒`,
       status: finalStatus === 1 ? '成功' : finalStatus === 2 ? '部分成功' : '失败',
       databaseStats: stats,
@@ -264,8 +219,6 @@ export async function syncPapers() {
       successCount,
       failCount,
       skipCount,
-      fastgptSuccessCount,
-      fastgptFailCount,
       duration,
     };
   } catch (error: any) {

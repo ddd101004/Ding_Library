@@ -5,7 +5,6 @@ import { paginate } from "@/utils/paginate";
 import prisma from "@/utils/prismaProxy";
 import { Prisma } from "@prisma/client";
 import { hashVerificationCode } from "@/utils/auth";
-import { createDataset } from "@/service/fastgpt";
 
 // 基础用户操作
 export const createUser = async (
@@ -473,63 +472,5 @@ export const clearVerificationCode = async (user_id: string) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logger.error(`清空验证码失败: ${errorMessage}`, { error });
     return;
-  }
-};
-
-/**
- * 获取或创建用户的 FastGPT 根知识库
- * 每个用户有一个专属的父级知识库，用户创建的所有文件夹都在此知识库下
- */
-export const getOrCreateUserRootDataset = async (
-  user_id: string
-): Promise<string | null> => {
-  try {
-    const user = await prisma.user.findUnique({
-      where: { user_id },
-      select: {
-        user_id: true,
-        username: true,
-        fastgpt_root_dataset_id: true,
-      },
-    });
-
-    if (!user) {
-      logger.error(`[FastGPT] 用户不存在: ${user_id}`);
-      return null;
-    }
-
-    // 已有根知识库，直接返回
-    if (user.fastgpt_root_dataset_id) {
-      return user.fastgpt_root_dataset_id;
-    }
-
-    // 创建用户的根知识库
-    const datasetName = `${user.user_id}_${user.username || "用户"}`;
-    const rootDatasetId = await createDataset({
-      name: datasetName,
-      intro: `用户 ${user.username} 的知识库根目录`,
-      type: "folder", // 使用 folder 类型作为容器
-    });
-
-    if (!rootDatasetId) {
-      logger.error(`[FastGPT] 创建用户根知识库失败: ${user_id}`);
-      return null;
-    }
-
-    // 保存到用户记录
-    await prisma.user.update({
-      where: { user_id },
-      data: { fastgpt_root_dataset_id: rootDatasetId },
-    });
-
-    logger.info(
-      `[FastGPT] 用户根知识库创建成功: userId=${user_id}, datasetId=${rootDatasetId}`
-    );
-
-    return rootDatasetId;
-  } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logger.error(`获取或创建用户根知识库失败: ${errorMessage}`, { error });
-    return null;
   }
 };

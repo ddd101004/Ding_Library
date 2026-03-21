@@ -12,7 +12,6 @@ import logger from "@/helper/logger";
 import { getAIChatApi } from "@/lib/ai/client";
 import { searchWanfangPapers } from "@/service/wanfang/paper";
 import { upsertWanfangPaper } from "@/db/wanfang/paper";
-import { syncPaperToDatasetAsync } from "@/service/fastgpt/publicDataset";
 import {
   createAutoRelatedCitations,
   getUniqueAutoRelatedPapersByConversation,
@@ -305,9 +304,6 @@ export async function autoSearchRelatedPapers(params: {
 
       // Upsert 到 Paper 表
       const paper = await upsertWanfangPaper(result);
-
-      // 异步同步到 FastGPT 公共数据集（非阻塞）
-      syncPaperToDatasetAsync(paper, "chat_related");
 
       // 计算相关度分数（基于排序位置）
       const score = 1 - i * 0.1; // 第1个0.9，第2个0.8...

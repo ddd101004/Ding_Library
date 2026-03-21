@@ -1,7 +1,6 @@
 import logger from "@/helper/logger";
 import prisma from "@/utils/prismaProxy";
 import { Prisma } from "@prisma/client";
-import { createTextCollection } from "@/service/fastgpt";
 
 export type FolderItemType = "paper" | "uploaded_paper" | "conversation";
 
@@ -17,14 +16,12 @@ export interface AddItemToFolderResult {
     added_at: Date;
     create_time: Date;
     update_time: Date;
-    fastgpt_collection_id?: string | null;
   };
   error?: string;
 }
 
 /**
  * 添加内容到文件夹（支持三种类型：论文、用户上传论文、对话）
- * 同步到 FastGPT 知识库
  * @param data.item_type - 内容类型: "paper" | "uploaded_paper" | "conversation"
  * @param data.item_id - 内容ID
  * @param data.user_id - 用户ID（用于验证对话归属）
@@ -39,51 +36,20 @@ export const addItemToFolder = async (data: {
   try {
     const { folder_id, item_type, item_id, user_id, notes } = data;
 
-    const folder = await prisma.paperFolder.findUnique({
-      where: { folder_id },
-      select: { fastgpt_dataset_id: true },
-    });
-
-    let contentForFastGPT: { name: string; text: string } | null = null;
-
+    // 验证内容是否存在并获取信息
     if (item_type === "paper") {
       const paper = await prisma.paper.findUnique({
         where: { id: item_id },
-        select: {
-          id: true,
-          title: true,
-          abstract: true,
-          keywords: true,
-          authors: true,
-        },
+        select: { id: true },
       });
       if (!paper) {
         logger.warn(`添加到文件夹失败: 第三方论文不存在 (paper_id: ${item_id})`);
         return { success: false, error: "paper_not_found" };
       }
-      const keywordsText = Array.isArray(paper.keywords)
-        ? (paper.keywords as string[]).join(", ")
-        : "";
-      contentForFastGPT = {
-        name: paper.title || "未命名论文",
-        text: [
-          `标题: ${paper.title || ""}`,
-          paper.abstract ? `摘要: ${paper.abstract}` : "",
-          keywordsText ? `关键词: ${keywordsText}` : "",
-        ]
-          .filter(Boolean)
-          .join("\n\n"),
-      };
     } else if (item_type === "uploaded_paper") {
       const uploadedPaper = await prisma.userUploadedPaper.findUnique({
         where: { id: item_id },
-        select: {
-          id: true,
-          title: true,
-          abstract: true,
-          keywords: true,
-          parsedContent: true,
-        },
+        select: { id: true },
       });
       if (!uploadedPaper) {
         logger.warn(
@@ -91,18 +57,6 @@ export const addItemToFolder = async (data: {
         );
         return { success: false, error: "uploaded_paper_not_found" };
       }
-      contentForFastGPT = {
-        name: uploadedPaper.title || "未命名上传论文",
-        text:
-          uploadedPaper.parsedContent ||
-          [
-            `标题: ${uploadedPaper.title || ""}`,
-            uploadedPaper.abstract ? `摘要: ${uploadedPaper.abstract}` : "",
-            uploadedPaper.keywords ? `关键词: ${uploadedPaper.keywords}` : "",
-          ]
-            .filter(Boolean)
-            .join("\n\n"),
-      };
     } else if (item_type === "conversation") {
       const conversation = await prisma.chatConversation.findFirst({
         where: {
@@ -110,18 +64,7 @@ export const addItemToFolder = async (data: {
           user_id,
           deleted_at: null,
         },
-        select: {
-          conversation_id: true,
-          title: true,
-          messages: {
-            select: {
-              role: true,
-              content: true,
-            },
-            orderBy: { message_order: "asc" },
-            take: 50,
-          },
-        },
+        select: { conversation_id: true },
       });
       if (!conversation) {
         logger.warn(
@@ -129,16 +72,6 @@ export const addItemToFolder = async (data: {
         );
         return { success: false, error: "conversation_not_found" };
       }
-      const messagesText = conversation.messages
-        .map((msg) => {
-          const roleLabel = msg.role === "user" ? "用户" : "助手";
-          return `${roleLabel}: ${msg.content}`;
-        })
-        .join("\n\n");
-      contentForFastGPT = {
-        name: conversation.title || "未命名对话",
-        text: `对话标题: ${conversation.title}\n\n${messagesText}`,
-      };
     } else {
       return { success: false, error: "invalid_item_type" };
     }
@@ -168,35 +101,6 @@ export const addItemToFolder = async (data: {
       data: createData,
     });
 
-    let fastgptCollectionId: string | null = null;
-    if (folder?.fastgpt_dataset_id && contentForFastGPT) {
-      try {
-        const result = await createTextCollection({
-          datasetId: folder.fastgpt_dataset_id,
-          name: contentForFastGPT.name,
-          text: contentForFastGPT.text,
-          trainingType: "chunk",
-          metadata: {
-            item_id: item.item_id,
-            item_type,
-            source_id: item_id,
-          },
-        });
-        fastgptCollectionId = result.collectionId;
-        logger.info(
-          `[Folder] FastGPT collection created: ${fastgptCollectionId} for ${item_type}: ${item_id}`
-        );
-      } catch (fastgptError) {
-        const errorMessage =
-          fastgptError instanceof Error
-            ? fastgptError.message
-            : String(fastgptError);
-        logger.error(
-          `[Folder] FastGPT collection creation failed: ${errorMessage}`
-        );
-      }
-    }
-
     return {
       success: true,
       item: {
@@ -209,7 +113,6 @@ export const addItemToFolder = async (data: {
         added_at: item.added_at,
         create_time: item.create_time,
         update_time: item.update_time,
-        fastgpt_collection_id: fastgptCollectionId,
       },
     };
   } catch (error: unknown) {

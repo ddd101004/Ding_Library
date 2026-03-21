@@ -2,7 +2,6 @@ import logger from "@/helper/logger";
 import prisma from "@/utils/prismaProxy";
 import { Prisma } from "@prisma/client";
 import { batchGetUserFeedbackStatus, getUserFeedbackStatus } from "@/db/messageFeedback";
-import { batchGetDocDeliveryStatusByPaperIds } from "@/db/docDeliveryRequest";
 
 /**
  * 获取会话的消息列表（分页，基于message_order）
@@ -135,17 +134,6 @@ export const getMessagesByConversationId = async (params: {
       versionCounts.map(v => [v.root_message_id!, v._count.message_id])
     );
 
-    // 提取所有引用论文的 ID，查询文献传递状态
-    const allPaperIds = limitedMessages.flatMap(msg =>
-      msg.citations
-        .filter(c => c.paper_id)
-        .map(c => c.paper_id)
-    );
-    const uniquePaperIds = [...new Set(allPaperIds)];
-    const deliveryStatusMap = uniquePaperIds.length > 0
-      ? await batchGetDocDeliveryStatusByPaperIds(user_id, uniquePaperIds)
-      : {};
-
     const formattedMessages = limitedMessages.map((msg) => {
       const feedbackStatus = feedbackStatusMap[msg.message_id] || { is_liked: false, is_disliked: false };
 
@@ -180,7 +168,6 @@ export const getMessagesByConversationId = async (params: {
         has_multiple_versions,
         citations: msg.citations.map(citation => ({
           ...citation,
-          doc_delivery_status: citation.paper_id ? deliveryStatusMap[citation.paper_id] : undefined,
         })),
         attachments: msg.attachments.map((att) => ({
           id: att.id,
@@ -241,17 +228,6 @@ export const getMessageById = async (message_id: string, user_id?: string) => {
       feedbackStatus = await getUserFeedbackStatus(user_id, message_id);
     }
 
-    // 查询引用论文的文献传递状态
-    let deliveryStatusMap: Record<string, unknown> = {};
-    if (user_id && message.citations.length > 0) {
-      const paperIds = message.citations
-        .filter(c => c.paper_id)
-        .map(c => c.paper_id);
-      if (paperIds.length > 0) {
-        deliveryStatusMap = await batchGetDocDeliveryStatusByPaperIds(user_id, paperIds);
-      }
-    }
-
     return {
       message_id: message.message_id,
       conversation_id: message.conversation_id,
@@ -275,10 +251,7 @@ export const getMessageById = async (message_id: string, user_id?: string) => {
       is_liked: feedbackStatus.is_liked,
       is_disliked: feedbackStatus.is_disliked,
       conversation: message.conversation,
-      citations: message.citations.map(citation => ({
-        ...citation,
-        doc_delivery_status: citation.paper_id ? deliveryStatusMap[citation.paper_id] : undefined,
-      })),
+      citations: message.citations,
       attachments: message.attachments.map((att) => ({
         id: att.id,
         uploaded_paper_id: att.uploaded_paper_id,

@@ -62,9 +62,6 @@ model User {
   paperAnnotations    PaperAnnotation[]
   paperReadingRecords PaperReadingRecord[]
 
-  // 关联 - 全文传递
-  docDeliveryRequests DocDeliveryRequest[]
-
   // 关联 - 用户通知
   notifications UserNotification[]
 
@@ -929,55 +926,6 @@ model ScholarPatentRelation {
   @@index([scholar_aminer_id])
   @@index([patent_aminer_id])
   @@map("scholar_patents")
-}
-
-/// 全文传递请求记录表 - 存储用户的全文传递请求
-model DocDeliveryRequest {
-  id      String @id @default(uuid())
-  user_id String @map("user_id")
-
-  // 第三方任务信息
-  task_id String @db.VarChar(100) // 第三方返回的任务ID
-
-  // 关联的论文（可选）
-  paper_id String? @map("paper_id")
-
-  // 论文信息快照（请求时保存，避免论文数据变动影响）
-  title            String  @db.VarChar(500)
-  authors          Json?   // 作者列表
-  publication_name String? @map("publication_name") @db.VarChar(255)
-  publication_year Int?    @map("publication_year")
-  abstract         String? @db.Text
-  doi              String? @db.VarChar(200)
-  tags             Json?   // 标签（如 CAS-4, SCIE）
-
-  // 分类信息
-  subject_category String? @map("subject_category") @db.VarChar(100) // 学科类别
-  article_type     String? @map("article_type") @db.VarChar(50) // 文章类型
-
-  // 状态信息
-  // 0:查询失败 1:提交中 2:服务中 3:已上传 4:已下载 8:完成结束 9:无法完成结束
-  status      Int     @default(1)
-  status_text String? @map("status_text") @db.VarChar(50)
-
-  // 全文信息
-  fulltext_url  String? @map("fulltext_url") @db.VarChar(500) // 全文下载URL
-  lib_attach_id String? @map("lib_attach_id") @db.VarChar(100) // 文献附件ID
-
-  // 时间戳
-  create_time    DateTime  @default(now()) @map("create_time")
-  update_time    DateTime  @updatedAt @map("update_time")
-  completed_time DateTime? @map("completed_time") // 完成时间
-
-  // 关联
-  user  User   @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  paper Paper? @relation(fields: [paper_id], references: [id], onDelete: SetNull)
-
-  @@index([user_id])
-  @@index([task_id])
-  @@index([status])
-  @@index([create_time])
-  @@map("doc_delivery_requests")
 }
 
 // ==================== 用户通知系统 ====================

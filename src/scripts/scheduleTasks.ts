@@ -3,8 +3,7 @@
  *
  * 功能：
  * 1. 每天定时同步论文数据（中文凌晨1点，外文凌晨2点）
- * 3. 每5分钟刷新一次全文传递状态
- * 4. 所有定时任务的执行时间可通过配置调整
+ * 2. 所有定时任务的执行时间可通过配置调整
  */
 
 // 加载环境变量（独立进程运行时必需）
@@ -21,7 +20,6 @@ dotenv.config({ path: path.resolve(process.cwd(), envFile) });
 import cron from "node-cron";
 import logger from "@/helper/logger";
 import { syncWanfangZhPapers, syncWanfangEnPapers } from "./syncWanfang";
-import { refreshDocDeliveryStatus } from "./refreshDocDeliveryStatus";
 
 /**
  * 启动所有定时任务
@@ -32,12 +30,10 @@ export async function startScheduledTasks() {
   try {
     const syncZhCron = "0 1 * * *";
     const syncEnCron = "0 2 * * *";
-    const docDeliveryCron = "*/5 * * * *";
 
     logger.info("定时任务配置", {
       syncZhCron,
       syncEnCron,
-      docDeliveryCron,
     });
 
     const syncZhTask = cron.schedule(
@@ -84,36 +80,10 @@ export async function startScheduledTasks() {
 
     logger.info("万方外文论文同步任务已注册", { cron: syncEnCron });
 
-
-    const docDeliveryTask = cron.schedule(
-      docDeliveryCron,
-      async () => {
-        try {
-          const result = await refreshDocDeliveryStatus();
-          if (result.total > 0) {
-            logger.info("全文传递状态刷新任务完成", result);
-          }
-        } catch (error: unknown) {
-          const errorMessage =
-            error instanceof Error ? error.message : String(error);
-          logger.error("全文传递状态刷新任务执行失败", {
-            error: errorMessage,
-          });
-        }
-      },
-      {
-        scheduled: true,
-        timezone: "Asia/Shanghai",
-      },
-    );
-
-    logger.info("全文传递状态刷新任务已注册", { cron: docDeliveryCron });
-
     const shutdown = () => {
       logger.info("========== 定时任务调度器正在关闭 ==========");
       syncZhTask.stop();
       syncEnTask.stop();
-      docDeliveryTask.stop();
       logger.info("所有定时任务已停止");
       process.exit(0);
     };
@@ -125,7 +95,6 @@ export async function startScheduledTasks() {
       tasks: [
         "万方中文论文同步",
         "万方外文论文同步",
-        "全文传递状态刷新",
       ],
     });
 

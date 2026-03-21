@@ -66,13 +66,6 @@ export const STRING_LIMITS = {
   app_num: { min: 1, max: 100 }, // 申请号 (db: VarChar(100))
   pub_num: { min: 1, max: 100 }, // 公开号 (db: VarChar(100))
 
-  // 文献传递相关 (参考: DocDeliveryRequest 表)
-  task_id: { min: 1, max: 100 }, // 任务 ID (db: VarChar(100))
-  lib_attach_id: { min: 1, max: 100 }, // 文献附件 ID (db: VarChar(100))
-  subject_category: { min: 1, max: 100 }, // 学科类别 (db: VarChar(100))
-  article_type: { min: 1, max: 50 }, // 文章类型 (db: VarChar(50))
-  publication_name: { min: 1, max: 255 }, // 出版物名称 (db: VarChar(255))
-
   // 通用
   id: { min: 1, max: 36 }, // ID 类字段 (db: VarChar(36), UUID)
   uuid: { min: 36, max: 36 }, // UUID (固定长度)

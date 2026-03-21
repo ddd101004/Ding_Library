@@ -24,11 +24,6 @@ import {
   AutoRelatedPapersResult,
   RelatedPaper,
 } from "@/service/chat/autoRelatedPapers";
-// import { findUploadedPapersByIds } from "@/db/ai-reading/uploadedPaper";
-import {
-  batchGetDocDeliveryStatusByPaperIds,
-  DocDeliveryStatus,
-} from "@/db/docDeliveryRequest";
 import logger from "@/helper/logger";
 
 // ============================================================================
@@ -112,7 +107,6 @@ export interface FormattedRelatedPaper {
   doi?: string;
   source: string;
   source_id: string;
-  doc_delivery_status?: DocDeliveryStatus;
 }
 
 /**
@@ -405,7 +399,7 @@ export async function executeAutoSearch(params: {
 /**
  * 格式化论文数据用于返回给前端
  * @param searchResult 检索结果
- * @param userId 用户 ID（用于查询文献传递状态）
+ * @param userId 用户 ID
  * @returns 格式化后的论文响应数据，如果无结果则返回 null
  */
 export async function formatRelatedPapers(
@@ -414,16 +408,6 @@ export async function formatRelatedPapers(
 ): Promise<FormattedPapersResponse | null> {
   if (!searchResult?.success || searchResult.papers.length === 0) {
     return null;
-  }
-
-  // 查询文献传递状态
-  let deliveryStatusMap: Record<string, DocDeliveryStatus> = {};
-  if (userId) {
-    const paperIds = searchResult.papers.map((paper) => paper.id);
-    deliveryStatusMap = await batchGetDocDeliveryStatusByPaperIds(
-      userId,
-      paperIds
-    );
   }
 
   return {
@@ -438,7 +422,6 @@ export async function formatRelatedPapers(
       doi: paper.doi,
       source: paper.source,
       source_id: paper.source_id,
-      doc_delivery_status: deliveryStatusMap[paper.id],
     })),
     keywords: searchResult.keywords,
     search_query: searchResult.searchQuery,
