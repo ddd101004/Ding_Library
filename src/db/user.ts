@@ -136,47 +136,6 @@ export const isEmailTaken = async (email: string, excludeUserId?: string) => {
   }
 };
 
-/**
- * 获取用户通知设置
- */
-export const getUserNotificationSettings = async (user_id: string) => {
-  try {
-    const user = await prisma.user.findFirst({
-      where: { user_id, deleted_status: 0 },
-      select: {
-        notify_doc_delivery: true,
-      },
-    });
-    return user;
-  } catch (error: any) {
-    logger.error(`获取通知设置失败: ${error?.message}`, { error });
-    return null;
-  }
-};
-
-/**
- * 更新用户通知设置
- */
-export const updateUserNotificationSettings = async (
-  user_id: string,
-  data: {
-    notify_doc_delivery?: boolean;
-  }
-) => {
-  try {
-    const user = await prisma.user.update({
-      where: { user_id },
-      data,
-      select: {
-        notify_doc_delivery: true,
-      },
-    });
-    return user;
-  } catch (error: any) {
-    logger.error(`更新通知设置失败: ${error?.message}`, { error });
-    return null;
-  }
-};
 
 /**
  * 软删除用户账户

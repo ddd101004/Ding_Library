@@ -16,6 +16,7 @@ import {
 import { saveFile as saveFileToLocal, checkFileExists } from "@/lib/storage/local";
 import { upsertUploadedPaper } from "@/db/uploadedPaper";
 import logger from "@/helper/logger";
+import { triggerFileParsing } from "@/service/parser/fileParser";
 
 // 禁用 Next.js 默认的 body parser
 export const config = {
@@ -120,6 +121,11 @@ function parseForm(
           filePath: result.filePath,
         });
 
+        // 异步触发文件内容解析
+        triggerFileParsing(paper.id).catch((error) => {
+          logger.error("触发文件解析失败", { paperId: paper.id, error: error.message });
+        });
+
         return sendSuccessResponse(res, "上传成功", {
           id: paper.id,
           title: paper.title,
@@ -175,6 +181,11 @@ function parseForm(
       paperId: paper.id,
       filePath,
       parseStatus: paper.parseStatus,
+    });
+
+    // 异步触发文件内容解析
+    triggerFileParsing(paper.id).catch((error) => {
+      logger.error("触发文件解析失败", { paperId: paper.id, error: error.message });
     });
 
     return sendSuccessResponse(res, "创建成功", {

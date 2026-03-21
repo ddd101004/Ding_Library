@@ -20,8 +20,13 @@ export default function PaperDetailPage() {
       setError(null);
 
       try {
-        // 调用通用论文详情 API
-        const response = await apiGet(`/api/papers/${id}`);
+        // 先尝试获取用户上传的论文
+        let response = await apiGet(`/api/uploaded-papers/${id}`);
+
+        // 如果用户上传论文不存在，尝试获取第三方论文
+        if (response.code !== 200) {
+          response = await apiGet(`/api/papers/${id}`);
+        }
 
         if (response.code === 200 && response.data) {
           const paper = response.data;
@@ -39,13 +44,13 @@ export default function PaperDetailPage() {
             venue: paper.publicationName || paper.venue || {},
             doi: paper.doi,
             keywords: paper.keywords || [],
-            source: paper.source || "wanfang",
+            source: paper.source || "uploaded",
             url: paper.plink || paper.url,
             publicationName: paper.publicationName,
             publicationDate: paper.publicationDate,
             publicationType: paper.publicationType,
-            hasFulltext: paper.hasFulltext,
-            pdfLink: paper.pdfLink
+            hasFulltext: paper.hasFulltext || !!paper.parsed_content,
+            pdfLink: paper.pdfLink || paper.file_path,
           };
 
           setPaperData(transformedData);

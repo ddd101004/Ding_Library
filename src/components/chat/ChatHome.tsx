@@ -61,7 +61,7 @@ export default function ChatHome() {
       // 开始录音前保存当前文本
       textBeforeRecording.current = inputText;
       // 设置累积文本为当前输入框的文本
-      setTranscribedText(inputText); // 这里会更新 accumulatedTextRef
+      setTranscribedText(inputText);
     } else {
       // 停止录音时不需要重置，保持累积文本
     }
@@ -162,6 +162,9 @@ export default function ChatHome() {
       formatFileContent: () => "",
       saveFilesToSession: () => {},
     });
+
+    // 发送消息后清空语音识别的文本，避免下次录音时重复显示
+    setTranscribedText('');
   };
 
   // 处理导航

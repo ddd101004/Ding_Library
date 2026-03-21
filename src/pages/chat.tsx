@@ -2,7 +2,6 @@ import Head from "next/head";
 import ChatHome from '../components/chat/ChatHome';
 import WithSidebarLayout from '../components/layout/WithSidebarLayout';
 import SearchModal from '../components/chat/common/SearchModal';
-import FullTextDeliveryToast from '../components/notice/fullTextDeliveryToast';
 
 export default function ChatPage() {
   return (
@@ -17,9 +16,7 @@ export default function ChatPage() {
         <ChatHome />
       </WithSidebarLayout>
       <SearchModal />
-
-      {/* 全文传递完成通知 */}
-      <FullTextDeliveryToast />
+  ))
     </>
   );
 }

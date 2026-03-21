@@ -4,12 +4,12 @@ import { Favorite, Prisma } from '@prisma/client';
 /**
  * 收藏类型
  */
-export type FavoriteType = 'paper' | 'scholar' | 'patent';
+export type FavoriteType = 'paper';
 
 /**
  * 收藏字段映射
  */
-type FavoriteFieldKey = 'paper_id' | 'scholar_id' | 'patent_id';
+type FavoriteFieldKey = 'paper_id';
 
 /**
  * 添加收藏
@@ -20,8 +20,6 @@ export async function addFavorite(data: {
   user_id: string;
   favorite_type: string;
   paper_id?: string;      // 数据库 UUID
-  scholar_id?: string;    // 数据库 UUID
-  patent_id?: string;     // 数据库 UUID
 }): Promise<Favorite> {
   return await prisma.favorite.create({
     data,
@@ -54,10 +52,6 @@ export async function removeFavoriteByItem(
 
   if (favorite_type === 'paper') {
     where.paper_id = item_db_id;
-  } else if (favorite_type === 'scholar') {
-    where.scholar_id = item_db_id;
-  } else if (favorite_type === 'patent') {
-    where.patent_id = item_db_id;
   }
 
   await prisma.favorite.deleteMany({ where });
@@ -72,8 +66,6 @@ export async function checkFavorite(params: {
   user_id: string;
   favorite_type: string;
   paper_id?: string;      // 数据库 UUID
-  scholar_id?: string;    // 数据库 UUID
-  patent_id?: string;     // 数据库 UUID
 }): Promise<boolean> {
   const count = await prisma.favorite.count({
     where: params,

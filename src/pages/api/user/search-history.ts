@@ -29,7 +29,7 @@ const handleGet = async (
   if (
     type &&
     typeof type === "string" &&
-    !["paper", "scholar", "patent", "comprehensive"].includes(type)
+    !["paper", "paper", "comprehensive"].includes(type)
   ) {
     return sendWarnningResponse(res, "搜索类型无效");
   }
@@ -54,8 +54,6 @@ const handleGet = async (
     result_count: item.result_count,
     create_time: item.create_time,
     paper_id: item.paper_id,
-    scholar_id: item.scholar_id,
-    patent_id: item.patent_id,
   }));
 
   return sendSuccessResponse(res, "获取成功", {

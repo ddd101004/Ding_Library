@@ -31,7 +31,21 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
   const textareaRef = useRef<ChatInputRef>(null);
   const avatarPopupRef = useRef<HTMLDivElement>(null);
 
-  const { isRecording, toggleRecording, transcribedText } = useAudioRecorder();
+  const { isRecording, toggleRecording, transcribedText, setTranscribedText } = useAudioRecorder();
+
+  // 保存语音识别前的文本内容
+  const textBeforeRecording = useRef('');
+
+  // 包装 toggleRecording 函数以处理文本状态
+  const handleToggleRecording = () => {
+    if (!isRecording) {
+      // 开始录音前保存当前文本
+      textBeforeRecording.current = inputText;
+      // 设置累积文本为当前输入框的文本
+      setTranscribedText(inputText);
+    }
+    toggleRecording();
+  };
 
   const { handleSendMessage, isSending } = useConversation();
 
@@ -127,6 +141,9 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
       formatFileContent: () => "",
       saveFilesToSession: () => {},
     });
+
+    // 发送消息后清空语音识别的文本，避免下次录音时重复显示
+    setTranscribedText('');
   };
 
   // 处理关闭功能
@@ -304,7 +321,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                     isPaperSearchActive={isPaperSearchActive}
                     onTogglePaperSearch={togglePaperSearch}
                     isRecording={isRecording}
-                    onToggleRecording={toggleRecording}
+                    onToggleRecording={handleToggleRecording}
                     sendButtonHover={sendButtonHover}
                     onSendButtonHover={setSendButtonHover}
                     onSend={handleSend}

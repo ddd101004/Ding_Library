@@ -4,8 +4,9 @@ import { Prisma } from "@prisma/client";
 
 export interface FolderPaperItem {
   item_id: string;
-  item_type: "paper" | "uploaded_paper";
-  paper_id: string;
+  item_type: "uploaded_paper";
+  paper_id: string | null;
+  uploaded_paper_id: string;
   title: string;
   authors: Prisma.JsonValue | string | null;
   publication_name: string | null;
@@ -92,7 +93,8 @@ export const getFolderContents = async (params: {
         items.push({
           item_id: item.item_id,
           item_type: "uploaded_paper",
-          paper_id: item.uploadedPaper.id,
+          paper_id: item.paper_id,
+          uploaded_paper_id: item.uploadedPaper.id,
           title: item.uploadedPaper.title,
           authors: item.uploadedPaper.authors,
           publication_name: item.uploadedPaper.source,

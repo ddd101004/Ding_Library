@@ -6,7 +6,8 @@
       "Bash(rm:*)",
       "Bash(npx next build:*)",
       "Bash(git checkout:*)",
-      "Bash(pnpm prisma generate:*)"
+      "Bash(pnpm prisma generate:*)",
+      "Bash(pnpm add:*)"
     ],
     "deny": [],
     "ask": []

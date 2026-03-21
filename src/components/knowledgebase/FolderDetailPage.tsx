@@ -315,11 +315,19 @@ export default function FolderDetailPage({
   // 处理查看详情
   const handleViewDetail = (item: any) => {
     if (item.item_type === 'uploaded_paper') {
-      // 跳转到论文详情页
-      router.push(`/ai-reading/papers?id=${item.paper_id}`);
+      // 跳转到文件详情页，使用 uploaded_paper_id
+      const paperId = item.uploaded_paper_id || item.paper_id;
+      router.push(`/knowledgebase/file/${paperId}`);
     } else if (item.item_type === 'conversation') {
-      // 跳转到对话详情页
-      router.push(`/chat?id=${item.conversation_id}`);
+      // 跳转到对话详情页，携带来源信息用于显示返回按钮
+      router.push({
+        pathname: '/chatconversation',
+        query: {
+          conversationId: item.conversation_id,
+          from: 'knowledgebase',
+          folderId: folder.folder_id,
+        },
+      });
     }
   };
 

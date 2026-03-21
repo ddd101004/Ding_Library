@@ -37,11 +37,26 @@ export default function ChatConversation({
     functionType,
     folderId,
     folderName,
+    from,
   } = router.query;
 
   const { userInfo, getToken, clearUserInfo } = useUser();
-  const { isRecording, toggleRecording, transcribedText } = useAudioRecorder();
+  const { isRecording, toggleRecording, transcribedText, setTranscribedText } = useAudioRecorder();
   const { getCurrentTime, formatMessage } = useMessageFormatter();
+
+  // 保存语音识别前的文本内容
+  const textBeforeRecording = useRef('');
+
+  // 包装 toggleRecording 函数以处理文本状态
+  const handleToggleRecording = () => {
+    if (!isRecording) {
+      // 开始录音前保存当前文本
+      textBeforeRecording.current = inputText;
+      // 设置累积文本为当前输入框的文本
+      setTranscribedText(inputText);
+    }
+    toggleRecording();
+  };
 
   // ============ 使用自定义Hooks ============
   const chatState = useChatState();
@@ -387,6 +402,8 @@ export default function ChatConversation({
 
     if (!isInitial) {
       setInputText("");
+      // 清空语音识别的文本，避免下次录音时重复显示
+      setTranscribedText('');
     }
 
     try {
@@ -573,7 +590,7 @@ export default function ChatConversation({
     }
 
     if (isRecording) {
-      toggleRecording();
+      handleToggleRecording();
     }
 
     sendMessage(inputText.trim(), false);
@@ -749,6 +766,30 @@ export default function ChatConversation({
         }
       `}</style>
 
+      {/* 返回按钮 - 仅在从知识库进入时显示 */}
+      {from === 'knowledgebase' && folderId && (
+        <div className="fixed top-6 left-[96px] z-50">
+          <button
+            onClick={() => router.push(`/knowledge-base/folder/${folderId}`)}
+            className="flex items-center gap-2 px-4 py-2 bg-white rounded-[20px] border border-[#d4ede4] shadow-md hover:bg-[#f0faf6] transition-colors"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span className="text-sm font-medium text-gray-700">返回知识库</span>
+          </button>
+        </div>
+      )}
+
       <UserAvatarSection />
 
       {/* 主容器添加浅绿背景和边框样式 */}
@@ -827,7 +868,7 @@ export default function ChatConversation({
       onKeyDown={handleKeyDown}
       onSend={handleSendMessage}
       isRecording={isRecording}
-      toggleRecording={toggleRecording}
+      toggleRecording={handleToggleRecording}
       isDeepThinkActive={isDeepThinkActive}
       toggleDeepThink={toggleDeepThink}
       isPaperSearchActive={isPaperSearchActive}

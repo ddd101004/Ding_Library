@@ -114,7 +114,7 @@ export function useAudioRecorder(): AudioRecorderResult {
             break;
           case 'not-allowed':
           case 'service-not-allowed':
-            alert('无法访问麦克风，请检查权限设置');
+            alert('无法访问麦克风，请检查麦克风权限');
             break;
           default:
             console.warn('语音识别出现问题:', event.error);
