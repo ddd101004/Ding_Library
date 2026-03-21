@@ -118,20 +118,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       return sendMethodNotAllowedResponse(res, "仅支持POST请求");
     }
   } catch (error: unknown) {
-    // 对 error 进行类型检查
-    const errorMessage = error instanceof Error ? error.message : "未知错误";
-
-    // 根据错误类型返回不同提示
-    if (
-      errorMessage.includes("该手机号今日短信发送次数已达上限") ||
-      errorMessage.includes("手机号格式不正确")
-    ) {
-      sendWarnningResponse(res, errorMessage);
-    } else if (errorMessage.includes("短信余额不足")) {
-      sendErrorResponse(res, errorMessage);
-    } else {
-      sendErrorResponse(res, "验证码发送失败,请稍后再试", error);
-    }
+    sendErrorResponse(res, "验证码发送失败,请稍后再试", error);
   }
 };
 

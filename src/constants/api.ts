@@ -17,7 +17,6 @@ export const api = {
     search: 'https://search.ebscohost.com/edsapi/rest/search'
   },
   services: {
-    sms: process.env.NEXT_PUBLIC_SMS_API_URL || '',
     email: process.env.NEXT_PUBLIC_EMAIL_API_URL || ''
   }
 };

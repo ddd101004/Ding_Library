@@ -510,7 +510,7 @@ ALTER TABLE `bills`
 - Token expiration: 7 days (configured in `src/constants/index.ts`)
 - `withAuth` in `src/middleware/auth/withAuth.ts` handles API route protection
 - User registration supports email or phone (controlled by `REGISTER_TYPE` constant)
-- Verification codes sent via Tencent Cloud SMS or email (nodemailer)
+- Verification codes sent via email (nodemailer) or printed to console (development mode)
 - User status tracking: disabled_status, deleted_status, email_verified, phone_verified
 
 ### Database Layer Pattern
@@ -611,8 +611,6 @@ Required environment variables:
 - `DATABASE_URL` - MySQL connection string
 - `JWT_SECRET` - JWT signing secret
 - `LLM_MODEL`, `LLM_API_KEY`, `LLM_API_URL` - AI model configuration
-- `TENCENTCLOUD_SECRET_ID`, `TENCENTCLOUD_SECRET_KEY` - Tencent Cloud credentials
-- `TENCENTCLOUD_SMS_*` - SMS configuration
 
 ### Path Aliases
 
@@ -1450,5 +1448,6 @@ To deploy:
 - **Styling**: Tailwind CSS 3.3.5 with shadcn/ui components
 - **Logging**: Winston with daily rotation
 - **AI Integration**: OpenAI SDK 4.47.1
-- **SMS/Email**: Tencent Cloud SDK, nodemailer
+- **Email**: nodemailer
+- **Verification Code**: Console output (development mode)
 - **Package Manager**: pnpm
