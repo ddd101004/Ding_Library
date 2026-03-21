@@ -51,6 +51,7 @@ const handleGet = async (
   // 转换authors为string格式（formatCitation函数需要JSON字符串）
   const paperForFormat = {
     title: paper.title,
+    title_zh: paper.title_zh,
     authors: paper.authors ? JSON.stringify(paper.authors) : null,
     publication_name: paper.publication_name,
     publication_year: paper.publication_year,
@@ -58,6 +59,7 @@ const handleGet = async (
     volume: paper.volume,
     issue: paper.issue,
     start_page: paper.start_page,
+    page_count: paper.page_count,
   };
 
   // 格式化引用

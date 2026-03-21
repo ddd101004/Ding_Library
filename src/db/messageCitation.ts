@@ -486,6 +486,7 @@ export const deleteCitationsByMessageId = async (message_id: string) => {
 export const formatCitation = (
   paper: {
     title: string;
+    title_zh?: string | null;
     authors?: string | null;
     publication_name?: string | null;
     publication_year?: number | null;
@@ -493,6 +494,7 @@ export const formatCitation = (
     volume?: string | null;
     issue?: string | null;
     start_page?: string | null;
+    page_count?: number | null;
   },
   format: string = "APA"
 ): string => {
@@ -531,13 +533,52 @@ export const formatCitation = (
       case "GB/T 7714-2015":
         // GB/T 7714-2015 中国国家标准格式
         // 格式：作者. 题名[J]. 期刊名, 年, 卷(期): 起-止页码.
-        // 中文作者用"等"，英文作者用"et al."
+        // 示例：[1] 王贤萍, 解明利. "一水"理念下南方多雨地区分流制污水管网提质改造思路[J]. 净水技术, 2026, X(X): XX-XX.
+
+        // 1. 处理作者列表：使用中文顿号分隔
         const isChineseAuthors = authorsArray.some(author => /[\u4e00-\u9fa5]/.test(author));
         const authorListGBT = isChineseAuthors
-          ? authorsArray.slice(0, 3).join(", ") + (authorsArray.length > 3 ? ", 等" : "")
-          : authorList; // 英文作者保持原样
+          ? authorsArray.slice(0, 3).join("、") + (authorsArray.length > 3 ? "、等" : "")
+          : authorsArray.slice(0, 3).join(", ") + (authorsArray.length > 3 ? ", et al." : "");
 
-        return `${authorListGBT}. ${paper.title}[J]. ${paper.publication_name || ""}${paper.publication_year ? `, ${paper.publication_year}` : ""}${paper.volume ? `, ${paper.volume}` : ""}${paper.issue ? `(${paper.issue})` : ""}${paper.start_page ? `: ${paper.start_page}` : ""}.`;
+        // 2. 优先使用中文标题
+        const displayTitle = paper.title_zh || paper.title;
+
+        // 3. 计算结束页码（如果有起始页和页数）
+        let pageRange = "";
+        if (paper.start_page) {
+          if (paper.page_count) {
+            // 计算结束页码：起始页 + 页数 - 1
+            const startPageNum = parseInt(paper.start_page);
+            const endPageNum = startPageNum + paper.page_count - 1;
+            pageRange = `: ${paper.start_page}-${endPageNum}`;
+          } else {
+            // 只有起始页，没有结束页
+            pageRange = `: ${paper.start_page}`;
+          }
+        }
+
+        // 4. 组装引用字符串
+        // 格式：作者. 题名[J]. 期刊名, 年, 卷(期): 起-止页码.
+        const parts = [
+          authorListGBT,
+          `${displayTitle}[J]`,
+          paper.publication_name || "",
+        ];
+
+        // 添加年份、卷、期、页码部分
+        if (paper.publication_year || paper.volume || paper.issue || pageRange) {
+          const yearVolIssue = [];
+          if (paper.publication_year) yearVolIssue.push(paper.publication_year);
+          if (paper.volume) yearVolIssue.push(paper.volume);
+          if (paper.issue) yearVolIssue.push(`(${paper.issue})`);
+
+          if (yearVolIssue.length > 0 || pageRange) {
+            parts.push(yearVolIssue.join(", ") + pageRange);
+          }
+        }
+
+        return parts.join(". ") + ".";
 
       case "BIBTEX":
         const firstAuthor =
