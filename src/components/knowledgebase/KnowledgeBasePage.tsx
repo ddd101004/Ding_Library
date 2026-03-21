@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
+import { Folder as FolderIcon, Database, ChevronDown, ChevronRight, FolderOpen, Plus, Edit, Trash2, MoreVertical } from "lucide-react";
 import { apiGet, apiDel, apiRequest, BusinessError } from "@/api/request";
 import { toast } from "sonner";
 import KnowledgeBaseModal from "./KnowledgeBaseModal";
@@ -313,9 +314,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
         <div className="h-[84px] flex items-center px-6 gap-6">
           {/* 知识库标题 */}
           <div className="flex items-center flex-shrink-0">
-            <img
-              src="/slibar/folder1.png"
-              alt="知识库图标"
+            <FolderIcon
               className="w-[28px] h-[28px] mr-3"
             />
             <h1 className="text-[24px] font-medium text-[#333333] leading-[30px]">
@@ -331,9 +330,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
             className="flex items-center cursor-pointer hover:bg-[rgba(59,128,255,0.07)] transition-colors rounded-lg px-3 py-2 flex-shrink-0"
             onClick={handleBackToList}
           >
-            <img
-              src="/slibar/slibar-knowledge-base@2x.png"
-              alt="我的知识库"
+            <Database
               className="w-[20px] h-[20px] mr-2"
             />
             <span className="text-[16px] font-medium text-[#333333] leading-[24px]">
@@ -352,11 +349,15 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
               className="flex items-center gap-2 cursor-pointer hover:bg-[rgba(59,128,255,0.07)] transition-colors rounded-lg px-3 py-2"
               onClick={toggleExpand}
             >
-              <img
-                src={expanded ? "/slibar/fileopen.svg" : "/slibar/filelist.svg"}
-                alt={expanded ? "收起" : "展开"}
-                className="w-[15px] h-[15px]"
-              />
+              {expanded ? (
+                <ChevronDown
+                  className="w-[15px] h-[15px]"
+                />
+              ) : (
+                <ChevronRight
+                  className="w-[15px] h-[15px]"
+                />
+              )}
               <span className="text-[16px] font-medium text-[#333333] leading-[24px]">
                 创建的知识库
               </span>
@@ -397,15 +398,15 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                             : "hover:bg-gray-50"
                         }`}
                       >
-                        <img
-                          src={
-                            selectedFolder?.folder_id === folder.folder_id
-                              ? "/slibar/folderpng1.png"
-                              : "/slibar/slibar-createbase@2x.png"
-                          }
-                          alt="文件夹"
-                          className="w-[17px] h-[21px] mr-3 flex-shrink-0"
-                        />
+                        {selectedFolder?.folder_id === folder.folder_id ? (
+                          <FolderOpen
+                            className="w-[17px] h-[21px] mr-3 flex-shrink-0"
+                          />
+                        ) : (
+                          <FolderIcon
+                            className="w-[17px] h-[21px] mr-3 flex-shrink-0"
+                          />
+                        )}
                         <span
                           className={`${
                             selectedFolder?.folder_id === folder.folder_id
@@ -430,9 +431,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
               onClick={openCreateModal}
               className="flex items-center h-[36px] px-4 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-[18px] text-white text-[16px] font-normal hover:opacity-90 transition-opacity"
             >
-              <img
-                src="/slibar/plus.svg"
-                alt="添加"
+              <Plus
                 className="w-[20px] h-[20px] mr-2"
               />
               新建知识库
@@ -553,9 +552,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                         <div className="flex items-center w-full cursor-pointer hover:bg-gray-50 rounded transition-colors" style={{ height: "80px" }} onClick={() => handleFolderClick(folder)}>
                           {/* 知识库名称列 */}
                           <div className="flex items-center flex-1 pr-2">
-                            <img
-                              src="/slibar/slibar-createbase@2x.png"
-                              alt="文件夹"
+                            <FolderIcon
                               className="w-[14px] h-[18px] sm:w-[17px] sm:h-[21px] mr-2 sm:mr-3 flex-shrink-0"
                             />
                             <span className="text-[12px] sm:text-[14px] md:text-[16px] text-gray-700 truncate" title={folder.folder_name}>
@@ -582,7 +579,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                               }}
                               className="p-1 hover:bg-gray-100 rounded transition-colors"
                             >
-                              <img src="/slibar/slibar-edit@2x.png" alt="编辑" style={{ width: "16px", height: "16px" }} />
+                              <Edit style={{ width: "16px", height: "16px" }} />
                             </button>
                             <button
                               onClick={(e) => {
@@ -592,7 +589,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                               className="p-1 hover:bg-gray-100 rounded transition-colors"
                               style={{ marginLeft: "12px" }}
                             >
-                              <img src="/settings/settings-delete@2x.png" alt="删除" style={{ width: "16px", height: "16px" }} />
+                              <Trash2 style={{ width: "16px", height: "16px" }} />
                             </button>
                           </div>
                         </div>
@@ -748,9 +745,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                             }}
                             onClick={(e) => togglePopup(folder.folder_id, e)}
                           >
-                            <img
-                              src="/settings/settins-details.svg"
-                              alt="更多操作"
+                            <MoreVertical
                               style={{
                                 width: "12px",
                                 height: "12px",

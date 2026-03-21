@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { X, Eye, EyeOff, Dot, ChevronDown } from "lucide-react";
 import { apiGetAuth, apiDownloadFile } from "@/api/request";
 import { toast } from "sonner";
 
@@ -221,9 +222,7 @@ export default function CitationModal({
           onClick={onClose}
           className="absolute z-10 hover:opacity-70 transition-opacity flex items-center justify-center top-[3%] right-[4%] w-[clamp(14px,2vw,18px)] h-[clamp(14px,2vw,18px)] p-0 bg-transparent border-none cursor-pointer"
         >
-          <img
-            src="/paper/paper-critationclose.png"
-            alt="关闭"
+          <X
             className="w-full h-full object-contain"
           />
         </button>
@@ -244,11 +243,7 @@ export default function CitationModal({
                 className="flex items-center justify-between w-full h-[clamp(32px,4vw,36px)] bg-[#F7F8FA] rounded-[4px] border border-[#C8C9CC] px-[clamp(12px,2vw,20px)] text-[clamp(12px,1.5vw,16px)]"
               >
                 <span>{citationFormat}</span>
-                <img
-                  src="/chat-page/chat-page-open.png"
-                  alt="下拉"
-                  width={10}
-                  height={6}
+                <ChevronDown
                   className={`w-[clamp(8px,1vw,10px)] h-[clamp(5px,0.8vw,6px)] transition-transform duration-200 ${
                     showFormatDropdown ? "rotate-180" : ""
                   }`}
@@ -308,12 +303,8 @@ export default function CitationModal({
                   className="flex items-center"
                 >
                   {downloadFormat === format ? (
-                    <img
-                      src="/chat-page/point1.png"
-                      alt="选中"
-                      width={20}
-                      height={20}
-                      className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)]"
+                    <Dot
+                      className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)] text-[#0D9488]"
                     />
                   ) : (
                     <div className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)] bg-white rounded-[10px] border border-[#C8C9CC]" />

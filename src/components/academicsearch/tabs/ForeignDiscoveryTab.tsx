@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { Quote, Languages } from "lucide-react";
 import { SearchResult } from "../../../types/types";
 import AuthorDisplay from "./AuthorDisplay";
 import CitationModal from "./CitationModal";
@@ -171,9 +172,7 @@ export default function ForeignDiscoveryTab({
                   handleQuoteClick(paper, e);
                 }}
               >
-                <img
-                  src="/paper/paper-quote@2x.png"
-                  alt="引用"
+                <Quote
                   className="w-[15px] h-[14px] sm:w-[17px] sm:h-[16px]"
                 />
               </div>
@@ -210,9 +209,7 @@ export default function ForeignDiscoveryTab({
                       if (chineseTitle) {
                         return (
                           <>
-                            <img
-                              src="/paper/paper-changelanguage.png"
-                              alt="中文标题"
+                            <Languages
                               className="w-[15px] h-[15px] sm:w-[17px] sm:h-[17px] mr-1 flex-shrink-0"
                             />
                             {chineseTitle}

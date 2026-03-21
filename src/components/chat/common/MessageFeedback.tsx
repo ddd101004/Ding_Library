@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { apiPost } from "@/api/request";
 import {
   Tooltip,
@@ -145,30 +146,16 @@ const MessageFeedback: React.FC<MessageFeedbackProps> = ({
     }
   };
 
-  // 获取点赞图标
-  const getLikeIcon = () => {
-    return currentFeedback === "like"
-      ? "/paper/like1.png"
-      : "/paper/paper-like@2x.png";
-  };
-
-  // 获取点踩图标
-  const getDislikeIcon = () => {
-    return currentFeedback === "dislike"
-      ? "/paper/dislike1.png"
-      : "/paper/paper-dislike@2x.png";
-  };
-
   return (
     <div className="flex items-center">
       {/* 点赞图标 */}
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="relative">
-            <img
-              src={getLikeIcon()}
-              alt="点赞"
-              className="cursor-pointer hover:opacity-80 transition-opacity"
+            <ThumbsUp
+              className={`cursor-pointer hover:opacity-80 transition-opacity ${
+                currentFeedback === "like" ? "text-[#0D9488]" : ""
+              }`}
               style={{ width: "21px", height: "20px" }}
               onClick={handleLike}
             />
@@ -183,10 +170,10 @@ const MessageFeedback: React.FC<MessageFeedbackProps> = ({
       <Tooltip>
         <TooltipTrigger asChild>
           <div className="relative" style={{ marginLeft: "50px" }}>
-            <img
-              src={getDislikeIcon()}
-              alt="点踩"
-              className="cursor-pointer hover:opacity-80 transition-opacity"
+            <ThumbsDown
+              className={`cursor-pointer hover:opacity-80 transition-opacity ${
+                currentFeedback === "dislike" ? "text-[#0D9488]" : ""
+              }`}
               style={{
                 width: "21px",
                 height: "20px",

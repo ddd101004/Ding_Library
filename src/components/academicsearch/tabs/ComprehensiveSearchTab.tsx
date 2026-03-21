@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import { SearchResult, ScholarResult, PatentResult } from "../../../types/types";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { SearchResult } from "../../../types/types";
 import AuthorDisplay from "./AuthorDisplay";
 import CitationModal from "./CitationModal";
 import PaperCard from "./PaperCard";
-import { ScholarAvatar } from "./AuthorAvatar";
 
 interface ComprehensiveSearchTabProps {
   searchResults: {
@@ -24,18 +24,18 @@ interface ComprehensiveSearchTabProps {
       items: SearchResult[];
       source: string;
     };
-    scholars: {
+    scholars?: {
       total: number;
       page: number;
       page_size: number;
-      items: ScholarResult[];
+      items: any[];
       source: string;
     };
-    patents: {
+    patents?: {
       total: number;
       page: number;
       page_size: number;
-      items: PatentResult[];
+      items: any[];
       source: string;
     };
   } | null;
@@ -138,9 +138,7 @@ export default function ComprehensiveSearchTab({
               }}
               className="flex items-center justify-center ml-[10px] w-[20px] h-[20px] bg-[#CCCCCC] rounded-[10px] border-none cursor-pointer relative top-[2px]"
             >
-              <img
-                src="/paper/paper-clickopen.png"
-                alt="查看更多中文论文"
+              <ChevronRight
                 className="w-[10px] h-[10px]"
               />
             </button>
@@ -181,9 +179,7 @@ export default function ComprehensiveSearchTab({
             }}
             className="flex items-center justify-center ml-[10px] w-[20px] h-[20px] bg-[#CCCCCC] rounded-[10px] border-none cursor-pointer relative top-[2px]"
           >
-            <img
-              src="/paper/paper-clickopen.png"
-              alt="查看更多外文论文"
+            <ChevronRight
               className="w-[10px] h-[10px]"
             />
           </button>

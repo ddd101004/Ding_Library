@@ -1,4 +1,5 @@
 import React from 'react';
+import { MessageSquare, GraduationCap, Mic, MicOff, Send, Brain, FileSearch } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -83,7 +84,7 @@ export default function Toolbar({
         } ${
           isControlDisabled
             ? 'opacity-50 cursor-not-allowed'
-            : 'hover:scale-[1.01] cursor-pointer'
+            : 'hover:scale-[1.02] hover:shadow-md hover:border-[#0D9488] cursor-pointer'
         }`}
         disabled={isControlDisabled}
       >
@@ -94,12 +95,8 @@ export default function Toolbar({
           </>
         ) : (
           <>
-            <img
-              src={isDeepThinkActive
-                ? '/chat-page/chat-page-deep-think-2@2x.png'
-                : '/chat-page/chat-page-deep-think-1@2x.png'}
-              alt="DeepThink"
-              className="w-5 h-5"
+            <Brain
+              className={`w-5 h-5 ${isDeepThinkActive ? 'text-white' : ''}`}
             />
             <span className="text-base">DeepThink</span>
           </>
@@ -119,7 +116,7 @@ export default function Toolbar({
             } ${
               isControlDisabled
                 ? 'opacity-50 cursor-not-allowed'
-                : 'hover:scale-[1.01] cursor-pointer'
+                : 'hover:scale-[1.02] hover:shadow-md hover:border-[#0D9488] cursor-pointer'
             }`}
             disabled={isControlDisabled}
           >
@@ -130,12 +127,8 @@ export default function Toolbar({
                 </>
               ) : (
                 <>
-                  <img
-                    src={isPaperSearchActive
-                      ? "/chat-page/chat-page-clickwebsitepaper.png"
-                      : "/chat-page/chat-page-websitepaper.png"}
-                    alt="论文搜索"
-                    className="w-5 h-5"
+                  <FileSearch
+                    className={`w-5 h-5 ${isPaperSearchActive ? 'text-white' : ''}`}
                   />
                   <span className="text-base">论文搜索</span>
                 </>
@@ -165,11 +158,7 @@ export default function Toolbar({
             }`}
             disabled={isControlDisabled}
           >
-            <img
-              src="/chat-page/qqqa1.png"
-              alt="快问快答"
-              className="w-[18px] h-[18px]"
-            />
+            <MessageSquare className="w-[18px] h-[18px]" />
             <span className="text-sm">快问快答</span>
           </button>
 
@@ -183,11 +172,7 @@ export default function Toolbar({
             }`}
             disabled={isControlDisabled}
           >
-            <img
-              src="/chat-page/deepstudy1.png"
-              alt="深度学习"
-              className="w-[18px] h-[18px]"
-            />
+            <GraduationCap className="w-[18px] h-[18px]" />
             <span className="text-sm">深度学习</span>
           </button>
         </>
@@ -199,17 +184,24 @@ export default function Toolbar({
         <div className="relative flex items-center">
         <Tooltip>
           <TooltipTrigger asChild>
-            <img
-              src={isRecording
-                ? '/chat-page/voice1.png'
-                : '/chat-page/chat-page-voice@2x.png'}
-              alt="语音"
-              className={`w-10 h-10 transition-opacity ${
+            <div
+              className={`transition-opacity ${
                 isSending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:opacity-80'
               }`}
               onClick={handleToggleRecording}
               onMouseDown={(e) => e.preventDefault()}
-            />
+            >
+              {isRecording ? (
+                <div className="flex items-center justify-center">
+                  <div className="animate-pulse mr-1">
+                    <div className="w-2 h-2 bg-red-500 rounded-full animate-ping"></div>
+                  </div>
+                  <Mic className="w-8 h-8 text-red-500" />
+                </div>
+              ) : (
+                <Mic className="w-8 h-8" />
+              )}
+            </div>
           </TooltipTrigger>
           {!isSending && (
             <TooltipContent>
@@ -237,12 +229,8 @@ export default function Toolbar({
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
               </div>
             ) : (
-              <img
-                src={sendButtonHover && !isOverallDisabled
-                  ? '/chat-page/send2.png'
-                  : '/chat-page/send1.png'}
-                alt="发送"
-                className="w-full h-full"
+              <Send
+                className={`w-6 h-6 ${sendButtonHover && !isOverallDisabled ? 'text-[#0D9488]' : ''}`}
               />
             )}
           </button>

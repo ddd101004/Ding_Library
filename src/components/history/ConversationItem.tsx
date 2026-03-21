@@ -1,5 +1,5 @@
 import React from 'react';
-import Image from 'next/image';
+import { FolderPlus, Download, Trash2, MessageSquare, MoreVertical } from 'lucide-react';
 import {
   Tooltip,
   TooltipContent,
@@ -78,13 +78,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
     >
       {/* 图标 */}
       <div className="absolute left-[60px] top-1/2 -translate-y-1/2">
-        <Image
-          src="/chat-page/chat-page-history-commontag.png"
-          alt="普通对话"
-          width={40}
-          height={50}
-          className="w-[25px] h-[30px]"
-        />
+        <MessageSquare className="w-[25px] h-[30px]" />
       </div>
 
       {/* 内容区域 */}
@@ -96,7 +90,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
           {/* 论文信息 - 显示 paper_info 数组中的论文标题，一行显示超出省略 */}
           {conv.paper_info && conv.paper_info.length > 0 && (
-            <p className="text-[14px] text-[#666] mt-[10px] w-[850px] truncate">
+            <p className="text-[14px] text-[#666] mt-[10px] w-[750px] truncate">
               包含论文：
               {conv.paper_info.map((paper, index) => (
                 <span key={paper.id}>
@@ -129,12 +123,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                       className="w-5 h-5 flex items-center justify-center mr-[30px]"
                       onClick={(e) => onAddToFolder(conv.conversation_id, e)}
                     >
-                      <Image
-                        src="/slibar/slibar-createbase@2x.png"
-                        alt="导入知识库"
-                        width={20}
-                        height={20}
-                      />
+                      <FolderPlus className="w-5 h-5" />
                     </button>
                   </TooltipTrigger>
                   <TooltipContent>
@@ -151,12 +140,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                     onClick={(e) => onExport(conv.conversation_id, e)}
                     disabled={exporting === conv.conversation_id}
                   >
-                    <Image
-                      src="/slibar/settings-export@2x.png"
-                      alt="导出"
-                      width={20}
-                      height={20}
-                    />
+                    <Download className="w-5 h-5" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -171,12 +155,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
                     className="w-5 h-5 flex items-center justify-center"
                     onClick={(e) => onDelete(conv.conversation_id, e)}
                   >
-                    <Image
-                      src="/settings/settings-delete@2x.png"
-                      alt="删除"
-                      width={20}
-                      height={20}
-                    />
+                    <Trash2 className="w-5 h-5" />
                   </button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -188,15 +167,10 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         ) : (
           /* 三个点图标 */
           <div
-            className="w-6 h-1 flex items-center justify-center opacity-50 cursor-pointer py-5"
+            className="w-6 h-6 flex items-center justify-center opacity-50 cursor-pointer py-5"
             onClick={(e) => onThreeDotClick(conv.conversation_id, e)}
           >
-            <Image
-              src="/settings/settins-details.svg"
-              alt="更多"
-              width={24}
-              height={4}
-            />
+            <MoreVertical className="w-6 h-6" />
           </div>
         )}
       </div>

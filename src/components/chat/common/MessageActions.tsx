@@ -1,4 +1,5 @@
 import React from "react";
+import { RefreshCw } from "lucide-react";
 import CopyButton from "./CopyButton";
 import MessageVersionControl from "./MessageVersionControl";
 import MessageFeedback from "./MessageFeedback";
@@ -103,9 +104,7 @@ const MessageActions: React.FC<MessageActionsProps> = ({
         <div className="relative" style={{ marginLeft: "50px" }}>
           {isAiResponding ? (
             // AI正在回复中 - 禁用状态的重新生成按钮
-            <img
-              src="/paper/paper-refresh@2x.png"
-              alt="重新回答"
+            <RefreshCw
               className="opacity-50 cursor-not-allowed transition-opacity"
               style={{
                 width: "21px",
@@ -114,9 +113,7 @@ const MessageActions: React.FC<MessageActionsProps> = ({
             />
           ) : (
             // 正常状态的重新生成按钮
-            <img
-              src="/paper/paper-refresh@2x.png"
-              alt="重新回答"
+            <RefreshCw
               className="cursor-pointer hover:opacity-80 transition-opacity"
               style={{
                 width: "21px",

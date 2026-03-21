@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useSearch } from "../../components/contexts/SearchContext";
 import { apiPost, apiGet } from "@/api/request";
 import AvatarHoverMenu from "../chat/common/AvatarHoverMenu";
+import { Search } from "lucide-react";
 import {
   ComprehensiveSearchTab,
   ChineseDiscoveryTab,
@@ -475,9 +476,7 @@ export default function AcademicSearchPage() {
                 <div
                   className="flex items-center gap-3 w-full h-full bg-[#F7F8FA] rounded-[20px] border border-[#C8C9CC]"
                 >
-                  <img
-                    src="/slibar/slibar-questions-answers.png"
-                    alt="学术搜索"
+                  <Search
                     className="w-5 h-5 ml-6"
                   />
                   <input

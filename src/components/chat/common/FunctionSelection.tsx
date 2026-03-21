@@ -1,5 +1,6 @@
 import React from 'react';
 import { useRouter } from 'next/router';
+import { MessageSquare, GraduationCap, X } from 'lucide-react';
 
 interface FunctionSelectionProps {
   functionType: string;
@@ -10,15 +11,15 @@ interface FunctionSelectionProps {
 // 功能类型到图标和标签的映射
 const functionConfig = {
   quickQA: {
-    icon: '/chat-page/qqqa1.png',
+    icon: MessageSquare,
     label: '快问快答'
   },
   deepStudy: {
-    icon: '/chat-page/deepstudy1.png',
+    icon: GraduationCap,
     label: '深度学习'
   },
   more: {
-    icon: '/chat-page/chat-page-more.png',
+    icon: MessageSquare, // 暂时使用 MessageSquare，可根据需要修改
     label: '更多'
   }
 };
@@ -42,16 +43,15 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
           opacity: 0.7
         }}
       >
-        <img
-          src={config.icon}
-          alt={config.label}
-          className="mr-[9px]"
-          style={{
+        {React.createElement(config.icon, {
+          className: "mr-[9px]",
+          style: {
             width: "18px",
             height: "18px",
-            marginLeft: "28px"
-          }}
-        />
+            marginLeft: "28px",
+            color: "#0D9488"
+          }
+        })}
         <span
           className="font-normal"
           style={{
@@ -80,10 +80,9 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
               }}
               title="文件解析中，请稍后再关闭"
             >
-              <img
-                src="/chat-page/cancel1.png"
-                alt="关闭"
+              <X
                 className="w-[12px] h-[12px]"
+                style={{ color: "#EC4899" }}
               />
             </div>
           </>
@@ -101,10 +100,9 @@ const FunctionSelection: React.FC<FunctionSelectionProps> = ({ functionType, onC
                 border: "1px solid #6FCF97"
               }}
             >
-              <img
-                src="/chat-page/cancel1.png"
-                alt="关闭"
+              <X
                 className="w-[10px] h-[10px]"
+                style={{ color: "#EC4899" }}
               />
             </button>
           </>

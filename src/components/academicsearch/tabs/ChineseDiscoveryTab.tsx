@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
+import { Quote } from "lucide-react";
 import { SearchResult } from "../../../types/types";
 import AuthorDisplay from "./AuthorDisplay";
 import CitationModal from "./CitationModal";
@@ -170,9 +171,7 @@ export default function ChineseDiscoveryTab({
                   handleQuoteClick(paper, e);
                 }}
               >
-                <img
-                  src="/paper/paper-quote@2x.png"
-                  alt="引用"
+                <Quote
                   className="w-[15px] h-[14px] sm:w-[17px] sm:h-[16px]"
                 />
               </div>

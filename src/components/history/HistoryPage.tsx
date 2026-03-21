@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Trash2, History as HistoryIcon, MessageSquare } from "lucide-react";
 import GroupSection from "./GroupSection";
 import Image from "next/image";
 import { useRouter } from "next/router";
@@ -140,12 +141,8 @@ const DeleteConfirmationDialog: React.FC<{
         data-delete-dialog="true"
       >
         <div className="flex justify-center mt-[30px]">
-          <img
-            src="/chat-page/chat-page-lose@2x.png"
-            alt="警告"
-            width={30}
-            height={30}
-            className="w-[30px] h-[30px]"
+          <Trash2
+            className="w-[30px] h-[30px] text-[#FF4D4F]"
           />
         </div>
 
@@ -976,12 +973,8 @@ const History: React.FC = () => {
         <div className="w-full max-w-[1200px] flex flex-col gap-6">
           {/* 标题区域 */}
           <div className="flex items-center pt-2">
-            <Image
-              src="/slibar/slibar-history(1).png"
-              alt="历史记录"
-              width={30}
-              height={30}
-              className="mr-3"
+            <HistoryIcon
+              className="w-[30px] h-[30px] mr-3 text-[#0D9488]"
             />
             <h2 className="font-medium text-[30px] text-[#333333] leading-[40px]">
               历史记录
@@ -993,12 +986,8 @@ const History: React.FC = () => {
             onSubmit={handleSearch}
             className="w-full h-[60px] bg-[#F7F8FA] rounded-[20px] border border-[#C8C9CC] flex items-center"
           >
-            <Image
-              src="/slibar/slibar-questions-answers.png"
-              alt="搜索"
-              width={20}
-              height={20}
-              className="mx-[20px]"
+            <MessageSquare
+              className="w-[20px] h-[20px] mx-[20px] text-[#666666]"
             />
             <input
               type="text"

@@ -1,4 +1,5 @@
 import React from "react";
+import { Trash2 } from "lucide-react";
 import { Folder } from "../../types/foder";
 interface DeleteModalProps {
   isOpen: boolean;
@@ -20,12 +21,8 @@ const DeleteModal: React.FC<DeleteModalProps> = ({
       <div className="w-[400px] bg-white rounded-[20px] shadow-lg p-8">
         {/* 警告图标 */}
         <div className="flex justify-center mb-6">
-          <img
-            src="/chat-page/chat-page-lose@2x.png"
-            alt="警告"
-            width={60}
-            height={60}
-            className="w-[60px] h-[60px]"
+          <Trash2
+            className="w-[60px] h-[60px] text-[#FF4D4F]"
           />
         </div>
 

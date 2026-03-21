@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import CitationModal from "./CitationModal";
 import AuthorAvatar, { AuthorInfo } from "./AuthorAvatar";
+import { AlignLeft, ChevronLeft, Quote, Tag, Globe } from "lucide-react";
 
 interface PaperDetailProps {
   paper: {
@@ -212,9 +213,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
         className="flex items-center cursor-pointer py-4"
         onClick={onBack}
       >
-        <img
-          src="/paper/paper-details.png"
-          alt="详情"
+        <AlignLeft
           className="w-[clamp(5px,1vw,6px)] h-[clamp(8px,1.5vw,10px)]"
         />
         <span className="ml-[clamp(8px,1.5vw,10px)] text-sm text-[#666666]">详情</span>
@@ -234,9 +233,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
         >
           {/* 导航文字 */}
           <div className="flex items-center cursor-pointer text-sm font-medium text-[#666666]">
-            <img
-              src="/paper/papers-navigation.png"
-              alt="导航"
+            <ChevronLeft
               className="w-[clamp(16px,2.5vw,20px)] h-[clamp(14px,2vw,17px)] mr-[clamp(8px,1.2vw,10px)]"
             />
             <span className="text-[clamp(12px,1.5vw,14px)]">导航</span>
@@ -304,9 +301,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                 style={{ width: "clamp(48px,10vw,56px)", height: "clamp(32px,5vw,40px)" }}
                 onClick={handleCitationClick}
               >
-                <img
-                  src="/paper/paper-quote@2x.png"
-                  alt="引用"
+                <Quote
                   className="w-[clamp(14px,2vw,17px)] h-[clamp(13px,2vw,16px)]"
                 />
               </div>
@@ -318,9 +313,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
             <div className="flex flex-col h-full">
               {/* 第一行：出版社 */}
               <div className="flex items-center justify-start h-10 mb-[10px] px-[clamp(12px,2vw,20px)]">
-                <img
-                  src="/paper/paper-type@2x.png"
-                  alt="出版社"
+                <Tag
                   className="w-[clamp(16px,2.5vw,20px)] h-[clamp(16px,2.5vw,20px)] mr-[clamp(12px,2vw,19px)]"
                 />
                 <span className="text-[clamp(12px,1.5vw,16px)] text-[#333333] font-medium">
@@ -392,9 +385,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                         rel="noopener noreferrer"
                         className="flex items-center text-[#0D9488] no-underline hover:underline"
                       >
-                        <img
-                          src="/paper/paper-shinyoffitialwebsite@2x.png"
-                          alt="官方网站"
+                        <Globe
                           className="w-[clamp(16px,2.5vw,20px)] h-[clamp(16px,2.5vw,20px)]"
                         />
                         <span className="ml-[11px] text-[clamp(12px,1.5vw,16px)]">

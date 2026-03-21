@@ -45,7 +45,7 @@ const MainContent: React.FC<MainContentProps> = ({
       case "quickQA":
         return {
           title: "快问快答",
-          description: "更懂人的图书馆，遇见对你有用的知识",
+          description: "更懂人的AI学术系统，遇见对你有用的知识",
         };
       case "deepStudy":
         return {

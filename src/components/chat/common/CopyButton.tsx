@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from "react";
+import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import {
   Tooltip,
@@ -26,12 +27,6 @@ const SIZE_CONFIG = {
   sm: { width: 16, height: 16 },
   md: { width: 21, height: 20 },
   lg: { width: 24, height: 24 },
-} as const;
-
-// 图标路径
-const ICONS = {
-  default: "/paper/paper-copy@2x.png",
-  success: "/chat-page/copyok1.png",
 } as const;
 
 /**
@@ -255,12 +250,18 @@ const CopyButton: React.FC<CopyButtonProps> = ({
               {isCopying ? (
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
               ) : (
-                <img
-                  src={isCopied ? ICONS.success : ICONS.default}
-                  alt={isCopied ? "复制成功" : "复制"}
-                  width={SIZE_CONFIG[size].width}
-                  height={SIZE_CONFIG[size].height}
-                />
+                isCopied ? (
+                  <Check
+                    width={SIZE_CONFIG[size].width}
+                    height={SIZE_CONFIG[size].height}
+                    className="text-green-600"
+                  />
+                ) : (
+                  <Copy
+                    width={SIZE_CONFIG[size].width}
+                    height={SIZE_CONFIG[size].height}
+                  />
+                )
               )}
               <span>{children}</span>
               {showStatusIndicator && isCopied && (
@@ -295,13 +296,19 @@ const CopyButton: React.FC<CopyButtonProps> = ({
             {isCopying ? (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mx-auto"></div>
             ) : (
-              <img
-                src={isCopied ? ICONS.success : ICONS.default}
-                alt={isCopied ? "复制成功" : "复制"}
-                width={sizeConfig.width}
-                height={sizeConfig.height}
-                className="block"
-              />
+              isCopied ? (
+                <Check
+                  width={sizeConfig.width}
+                  height={sizeConfig.height}
+                  className="block text-green-600"
+                />
+              ) : (
+                <Copy
+                  width={sizeConfig.width}
+                  height={sizeConfig.height}
+                  className="block"
+                />
+              )
             )}
           </button>
         </TooltipTrigger>

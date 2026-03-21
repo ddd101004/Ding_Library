@@ -16,11 +16,11 @@ export default function Home() {
         <title>AI智慧学术交互系统</title>
         <meta
           name="description"
-          content="新一代图书馆·陪你探索世界"
+          content="AI智慧学术交互系统·陪你探索世界"
         />
         <meta
           name="keywords"
-          content="智慧图书馆,文献检索,科研助手,学术搜索,AI助手"
+          content="AI智慧交互系统,文献检索,科研助手,学术搜索,AI助手"
         />
         <meta
           name="viewport"

@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { Quote, Languages } from "lucide-react";
 import { SearchResult } from "../../../types/types";
 import AuthorDisplay from "./AuthorDisplay";
 
@@ -50,9 +51,7 @@ export default function PaperCard({
               {englishTitle}
             </h4>
             <h5 className="font-normal text-[14px] sm:text-[16px] text-[#0D9488] leading-[1.4] max-h-[50px] overflow-hidden text-ellipsis line-clamp-2 mt-1 flex items-center">
-              <img
-                src="/paper/paper-changelanguage.png"
-                alt="中文标题"
+              <Languages
                 className="w-[15px] h-[15px] sm:w-[17px] sm:h-[17px] mr-1 flex-shrink-0"
               />
               {chineseTitle}
@@ -138,9 +137,7 @@ export default function PaperCard({
         className="favorite-button absolute flex items-center justify-center cursor-pointer hover:shadow-md transition-all duration-200 w-[52px] sm:w-[56px] h-[34px] sm:h-[36px] bg-white border border-[#C8C9CC] rounded-[18px] bottom-[15px] right-[15px] sm:right-[20px]"
         onClick={handleQuoteButtonClick}
       >
-        <img
-          src="/paper/paper-quote@2x.png"
-          alt="引用"
+        <Quote
           className="w-[15px] h-[14px] sm:w-[17px] sm:h-[16px]"
         />
       </div>

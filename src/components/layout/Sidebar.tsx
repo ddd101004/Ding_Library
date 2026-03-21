@@ -1,4 +1,5 @@
 import React from "react";
+import { Search, Database, Folder, History, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -15,7 +16,6 @@ interface SidebarProps {
   onMenuItemClick: (e: React.MouseEvent, path: string, icon: string) => void;
   onAcademicSearchClick: (e: React.MouseEvent) => void;
   onNewChatClick: (e: React.MouseEvent) => void;
-  onSubscriptionClick: (e: React.MouseEvent) => void;
   onRecentConversationClick: (conversationId: string, e: React.MouseEvent) => void;
 }
 
@@ -28,7 +28,6 @@ const Sidebar: React.FC<SidebarProps> = ({
   onMenuItemClick,
   onAcademicSearchClick,
   onNewChatClick,
-  onSubscriptionClick,
   onRecentConversationClick,
 }) => {
   const isMenuItemActive = (menuType: string) => activeIcon === menuType && isSidebarOpen;
@@ -52,11 +51,11 @@ const Sidebar: React.FC<SidebarProps> = ({
   <div className="flex items-center h-full">
     <img
       src="/logo/ai_logo.png"
-      alt="AI学术图书馆"
+      alt="AI学术交互系统"
       className="h-[40px] w-[40px] object-contain"
     />
     {isSidebarOpen && (
-      <span className="text-[#0D9488] text-[24px] ml-2">AI学术图书馆</span>
+      <span className="text-[#0D9488] text-[24px] ml-2">AI学术系统</span>
     )}
   </div>
 </div>
@@ -85,10 +84,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         }`}
         onClick={(e) => handleSidebarItemClick(e, () => onAcademicSearchClick(e))}
       >
-        <img
-          src={activeIcon === "academic" ? "/slibar/questions1.png" : "/slibar/slibar-questions-answers@2x.png"}
-          alt="学术搜索"
-          className="w-[22px] h-[22px]"
+        <Search
+          className={`w-[22px] h-[22px] ${isMenuItemActive("academic") ? "text-[#0D9488]" : "text-gray-700"}`}
         />
         {isSidebarOpen && (
           <span className={`text-[16px] ml-2 ${isMenuItemActive("academic") ? "text-[#0D9488]" : "text-gray-700"}`}>学术搜索</span>
@@ -102,10 +99,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         }`}
         onClick={(e) => onMenuItemClick(e, "/knowledge-base", "knowledge")}
       >
-        <img
-          src={activeIcon === "knowledge" ? "/slibar/folder1.png" : "/slibar/slibar-knowledge-base@2x.png"}
-          alt="知识库"
-          className="w-[21px] h-[20px]"
+        <Database
+          className={`w-[21px] h-[20px] ${isMenuItemActive("knowledge") ? "text-[#0D9488]" : "text-gray-700"}`}
         />
         {isSidebarOpen && (
           <span className={`text-[16px] ml-2 ${isMenuItemActive("knowledge") ? "text-[#0D9488]" : "text-gray-700"}`}>知识库</span>
@@ -119,10 +114,8 @@ const Sidebar: React.FC<SidebarProps> = ({
         }`}
         onClick={(e) => onMenuItemClick(e, "/history", "history")}
       >
-        <img
-          src={activeIcon === "history" ? "/slibar/history1.png" : "/slibar/slibar-history@2x(1).png"}
-          alt="历史记录"
-          className="w-[21px] h-[21px]"
+        <History
+          className={`w-[21px] h-[21px] ${isMenuItemActive("history") ? "text-[#0D9488]" : "text-gray-700"}`}
         />
         {isSidebarOpen && (
           <span className={`text-[16px] ml-2 ${isMenuItemActive("history") ? "text-[#0D9488]" : "text-gray-700"}`}>历史记录</span>
@@ -173,32 +166,16 @@ const Sidebar: React.FC<SidebarProps> = ({
         </div>
       )}
 
-      {/* 订阅图标 - 已隐藏 */}
-      {false && (
-        <div
-          className={`fixed transition-all duration-300 cursor-pointer ${
-            isSidebarOpen ? "w-[192px] h-[140px] bottom-[210px]" : "w-[36px] h-[36px] bottom-[186px]"
-          }`}
-          onClick={(e) => handleSidebarItemClick(e, () => onSubscriptionClick(e))}
-        >
-          <img
-            src={isSidebarOpen ? "/slibar/slibar-subscribe@2x.png" : "/slibar/slibar-sub@2x.png"}
-            alt="订阅"
-            className="w-full h-full object-contain"
-          />
-        </div>
-      )}
-
       {/* 侧边栏切换按钮 */}
       <button
         onClick={onToggleSidebar}
         className={`mt-auto mb-[30px] focus:outline-none cursor-pointer ${isSidebarOpen ? "self-end mr-8" : ""}`}
       >
-        <img
-          src={isSidebarOpen ? "/slibar/slibar-closerslibar@2x.png" : "/slibar/slibar-openslibar@2x.png"}
-          alt={isSidebarOpen ? "关闭侧边栏" : "打开侧边栏"}
-          className="w-[18px] h-[20px]"
-        />
+        {isSidebarOpen ? (
+          <ChevronLeft className="w-[18px] h-[20px]" />
+        ) : (
+          <ChevronRight className="w-[18px] h-[20px]" />
+        )}
       </button>
     </div>
   );

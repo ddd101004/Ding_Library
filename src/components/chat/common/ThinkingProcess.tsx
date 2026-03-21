@@ -1,4 +1,5 @@
 import React from "react";
+import { CheckCircle, ChevronDown, ChevronUp, Dot, Atom } from "lucide-react";
 
 interface ThinkingProcessProps {
   messageId: string;
@@ -42,9 +43,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
         >
           {/* 左侧成功图标 */}
           <div className="flex items-center" style={{ marginLeft: "30px" }}>
-            <img
-              src="/chat-page/chat-page-success@2x.png"
-              alt="深度思考已完成"
+            <CheckCircle
               className="w-[18px] h-[18px]"
             />
             <span
@@ -72,9 +71,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
               }}
               onClick={handleToggleCollapse}
             >
-              <img
-                src="/chat-page/chat-page-open.png"
-                alt="展开思考过程"
+              <ChevronDown
                 className="w-[13px] h-[9px]"
               />
             </div>
@@ -105,19 +102,15 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
             >
               {/* 根据是否正在流式生成来显示不同的图标 */}
               {isStreaming ? (
-                // 正在生成时显示旋转的加载图标
-                <img
-                  src="/chat-page/think1.png"
-                  alt="思考中"
-                  className="w-7 h-7 animate-spin"
+                // 正在生成时显示旋转的原子图标
+                <Atom
+                  className="w-7 h-7 animate-spin text-[#0D9488]"
                   style={{ width: "28px", height: "30px" }}
                 />
               ) : (
                 // 生成完成时显示静态图标
-                <img
-                  src="/chat-page/think1.png"
-                  alt="思考过程"
-                  className="w-7 h-7"
+                <Atom
+                  className="w-7 h-7 text-[#0D9488]"
                   style={{ width: "28px", height: "30px" }}
                 />
               )}
@@ -149,9 +142,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
                 }}
                 onClick={handleToggleCollapse}
               >
-                <img
-                  src="/chat-page/chat-page-close.png"
-                  alt="折叠思考过程"
+                <ChevronUp
                   className="w-[12px] h-[8px]"
                 />
               </div>
@@ -186,9 +177,7 @@ const ThinkingProcess: React.FC<ThinkingProcessProps> = ({
                   marginTop: "22px",
                 }}
               >
-                <img
-                  src="/chat-page/point1.png"
-                  alt="思考装饰"
+                <Dot
                   className="w-4 h-4"
                 />
               </div>

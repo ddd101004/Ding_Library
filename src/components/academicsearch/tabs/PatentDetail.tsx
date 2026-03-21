@@ -1,5 +1,6 @@
 "use client";
 import React from "react";
+import { AlignLeft, Eye, Download } from "lucide-react";
 
 interface PatentDetailProps {
   patent: {
@@ -62,10 +63,8 @@ export default function PatentDetail({ patent, onBack }: PatentDetailProps) {
         className="flex items-center cursor-pointer ml-[20px] sm:ml-[50px] md:ml-[100px] lg:ml-[200px] xl:ml-[305px]"
         onClick={onBack}
       >
-        {/* paper-details.png 图标 */}
-        <img
-          src="/paper/paper-details.png"
-          alt="返回"
+        {/* 返回图标 */}
+        <AlignLeft
           className="w-[6px] h-[10px]"
         />
         {/* 返回文字 */}
@@ -90,9 +89,7 @@ export default function PatentDetail({ patent, onBack }: PatentDetailProps) {
           className="flex items-center cursor-not-allowed opacity-50 w-[100px] sm:w-[110px] md:w-[120px] lg:w-[128px] h-[36px] sm:h-[38px] md:h-[40px] bg-white rounded-[16px] sm:rounded-[18px] md:rounded-[20px] border border-[#E0E1E5] pl-[20px] sm:pl-[25px] md:pl-[30px] lg:pl-[37px] pr-[8px] sm:pr-[12px] md:pr-[14px] lg:pr-[16px] py-[8px] sm:py-[10px] md:py-[12px]"
           title="功能待开发中"
         >
-          <img
-            src="/paper/paper-preview@2x.png"
-            alt="预览"
+          <Eye
             className="w-[14px] h-[14px] sm:w-[15px] sm:h-[15px] md:w-[16px] md:h-[16px]"
           />
           <span className="ml-[8px] sm:ml-[9px] md:ml-[10px] lg:ml-[11px] text-sm sm:text-base text-[#666666]">
@@ -105,9 +102,7 @@ export default function PatentDetail({ patent, onBack }: PatentDetailProps) {
           className="flex items-center cursor-not-allowed opacity-50 w-[100px] sm:w-[110px] md:w-[120px] lg:w-[128px] h-[36px] sm:h-[38px] md:h-[40px] bg-white rounded-[16px] sm:rounded-[18px] md:rounded-[20px] border border-[#E0E1E5] ml-[15px] sm:ml-[18px] md:ml-[20px] pl-[20px] sm:pl-[25px] md:pl-[30px] lg:pl-[37px] pr-[8px] sm:pr-[12px] md:pr-[14px] lg:pr-[16px] py-[8px] sm:py-[10px] md:py-[12px]"
           title="功能待开发中"
         >
-          <img
-            src="/paper/paper-download@2x.png"
-            alt="下载"
+          <Download
             className="w-[14px] h-[14px] sm:w-[15px] sm:h-[15px] md:w-[16px] md:h-[16px]"
           />
           <span className="ml-[8px] sm:ml-[9px] md:ml-[10px] lg:ml-[11px] text-sm sm:text-base text-[#666666]">

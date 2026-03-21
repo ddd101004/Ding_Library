@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { RotateCcw } from "lucide-react";
 import FunctionSelection from "./common/FunctionSelection";
 import AvatarHoverMenu from "./common/AvatarHoverMenu";
 import ChatInput, { ChatInputRef } from "./common/ChatInput";
@@ -447,11 +448,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                 }}
                 onClick={handleRefreshClick}
               >
-                <img
-                  src="/chat-page/chat-page-changekeyorquestion@2x.png"
-                  alt="换一批"
-                  className="w-[18px] h-[18px] mr-2 flex-shrink-0"
-                />
+                <RotateCcw className="w-[18px] h-[18px] mr-2 flex-shrink-0" />
                 <span className="whitespace-nowrap">
                   {isLoading ? "加载中..." : "换一批"}
                 </span>

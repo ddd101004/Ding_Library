@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { useSearch } from "../../components/contexts/SearchContext";
 import { useUser } from "../../components/contexts/UserContext";
-import SubscriptionModal from "./SubscriptionModal";
 import MainContent from "./MainContent";
 import Sidebar from "./Sidebar";
 import { apiGet } from "../../api/request";
@@ -29,7 +28,6 @@ export default function WithSidebarLayout({
     return false;
   }); // 初始为关闭状态
   const [activeIcon, setActiveIcon] = useState<string | null>(null);
-  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
   const [recentConversations, setRecentConversations] = useState<any[]>([]);
   const [conversationsLoading, setConversationsLoading] = useState(false);
   const [isSmallScreen, setIsSmallScreen] = useState(false);
@@ -182,11 +180,6 @@ export default function WithSidebarLayout({
     router.push(path);
   };
 
-  const handleSubscriptionClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setShowSubscriptionModal(true);
-  };
-
   const handleRecentConversationClick = async (
     conversationId: string,
     e: React.MouseEvent
@@ -304,7 +297,6 @@ export default function WithSidebarLayout({
               onMenuItemClick={handleMenuItemClick}
               onAcademicSearchClick={handleAcademicSearchClick}
               onNewChatClick={handleNewChat}
-              onSubscriptionClick={handleSubscriptionClick}
               onRecentConversationClick={handleRecentConversationClick}
             />
           </div>
@@ -344,13 +336,7 @@ export default function WithSidebarLayout({
 
               {/* 历史记录下方的空白区域 */}
               <div
-                className="absolute top-[313px] left-0 right-0 bottom-[100px] cursor-pointer"
-                onClick={() => canOpenSidebar() && setIsSidebarOpen(true)}
-              />
-
-              {/* 订阅按钮上方的空白区域 */}
-              <div
-                className="absolute bottom-[176px] left-0 right-0 h-[374px] cursor-pointer"
+                className="absolute top-[313px] left-0 right-0 bottom-0 cursor-pointer"
                 onClick={() => canOpenSidebar() && setIsSidebarOpen(true)}
               />
             </>
@@ -386,12 +372,6 @@ export default function WithSidebarLayout({
               : children}
           </MainContent>
         )}
-
-        {/* 订阅弹窗 */}
-        <SubscriptionModal
-          show={showSubscriptionModal}
-          onClose={() => setShowSubscriptionModal(false)}
-        />
       </div>
     </div>
   );

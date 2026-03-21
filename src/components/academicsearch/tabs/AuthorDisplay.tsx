@@ -1,3 +1,5 @@
+import { Tag } from "lucide-react";
+
 interface AuthorDisplayProps {
   authors: string[] | Array<{ name: string; name_zh?: string }>;
   publicationName?: string;
@@ -57,7 +59,7 @@ export default function AuthorDisplay({
           <div key={index} className="flex items-center relative">
             {/* 首字母头像 */}
             <div
-              className="flex items-center justify-center rounded-full mr-[9px] flex-shrink-0 w-[22px] h-[22px] bg-[#CCCCCC] text-[16px] text-[#FFFFFF]"
+              className="flex items-center justify-center rounded-full mr-[9px] flex-shrink-0 w-[20px] h-[20px] bg-[#fcc099] text-[14px] text-[#FFFFFF]"
             >
               {getAuthorInitial(author)}
             </div>
@@ -85,9 +87,7 @@ export default function AuthorDisplay({
       {/* 出版信息 - 使用正常的文档流，不使用绝对定位 */}
       {publicationName && (
         <div className="flex items-center mb-[9px] whitespace-nowrap overflow-hidden text-ellipsis">
-          <img
-            src="/paper/paper-type@2x.png"
-            alt="出版社"
+          <Tag
             className="w-[21px] h-[20px] mr-[9px] flex-shrink-0"
           />
           <span className="text-[16px] text-[#999999]">

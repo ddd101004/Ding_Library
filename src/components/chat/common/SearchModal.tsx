@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useSearch } from "../../contexts/SearchContext";
+import { Search, Trash2 } from "lucide-react";
 
 export default function SearchModal() {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -100,9 +101,7 @@ export default function SearchModal() {
         {/* 搜索框 */}
         <div className="mb-2 -mt-1">
           <div className="flex items-center gap-[clamp(8px,1.2vw,12px)]">
-            <img
-              src="/slibar/slibar-questions-answers.png"
-              alt="学术搜索"
+            <Search
               className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)]"
             />
             <input
@@ -136,9 +135,7 @@ export default function SearchModal() {
                   onClick={clearSearchHistory}
                   className="flex items-center justify-center hover:opacity-70 transition-opacity"
                 >
-                  <img
-                    src="/settings/settings-delete.png"
-                    alt="清空历史"
+                  <Trash2
                     className="w-[clamp(15px,2vw,19px)] h-[clamp(18px,2.2vw,22px)]"
                   />
                 </button>

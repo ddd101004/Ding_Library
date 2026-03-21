@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
+import { User, LogOut } from "lucide-react";
 import { useAvatar } from "@/contexts/AvatarContext";
 import { useUser } from "@/components/contexts/UserContext";
 import { apiGet, apiPost } from "@/api/request";
@@ -127,22 +128,14 @@ export default function AvatarHoverMenu({
                 onClick={handlePersonalCenter}
                 className="w-full px-4 py-3 text-left text-[#2d3748] text-[16px] hover:bg-[#e8f8f0] transition-colors flex items-center gap-2"
               >
-                <img
-                  src="/settings/settings-person.png"
-                  alt="个人中心"
-                  className="w-5 h-5"
-                />
+                <User className="w-5 h-5" />
                 个人中心
               </button>
               <button
                 onClick={handleLogoutClick}
                 className="w-full px-3 py-3 text-left text-[#e53e3e] text-[16px] hover:bg-[#fee2e2] transition-colors flex items-center gap-2"
               >
-                <img
-                  src="/settings/exit1.png"
-                  alt="退出登录"
-                  className="w-8 h-8"
-                />
+                <LogOut className="w-5 h-5" />
                 退出登录
               </button>
             </div>

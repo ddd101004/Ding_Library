@@ -222,7 +222,7 @@ export default function ChatHome() {
               {getGreeting()}，{userInfo?.username || "访客"}
             </div>
             <div className="text-[24px]">
-              更懂人的图书馆，遇见对你有用的知识。
+              更懂人的AI学术系统，遇见对你有用的知识。
             </div>
           </div>
 
