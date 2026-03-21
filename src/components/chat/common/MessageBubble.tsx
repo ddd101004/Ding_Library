@@ -72,76 +72,13 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
             />
           </div>
 
-          {/* 显示文件标签（如果有文件） - 关键：确保文件标签正确显示 */}
-          {files && files.length > 0 && (
-            <div className="mb-2 mr-[30px] w-full flex justify-end">
-              <div className="flex flex-wrap gap-[30px] justify-end">
-                {files.map((fileWithContent, index) => (
-                  <div
-                    key={index}
-                    className="relative w-[255px] h-[56px] bg-[#F7F8FA] rounded-[20px] border border-[#E0E1E5] flex items-center"
-                  >
-                    {/* 左侧图标区域 */}
-                    <div className="w-[56px] h-[54px] bg-white rounded-l-[20px] border-r border-[#E0E1E5] flex items-center justify-center">
-                      {(() => {
-                        const fileName =
-                          fileWithContent.file.name || "未知文件";
-                        const fileExtension = fileName
-                          .split(".")
-                          .pop()
-                          ?.toLowerCase();
-                        let iconSrc = "/slibar/slibar-word@2x.png";
-
-                        if (fileExtension === "pdf") {
-                          iconSrc = "/slibar/slibar-pdf@2x.png";
-                        } else if (fileExtension === "txt") {
-                          iconSrc = "/slibar/slibar-txt@2x.png";
-                        }
-
-                        return (
-                          <img
-                            src={iconSrc}
-                            alt="文件类型"
-                            className="w-[27px] h-[30px] mx-[13px] my-[13px] ml-[15px]"
-                          />
-                        );
-                      })()}
-                    </div>
-
-                    {/* 文件名 */}
-                    <div className="flex-1 px-4 overflow-hidden">
-                      <span
-                        className="text-[16px] font-normal text-gray-700 block w-[152px] leading-[40px] h-[34px]"
-                        title={fileWithContent.file.name}
-                      >
-                        {fileWithContent.file.name.length <= 12
-                          ? fileWithContent.file.name
-                          : fileWithContent.file.name.substring(0, 8) + "..."}
-                      </span>
-                    </div>
-                    
-                    {/* 如果是传递的文件，不显示删除按钮 */}
-                    {onRemoveFile && (
-                      <button
-                        onClick={() => onRemoveFile(index)}
-                        className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center text-[10px] text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors border border-[#C8C9CC]"
-                      >
-                        ×
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* 用户消息气泡 - 使用 Markdown 渲染 */}
           {formattedContent && (
             <div
               className={cn(
                 "bg-[#F7F8FA] border border-[#E0E1E5] rounded-[20px_4px_20px_20px] px-4 py-3",
                 "max-w-[1000px] min-w-0 min-h-[60px] mr-12 break-words",
-                files && files.length > 0 ? "mt-2" : "mt-4"
+                "mt-4"
               )}
             >
               <div className="text-base text-gray-800 w-full leading-relaxed">
@@ -152,11 +89,6 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                 />
               </div>
             </div>
-          )}
-
-          {/* 如果只有文件没有文字，添加占位空间 */}
-          {!formattedContent && files && files.length > 0 && (
-            <div className="mt-4 mr-[30px] h-[10px]"></div>
           )}
         </div>
       ) : (

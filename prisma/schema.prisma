@@ -41,8 +41,6 @@ model User {
   email    String? @unique @db.VarChar(255)
   nickname String? @db.VarChar(100)
 
-  // 通知设置
-  notify_doc_delivery Boolean @default(true) @map("notify_doc_delivery")
 
   // FastGPT 集成
   fastgpt_root_dataset_id String? @db.VarChar(100) // 用户在 FastGPT 的根知识库 ID
@@ -561,127 +559,18 @@ model MessageFeedback {
 
 // ==================== 学术资源统一数据模型（续）====================
 
-/// 学者表 - 统一存储多个数据源的学者信息
-model Scholar {
-  id String @id @default(uuid())
 
-  // 数据源标识
-  source    String @db.VarChar(20) // 数据来源: aminer, wanfang, cnki
-  source_id String @db.VarChar(200) // 来源系统的唯一ID
-
-  // 基本信息
-  name    String  @db.VarChar(200)
-  name_zh String? @db.VarChar(200)
-
-  // 机构信息
-  orgs        Json? // 机构列表 (JSON数组)
-  org_zhs     Json? // 中文机构列表
-  position    String? @db.VarChar(200)
-  position_zh String? @db.VarChar(200)
-
-  // 个人简介
-  bio    String? @db.Text
-  bio_zh String? @db.Text
-  edu    String? @db.Text
-  edu_zh String? @db.Text
-
-  // 研究领域
-  interests Json? // 研究兴趣列表
-  honor     Json? // 荣誉列表
-
-  // 学术指标
-  n_citation Int? @default(0)
-  h_index    Int? @default(0)
-
-  // 学者画像 - 结构化数据 (来自 person/figure API)
-  edus         Json? // 结构化教育经历 [{school, degree, major, start_date, end_date}]
-  works        Json? // 结构化工作经历 [{org, position, start_date, end_date}]
-  ai_domain    Json? // AI研究领域 [{name, name_zh, weight}]
-  ai_interests Json? // AI研究兴趣 [{name, name_zh, weight}]
-
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-
-  // 关联 - 用户行为
-  searchHistory SearchHistory[]
-  browseHistory BrowseHistory[]
-  favorites     Favorite[]
-
-  @@unique([source, source_id])
-  @@index([source])
-  @@index([name])
-  @@index([name_zh])
-  @@index([n_citation])
-  @@map("scholars")
-}
-
-/// 专利表 - 统一存储多个数据源的专利信息
-model Patent {
-  id String @id @default(uuid())
-
-  // 数据源标识
-  source    String @db.VarChar(20) // 数据来源: aminer, wanfang, cnki
-  source_id String @db.VarChar(200) // 来源系统的唯一ID
-
-  // 基本信息
-  title    String  @db.VarChar(500) // 主标题（优先中文，无中文则英文）
-  title_zh String? @db.VarChar(500) // 中文标题
-  title_en String? @db.VarChar(500) // 英文标题
-  abstract String? @db.Text
-  year     Int?
-
-  // 专利标识
-  app_num  String? @db.VarChar(100) // 申请号
-  pub_num  String? @db.VarChar(100) // 公开号
-  pub_kind String? @db.VarChar(50) // 发布类型
-  country  String? @db.VarChar(50)
-
-  // 发明人信息
-  inventors Json? // 发明人列表
-
-  // 详细信息
-  assignee    Json? // 受让人列表
-  cpc         Json? // CPC分类号
-  ipc         Json? // IPC分类号
-  ipcr        Json? // IPCR分类号
-  description String?   @db.Text
-  app_date    DateTime?
-  pub_date    DateTime?
-  priority    Json? // 优先权信息
-
-  // 附加链接
-  preview_url  String? @db.VarChar(500)
-  download_url String? @db.VarChar(500)
-
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-
-  // 关联 - 用户行为
-  searchHistory SearchHistory[]
-  browseHistory BrowseHistory[]
-  favorites     Favorite[]
-
-  @@unique([source, source_id])
-  @@index([source])
-  @@index([year])
-  @@index([country])
-  @@index([app_num])
-  @@index([pub_num])
-  @@map("patents")
-}
 
 /// 搜索历史表 - 记录用户的搜索行为
 model SearchHistory {
   id           String @id @default(uuid())
   user_id      String
   keyword      String @db.VarChar(200)
-  search_type  String @db.VarChar(20) // paper, scholar, patent, comprehensive
+  search_type  String @db.VarChar(20) // paper, comprehensive
   result_count Int?   @default(0)
 
   // 关联的结果（使用数据库 UUID）
   paper_id   String?
-  scholar_id String?
-  patent_id  String?
 
   deleted_status Int       @default(0) @map("deleted_status") // 删除状态: 0-正常, 1-已删除
   deleted_time   DateTime? @map("deleted_time") // 删除时间
@@ -690,8 +579,6 @@ model SearchHistory {
 
   user    User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   paper   Paper?   @relation(fields: [paper_id], references: [id], onDelete: SetNull)
-  scholar Scholar? @relation(fields: [scholar_id], references: [id], onDelete: SetNull)
-  patent  Patent?  @relation(fields: [patent_id], references: [id], onDelete: SetNull)
 
   @@index([user_id])
   @@index([create_time])
@@ -704,54 +591,39 @@ model SearchHistory {
 model BrowseHistory {
   id          String @id @default(uuid())
   user_id     String
-  browse_type String @db.VarChar(20) // paper, scholar, patent
+  browse_type String @db.VarChar(20) // paper
 
   // 关联的资源（使用数据库 UUID）
   paper_id   String?
-  scholar_id String?
-  patent_id  String?
 
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
 
   user    User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   paper   Paper?   @relation(fields: [paper_id], references: [id], onDelete: SetNull)
-  scholar Scholar? @relation(fields: [scholar_id], references: [id], onDelete: SetNull)
-  patent  Patent?  @relation(fields: [patent_id], references: [id], onDelete: SetNull)
 
   @@index([user_id])
   @@index([create_time])
   @@index([user_id, browse_type, create_time])
   @@index([user_id, browse_type, paper_id])
-  @@index([user_id, browse_type, scholar_id])
-  @@index([user_id, browse_type, patent_id])
-  @@map("browse_history")
 }
 
 /// 收藏表 - 存储用户的收藏内容
 model Favorite {
   id            String @id @default(uuid())
   user_id       String
-  favorite_type String @db.VarChar(20) // paper, scholar, patent
+  favorite_type String @db.VarChar(20) // paper
 
   // 关联的资源（使用数据库 UUID）
   paper_id   String?
-  scholar_id String?
-  patent_id  String?
 
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
 
   user    User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
   paper   Paper?   @relation(fields: [paper_id], references: [id], onDelete: SetNull)
-  scholar Scholar? @relation(fields: [scholar_id], references: [id], onDelete: SetNull)
-  patent  Patent?  @relation(fields: [patent_id], references: [id], onDelete: SetNull)
 
   @@unique([user_id, favorite_type, paper_id])
-  @@unique([user_id, favorite_type, scholar_id])
-  @@unique([user_id, favorite_type, patent_id])
-  @@index([user_id])
-  @@index([create_time])
   @@index([user_id, favorite_type, create_time])
   @@map("favorites")
 }
@@ -879,51 +751,6 @@ model PaperReadingRecord {
   @@map("paper_reading_records")
 }
 
-/// 学者论文关联表 - 存储学者与论文的关联关系（来自 AMiner person/paper/relation 接口）
-model ScholarPaper {
-  id String @id @default(uuid())
-
-  // 学者信息（使用 AMiner ID 作为关联键，避免 UUID 变化问题）
-  scholar_aminer_id String @db.VarChar(200) // 学者的 AMiner ID
-
-  // 论文信息
-  paper_aminer_id String  @db.VarChar(200) // 论文的 AMiner ID
-  title           String? @db.VarChar(500) // 论文标题
-  title_zh        String? @db.VarChar(500) // 中文标题
-
-  // 时间戳
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-
-  // 唯一约束：同一学者的同一论文只存一条
-  @@unique([scholar_aminer_id, paper_aminer_id])
-  @@index([scholar_aminer_id])
-  @@index([paper_aminer_id])
-  @@map("scholar_papers")
-}
-
-/// 学者专利关联表 - 存储学者与专利的关联关系（来自 AMiner person/patent/relation 接口）
-model ScholarPatentRelation {
-  id String @id @default(uuid())
-
-  // 学者信息（使用 AMiner ID 作为关联键，避免 UUID 变化问题）
-  scholar_aminer_id String @db.VarChar(200) // 学者的 AMiner ID
-
-  // 专利信息
-  patent_aminer_id String  @db.VarChar(200) // 专利的 AMiner ID
-  title            String? @db.VarChar(500) // 专利标题
-  title_zh         String? @db.VarChar(500) // 中文标题
-
-  // 时间戳
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-
-  // 唯一约束：同一学者的同一专利只存一条
-  @@unique([scholar_aminer_id, patent_aminer_id])
-  @@index([scholar_aminer_id])
-  @@index([patent_aminer_id])
-  @@map("scholar_patents")
-}
 
 // ==================== 用户通知系统 ====================
 
