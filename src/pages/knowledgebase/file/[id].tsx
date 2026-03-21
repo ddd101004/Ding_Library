@@ -62,6 +62,22 @@ export default function FileDetailPage() {
 
   return (
     <WithSidebarLayout>
+      <style jsx global>{`
+        .file-content-scrollbar::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        .file-content-scrollbar::-webkit-scrollbar-track {
+          background: #f1f1f1;
+        }
+        .file-content-scrollbar::-webkit-scrollbar-thumb {
+          background: #CBD5E1;
+          border-radius: 4px;
+        }
+        .file-content-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #94A3B8;
+        }
+      `}</style>
       <div className="relative">
         {/* 头部：返回按钮和标题 */}
         <div className="flex items-center cursor-pointer ml-[305px]" onClick={handleBack}>
@@ -144,7 +160,7 @@ export default function FileDetailPage() {
             <div className="mt-8">
               <h2 className="text-xl font-medium text-[#333333] mb-4">文件内容</h2>
               <div className="w-full bg-white rounded-2xl border border-[#E0E1E5] p-6">
-                <div className="text-base text-[#666666] leading-[1.8] whitespace-pre-wrap max-h-[800px] overflow-y-auto">
+                <div className="file-content-scrollbar text-base text-[#666666] leading-[1.8] whitespace-pre-wrap max-h-[800px] overflow-y-scroll overflow-x-scroll">
                   {fileData.parsed_content}
                 </div>
               </div>

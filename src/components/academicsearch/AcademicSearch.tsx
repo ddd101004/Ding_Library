@@ -349,7 +349,8 @@ export default function AcademicSearchPage() {
       pathname: `/paper/${paper.id}`,
       query: {
         tab: currentTab,
-        q: searchKeyword
+        q: searchKeyword,
+        source: 'third-party'  // 标识这是第三方论文
       }
     });
   };

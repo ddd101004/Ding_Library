@@ -32,6 +32,7 @@ export interface RequestConfig extends AxiosRequestConfig {
   requireAuth?: boolean; // 是否需要认证
   skipContentType?: boolean; // 是否跳过自动设置 Content-Type（用于文件上传）
   silentAuthError?: boolean; // 是否静默处理认证错误（不跳转登录）
+  silentError?: boolean; // 是否静默处理所有错误（不显示 toast）
 }
 
 /**
@@ -131,7 +132,8 @@ axiosInstance.interceptors.response.use(
 
     // 业务逻辑错误处理
     if (code !== 200) {
-      if (message) {
+      // 如果不是静默模式，显示错误提示
+      if (!requestConfig.silentError && message) {
         // 对于 503 警告，使用 warning 而不是 error
         if (code === 503) {
           toast.warning(message);

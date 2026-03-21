@@ -162,6 +162,7 @@ export default function WithSidebarLayout({
     if (pathname === "/knowledge-base") setActiveIcon("knowledge");
     else if (pathname === "/history") setActiveIcon("history");
     else if (pathname === "/academic-search") setActiveIcon("academic");
+    else if (pathname.startsWith("/paper")) setActiveIcon("academic");
   }, [router.pathname]);
 
   // 各类功能点击事件（阻止冒泡，防止触发空白处点击）

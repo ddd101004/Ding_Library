@@ -770,7 +770,10 @@ export default function ChatConversation({
       {from === 'knowledgebase' && folderId && (
         <div className="fixed top-6 left-[96px] z-50">
           <button
-            onClick={() => router.push(`/knowledge-base/folder/${folderId}`)}
+            onClick={() => router.push({
+              pathname: '/knowledge-base',
+              query: { folder: folderId }
+            })}
             className="flex items-center gap-2 px-4 py-2 bg-white rounded-[20px] border border-[#d4ede4] shadow-md hover:bg-[#f0faf6] transition-colors"
           >
             <svg
