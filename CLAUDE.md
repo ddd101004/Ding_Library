@@ -593,7 +593,7 @@ API 文档位于 `docs/openapi/` 目录，按功能模块分组
 
 Winston logger configured in `src/helper/logger.ts`:
 
-- Production logs: `/var/logs/lingang-library/`
+- Production logs: `/var/logs/ai-library/`
 - Development logs: `./logs/`
 - Daily log rotation (14 days retention, 20MB max size)
 - Separate error.log and combined.log files
@@ -1427,7 +1427,7 @@ Key models in `prisma/schema.prisma`:
 
 - Multi-stage Dockerfile optimized for production
 - Port: 3007 (internal), mapped to 30001 (host) in OneDev template
-- Logs mounted: `/var/logs/lingang-library`
+- Logs mounted: `/var/logs/ai-library`
 - Uses pnpm and Alpine Linux base image
 - OneDev CI/CD configuration in `.onedev-buildspec.yml.template`
 

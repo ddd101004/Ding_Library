@@ -6,7 +6,7 @@
 const { spawn } = require('child_process');
 const path = require('path');
 
-console.log('========== Starting Lingang Library ==========');
+console.log('========== Starting AI Library ==========');
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
 // 启动定时任务调度器（后台）

@@ -1,12 +1,11 @@
-import { GetServerSideProps } from "next";
 import Head from "next/head";
 
 export default function UserServiceAgreementPage() {
   return (
     <>
       <Head>
-        <title>用户服务协议 - 临港智图</title>
-        <meta name="description" content="临港智图用户服务协议" />
+        <title>用户服务协议 - AI Library</title>
+        <meta name="description" content="AI Library用户服务协议" />
         <style>{`
           html, body {
             overflow: auto !important;
@@ -17,7 +16,7 @@ export default function UserServiceAgreementPage() {
       <div className="min-h-screen bg-white py-12 px-6 overflow-auto">
         <div className="max-w-5xl mx-auto">
           <h1 className="text-3xl font-bold text-center mb-10">
-            临港智图用户服务协议
+            AI Library用户服务协议
           </h1>
 
           <div className="space-y-5 text-base leading-relaxed text-left">
@@ -36,7 +35,7 @@ export default function UserServiceAgreementPage() {
             <section>
               <h2 className="text-xl font-semibold mb-3">一、服务内容</h2>
               <p className="mb-2">
-                临港智图（以下简称"本系统"）是运用人工智能、大数据分析等技术为您提供的智能图书检索、个性化推荐、AI辅助阅读、AI助手等服务。
+                AI Library（以下简称"本系统"）是运用人工智能、大数据分析等技术为您提供的智能图书检索、个性化推荐、AI辅助阅读、AI助手等服务。
               </p>
               <p>
                 本系统可能会根据您的阅读历史和偏好，利用算法技术向您提供个性化的图书推荐服务。
@@ -105,9 +104,3 @@ export default function UserServiceAgreementPage() {
     </>
   );
 }
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  return {
-    props: {},
-  };
-};

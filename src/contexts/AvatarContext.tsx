@@ -1,38 +1,18 @@
 "use client";
-import React, { createContext, useContext, useState, useEffect } from "react";
-import { apiGet } from "@/api/request";
+import React, { createContext, useContext } from "react";
 
 interface AvatarContextType {
   avatarUrl: string;
-  setAvatarUrl: (url: string) => void;
-  refreshAvatar: () => Promise<void>;
 }
 
 const AvatarContext = createContext<AvatarContextType | undefined>(undefined);
 
 export function AvatarProvider({ children }: { children: React.ReactNode }) {
-  const [avatarUrl, setAvatarUrl] = useState<string>("/touxiang.jpg");
-
-  // 从服务器获取头像 URL
-  const refreshAvatar = async () => {
-    try {
-      const response = await apiGet<{ avatar: string | null; config: any }>(
-        "/api/user/avatar"
-      );
-      if (response.code === 200 && response.data?.avatar) {
-        setAvatarUrl(response.data.avatar);
-      } else {
-        setAvatarUrl("/touxiang.jpg");
-      }
-    } catch (error) {
-      console.error("Failed to fetch avatar URL:", error);
-      // 如果获取失败（如未登录），使用默认头像
-      setAvatarUrl("/touxiang.jpg");
-    }
-  };
+  // 使用默认头像，不支持自定义头像
+  const avatarUrl = "/touxiang.jpg";
 
   return (
-    <AvatarContext.Provider value={{ avatarUrl, setAvatarUrl, refreshAvatar }}>
+    <AvatarContext.Provider value={{ avatarUrl }}>
       {children}
     </AvatarContext.Provider>
   );

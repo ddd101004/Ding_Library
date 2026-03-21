@@ -20,7 +20,7 @@ export default function Home() {
         />
         <meta
           name="keywords"
-          content="智慧图书馆,临港科技,文献检索,科研助手,学术搜索"
+          content="智慧图书馆,文献检索,科研助手,学术搜索,AI助手"
         />
         <meta
           name="viewport"

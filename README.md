@@ -7,7 +7,7 @@
 ## 在部署机器上创建日志存放目录
 
 ```bash
-mkdir -p /var/logs/lingang-library
+mkdir -p /var/logs/ai-library
 ```
 
 ## 修改 onedev 配置文件

@@ -1,5 +1,5 @@
 export const SCORE_NAME = "token";
-export const PRODUCT_NAME = "Lingang Library";
+export const PRODUCT_NAME = "AI Library";
 
 // 用户token有效期
 export const TOKEN_EXPIRE_IN = "7d";

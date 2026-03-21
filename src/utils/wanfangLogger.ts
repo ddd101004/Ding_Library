@@ -4,7 +4,7 @@ import logger from "@/helper/logger";
 
 // 万方检索日志目录
 const WANFANG_LOG_DIR = process.env.NODE_ENV === "production"
-  ? "/var/logs/lingang-library/wanfang"
+  ? "/var/logs/ai-library/wanfang"
   : path.join(process.cwd(), "logs", "wanfang");
 
 // 万方检索日志文件路径

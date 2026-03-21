@@ -14,7 +14,6 @@ interface UserInfoData {
   user_id: string;
   phone_number: string;
   nickname: string;
-  avatar: string | null;
 }
 
 export default function AvatarHoverMenu({
@@ -192,7 +191,7 @@ export default function AvatarHoverMenu({
                 <div className="flex flex-col items-center mb-6">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-[#d4ede4]">
                     <img
-                      src={userInfoData.avatar || avatarUrl}
+                      src={avatarUrl}
                       alt="用户头像"
                       className="w-full h-full object-cover"
                     />

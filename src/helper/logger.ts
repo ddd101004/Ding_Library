@@ -3,7 +3,7 @@ import fs from "fs";
 import DailyRotateFile from "winston-daily-rotate-file";
 
 const logDirectory =
-  process.env.NODE_ENV === "production" ? "/var/logs/lingang-library" : "logs";
+  process.env.NODE_ENV === "production" ? "/var/logs/ai-library" : "logs";
 
 // 检查日志目录是否存在，如果不存在则创建
 if (!fs.existsSync(logDirectory)) {
@@ -21,7 +21,7 @@ const logger = createLogger({
     format.json(),
     format.printf((info) => `${JSON.stringify(info)}\n`) // 添加换行符
   ),
-  defaultMeta: { service: "lingang-library" },
+  defaultMeta: { service: "ai-library" },
   transports: [
     // 使用日志轮转，自动管理日志文件大小和数量
     new DailyRotateFile({

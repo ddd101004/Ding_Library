@@ -9,28 +9,8 @@ import {
 import { getUserProfile } from "@/db/user";
 
 /**
- * 生成头像 URL（兼容本地和 COS）
- */
-function getAvatarUrl(avatar: string | null): string | null {
-  if (!avatar) return null;
-
-  // 本地存储路径
-  if (avatar.startsWith('avatars/') || avatar.startsWith('covers/')) {
-    return `/api/uploads/${avatar}`;
-  }
-
-  // 完整 URL（COS 或其他）
-  if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
-    return avatar;
-  }
-
-  // 旧的 COS 路径格式
-  return `https://library-cos.centum-cloud.com/${avatar}`;
-}
-
-/**
  * 获取用户信息
- * GET /api/auth/info - 获取用户信息
+ * GET /api/auth/info - 获取用户信息（只读，不支持修改）
  */
 const handleGet = async (
   req: NextApiRequest,
@@ -48,7 +28,6 @@ const handleGet = async (
     nickname: user.nickname || user.username,
     email: user.email,
     phone_number: user.phone_number || null,
-    avatar: getAvatarUrl(user.avatar || "") || null,
     company_name: user.company_name,
     create_time: user.create_time,
   });
