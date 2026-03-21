@@ -8,7 +8,9 @@
       "Bash(git checkout:*)",
       "Bash(pnpm prisma generate:*)",
       "Bash(pnpm add:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(mysql:*)",
+      "Bash(ls:*)"
     ],
     "deny": [],
     "ask": []

@@ -3,7 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";
 import { useAvatar } from "@/contexts/AvatarContext";
 import { useUser } from "@/components/contexts/UserContext";
-import { apiGet } from "@/api/request";
+import { apiGet, apiPost } from "@/api/request";
 import { toast } from "sonner";
 
 interface AvatarHoverMenuProps {
@@ -64,14 +64,22 @@ export default function AvatarHoverMenu({
     }
   };
 
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("token");
+  const handleLogout = async () => {
+    try {
+      await apiPost("/api/auth/logout");
+      toast.success("已成功退出登录");
+    } catch (error) {
+      console.warn("服务端登出失败，继续执行本地登出", error);
+      toast.success("已成功退出登录");
+    } finally {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("token");
+      }
+      setShowLogoutDialog(false);
+      setShowPersonalDialog(false);
+      setIsHovered(false);
+      router.push("/login");
     }
-    setShowLogoutDialog(false);
-    setShowPersonalDialog(false);
-    setIsHovered(false);
-    router.push("/login");
   };
 
   const handleLogoutClick = () => {
