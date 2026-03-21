@@ -41,10 +41,6 @@ model User {
   email    String? @unique @db.VarChar(255)
   nickname String? @db.VarChar(100)
 
-
-  // FastGPT 集成
-  fastgpt_root_dataset_id String? @db.VarChar(100) // 用户在 FastGPT 的根知识库 ID
-
   // 关联 - 智能对话系统
   conversations ChatConversation[]
   folders       PaperFolder[]
@@ -53,15 +49,9 @@ model User {
   // 关联 - 学术搜索系统
   searchHistory SearchHistory[]
   browseHistory BrowseHistory[]
-  favorites     Favorite[]
 
   // 关联 - AI伴读系统
-  uploadedPapers      UserUploadedPaper[]
-  paperAnnotations    PaperAnnotation[]
-  paperReadingRecords PaperReadingRecord[]
-
-  // 关联 - 用户通知
-  notifications UserNotification[]
+  uploadedPapers UserUploadedPaper[]
 
   @@map("users")
 }
@@ -195,12 +185,6 @@ model Paper {
   deleted_status Int       @default(0) // 删除状态: 0-正常, 1-已删除
   deleted_time   DateTime? // 删除时间
 
-  // FastGPT 公共数据集同步状态
-  fastgpt_collection_id String?   @db.VarChar(100) // FastGPT 中的 collection ID
-  fastgpt_sync_source   String?   @db.VarChar(20) // 同步来源: cron_task, user_search, chat_related
-  fastgpt_sync_time     DateTime? // FastGPT 同步时间
-  fastgpt_has_fulltext  Boolean   @default(false) // 是否已同步全文到 FastGPT
-
   // 关联 - 智能对话系统
   citations   MessageCitation[]
   folderItems FolderItem[]
@@ -208,7 +192,6 @@ model Paper {
   // 关联 - 用户行为
   searchHistory SearchHistory[]
   browseHistory BrowseHistory[]
-  favorites     Favorite[]
 
   @@unique([source, source_id]) // 联合唯一索引：数据源 + 来源ID
   @@unique([db_id, an]) // EBSCO 特定索引（兼容现有数据）
@@ -222,7 +205,6 @@ model Paper {
   @@index([sync_time])
   @@index([language])
   @@index([n_citation])
-  @@index([fastgpt_collection_id])
   @@map("papers")
 }
 
@@ -477,7 +459,7 @@ model MessageAttachment {
   @@map("message_attachments")
 }
 
-/// 论文文件夹表 - 存储用户创建的论文收藏文件夹（同时作为 FastGPT 知识库）
+/// 论文文件夹表 - 存储用户创建的论文收藏文件夹
 model PaperFolder {
   folder_id   String  @id @default(uuid()) @db.VarChar(36)
   user_id     String  @db.VarChar(36)
@@ -486,9 +468,6 @@ model PaperFolder {
   color       String? @db.VarChar(20) // 文件夹颜色标识
   cover_image String? @db.VarChar(500) // 文件夹封面图 URL
   sort_order  Int     @default(0) // 排序权重
-
-  // FastGPT RAG 知识库集成
-  fastgpt_dataset_id String? @db.VarChar(100) // FastGPT 知识库 ID
 
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
@@ -608,26 +587,6 @@ model BrowseHistory {
   @@index([user_id, browse_type, paper_id])
 }
 
-/// 收藏表 - 存储用户的收藏内容
-model Favorite {
-  id            String @id @default(uuid())
-  user_id       String
-  favorite_type String @db.VarChar(20) // paper
-
-  // 关联的资源（使用数据库 UUID）
-  paper_id   String?
-
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-
-  user    User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  paper   Paper?   @relation(fields: [paper_id], references: [id], onDelete: SetNull)
-
-  @@unique([user_id, favorite_type, paper_id])
-  @@index([user_id, favorite_type, create_time])
-  @@map("favorites")
-}
-
 // ==================== AI伴读功能相关模型 ====================
 
 /// 用户上传论文表 - 存储用户上传的论文文件和解析后的内容
@@ -660,9 +619,6 @@ model UserUploadedPaper {
   // 统计信息
   readCount         Int       @default(0) @map("read_count")
   conversationCount Int       @default(0) @map("conversation_count")
-  annotationCount   Int       @default(0) @map("annotation_count")
-  citationCount     Int       @default(0) @map("citation_count")
-  lastReadAt        DateTime? @map("last_read_at")
 
   // 时间戳
   createTime DateTime  @default(now()) @map("create_time")
@@ -672,8 +628,6 @@ model UserUploadedPaper {
   // 关联
   user               User                 @relation(fields: [userId], references: [user_id], onDelete: Cascade)
   conversations      ChatConversation[]
-  annotations        PaperAnnotation[]
-  readingRecords     PaperReadingRecord[]
   messageAttachments MessageAttachment[]
   folderItems        FolderItem[]    // 文件夹关联
 
@@ -682,97 +636,4 @@ model UserUploadedPaper {
   @@index([parseStatus])
   @@index([deletedAt])
   @@map("user_uploaded_papers")
-}
-
-/// 论文标注表 - 存储用户对论文的标注（高亮）
-model PaperAnnotation {
-  id              String @id @default(uuid())
-  userId          String @map("user_id")
-  uploadedPaperId String @map("uploaded_paper_id")
-
-  annotationText String @map("annotation_text") @db.Text
-  annotationType String @default("highlight") @map("annotation_type") @db.VarChar(20)
-  color          String @default("yellow") @db.VarChar(20)
-
-  pageNumber   Int?  @map("page_number")
-  startOffset  Int   @map("start_offset")
-  endOffset    Int   @map("end_offset")
-  positionJson Json? @map("position_json") // 详细位置信息 (用于PDF坐标定位)
-
-  note String? @db.Text
-  tags Json? // 标签 (JSON数组)
-
-  createTime DateTime  @default(now()) @map("create_time")
-  updateTime DateTime  @updatedAt @map("update_time")
-  deletedAt  DateTime? @map("deleted_at")
-
-  // 关联
-  user          User              @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  uploadedPaper UserUploadedPaper @relation(fields: [uploadedPaperId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([uploadedPaperId])
-  @@index([createTime])
-  @@index([deletedAt])
-  @@map("paper_annotations")
-}
-
-/// 阅读记录表 - 记录用户的阅读进度和行为
-model PaperReadingRecord {
-  id              String @id @default(uuid())
-  userId          String @map("user_id")
-  uploadedPaperId String @map("uploaded_paper_id")
-
-  currentPage        Int     @default(1) @map("current_page")
-  totalPages         Int?    @map("total_pages")
-  scrollPosition     Int     @default(0) @map("scroll_position")
-  progressPercentage Decimal @default(0) @map("progress_percentage") @db.Decimal(5, 2)
-
-  readingDurationSeconds BigInt    @default(0) @map("reading_duration_seconds")
-  sessionStartAt         DateTime? @map("session_start_at")
-  sessionEndAt           DateTime? @map("session_end_at")
-
-  annotationCreated Int @default(0) @map("annotation_created")
-  citationCreated   Int @default(0) @map("citation_created")
-  translationUsed   Int @default(0) @map("translation_used")
-  aiQuestionAsked   Int @default(0) @map("ai_question_asked")
-
-  createTime DateTime @default(now()) @map("create_time")
-  updateTime DateTime @updatedAt @map("update_time")
-
-  // 关联
-  user          User              @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  uploadedPaper UserUploadedPaper @relation(fields: [uploadedPaperId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, uploadedPaperId])
-  @@index([userId])
-  @@index([uploadedPaperId])
-  @@index([updateTime])
-  @@map("paper_reading_records")
-}
-
-
-// ==================== 用户通知系统 ====================
-
-model UserNotification {
-  id                String    @id @default(uuid())
-  user_id           String
-  notification_type String    @db.VarChar(50) // doc_delivery | system | account
-  title             String    @db.VarChar(255)
-  content           String?   @db.Text
-  is_read           Boolean   @default(false)
-  // 关联数据（可选，用于跳转）
-  related_type      String?   @db.VarChar(50) // paper | doc_delivery_request
-  related_id        String?
-  // 元数据
-  metadata          String?   @db.Text // JSON 格式的额外数据
-  create_time       DateTime  @default(now())
-  read_time         DateTime?
-
-  user User @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-
-  @@index([user_id, is_read])
-  @@index([user_id, notification_type])
-  @@index([create_time])
-  @@map("user_notifications")
 }

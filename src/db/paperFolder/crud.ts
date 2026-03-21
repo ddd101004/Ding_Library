@@ -54,7 +54,6 @@ export const getFoldersByUserId = async (user_id: string) => {
       cover_image: folder.cover_image,
       sort_order: folder.sort_order,
       item_count: folder._count.items,
-      fastgpt_dataset_id: folder.fastgpt_dataset_id,
       create_time: folder.create_time,
       update_time: folder.update_time,
     }));

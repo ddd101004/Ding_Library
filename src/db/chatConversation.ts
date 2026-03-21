@@ -81,7 +81,6 @@ export const getConversationById = async (conversation_id: string) => {
             folder_id: true,
             folder_name: true,
             description: true,
-            fastgpt_dataset_id: true,
           },
         },
       },
