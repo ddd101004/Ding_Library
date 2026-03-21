@@ -19,8 +19,6 @@ interface ToolbarProps {
   disabled?: boolean;
   isSending?: boolean;
   currentFunction?: string | null;
-  isAiReadingActive?: boolean;
-  isFolderChat?: boolean;
   onNavigateFunction?: (functionType: string) => void;
 }
 
@@ -37,8 +35,6 @@ export default function Toolbar({
   disabled = false,
   isSending = false,
   currentFunction = null,
-  isAiReadingActive = false,
-  isFolderChat = false,
   onNavigateFunction
 }: ToolbarProps) {
 
@@ -47,7 +43,7 @@ export default function Toolbar({
   };
 
   const handleTogglePaperSearch = () => {
-    if (!disabled && !isSending && !isAiReadingActive) onTogglePaperSearch();
+    if (!disabled && !isSending) onTogglePaperSearch();
   };
 
   const handleToggleRecording = () => {
@@ -71,12 +67,6 @@ export default function Toolbar({
 
   // 深度思考和论文搜索不受文件解析影响
   const isControlDisabled = disabled || isSending;
-
-  // 检查论文搜索是否应该被禁用（AI伴读激活时禁用）
-  const isPaperSearchDisabled = isControlDisabled || isAiReadingActive;
-
-  // 文件夹对话模式下隐藏论文搜索按钮
-  const shouldShowPaperSearch = !isFolderChat && !isAiReadingActive;
 
   return (
     <TooltipProvider>
@@ -116,24 +106,23 @@ export default function Toolbar({
         )}
       </button>
 
-      {/* Paper Search button - 文件夹对话模式或AI伴读模式时隐藏 */}
-      {shouldShowPaperSearch && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={handleTogglePaperSearch}
-              onMouseDown={(e) => e.preventDefault()}
-              className={`paper-search-btn w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
-                isPaperSearchActive
-                  ? 'bg-[#0D9488] opacity-80 text-white'
-                  : 'bg-transparent border border-[#C8C9CC] text-[#666666]'
-              } ${
-                isPaperSearchDisabled
-                  ? 'opacity-50 cursor-not-allowed'
-                  : 'hover:scale-[1.01] cursor-pointer'
-              }`}
-              disabled={isPaperSearchDisabled}
-            >
+      {/* Paper Search button */}
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={handleTogglePaperSearch}
+            onMouseDown={(e) => e.preventDefault()}
+            className={`paper-search-btn w-[140px] h-10 rounded-[20px] flex items-center justify-center gap-2 transition-all ${
+              isPaperSearchActive
+                ? 'bg-[#0D9488] opacity-80 text-white'
+                : 'bg-transparent border border-[#C8C9CC] text-[#666666]'
+            } ${
+              isControlDisabled
+                ? 'opacity-50 cursor-not-allowed'
+                : 'hover:scale-[1.01] cursor-pointer'
+            }`}
+            disabled={isControlDisabled}
+          >
             {isSending ? (
                 <>
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current"></div>
@@ -162,10 +151,9 @@ export default function Toolbar({
             </TooltipContent>
           )}
         </Tooltip>
-      )}
 
       {/* 快问快答和深度学习按钮 - 只在ChatHome模式时显示 */}
-      {!isFolderChat && onNavigateFunction && (
+      {onNavigateFunction && (
         <>
           <button
             onClick={() => onNavigateFunction('quickQA')}

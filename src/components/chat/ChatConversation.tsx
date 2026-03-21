@@ -35,8 +35,6 @@ export default function ChatConversation({
     userDisplayMessage,
     initialMessage,
     functionType,
-    folderId,
-    folderName,
     from,
   } = router.query;
 
@@ -71,8 +69,6 @@ export default function ChatConversation({
     setMessageError,
     isDeepThinkActive,
     isPaperSearchActive,
-    isFolderChatActive,
-    setIsFolderChatActive,
     currentFunction,
     setCurrentFunction,
     selectedButton,
@@ -521,7 +517,6 @@ export default function ChatConversation({
     messages,
     setMessages,
     setConversationDetail,
-    setIsFolderChatActive,
     setShowRelatedPapers,
     setRelatedPapersList,
     setLatestAiMessageId,
@@ -766,40 +761,6 @@ export default function ChatConversation({
         }
       `}</style>
 
-      {/* 返回按钮 - 仅在从知识库进入时显示 */}
-      {from === 'knowledgebase' && folderId && (
-        <div
-          className="fixed top-6 z-50 transition-all duration-300"
-          style={{
-            left: isSidebarOpen
-              ? 'calc(14rem + 24px)'  // 侧边栏宽度(224px) + 间距(24px)
-              : 'calc(5rem + 24px)'    // 侧边栏宽度(80px) + 间距(24px)
-          }}
-        >
-          <button
-            onClick={() => router.push({
-              pathname: '/knowledge-base',
-              query: { folder: folderId }
-            })}
-            className="flex items-center gap-2 px-4 py-2 bg-white rounded-[20px] border border-[#d4ede4] shadow-md hover:bg-[#f0faf6] transition-colors"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span className="text-sm font-medium text-gray-700">返回知识库</span>
-          </button>
-        </div>
-      )}
-
       <UserAvatarSection />
 
       {/* 主容器添加浅绿背景和边框样式 */}
@@ -819,9 +780,6 @@ export default function ChatConversation({
   userInfo={userInfo}
   isAiResponding={isAiResponding}
   conversationId={conversationId}
-  isFolderChatActive={isFolderChatActive}
-  folderId={folderId}
-  folderName={folderName}
   isSidebarOpen={isSidebarOpen}
   onToggleCollapse={toggleThinkingCollapse}
   onCopy={copyMessageContent}
@@ -888,7 +846,6 @@ export default function ChatConversation({
       onCloseFunction={handleCloseFunction}
       isFromOtherPage={false}
       showRelatedPapers={showRelatedPapers}
-      isFolderChat={false}
       style={{
         backgroundColor: '#d5f4cf',
         borderTop: '1px solid #d4ede4'

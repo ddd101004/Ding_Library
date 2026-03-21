@@ -13,7 +13,6 @@ interface UseConversationDataParams {
   messages: Message[];
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
   setConversationDetail: React.Dispatch<React.SetStateAction<any>>;
-  setIsFolderChatActive: React.Dispatch<React.SetStateAction<boolean>>;
   setShowRelatedPapers: React.Dispatch<React.SetStateAction<boolean>>;
   setRelatedPapersList: React.Dispatch<React.SetStateAction<MessagePapers[]>>;
   setLatestAiMessageId: React.Dispatch<React.SetStateAction<string | null>>;
@@ -49,7 +48,6 @@ export function useConversationData(params: UseConversationDataParams) {
     messages,
     setMessages,
     setConversationDetail,
-    setIsFolderChatActive,
     setShowRelatedPapers,
     setRelatedPapersList,
     setLatestAiMessageId,
@@ -219,17 +217,10 @@ export function useConversationData(params: UseConversationDataParams) {
           message_count: number;
           create_time: string;
           update_time: string;
-          conversation_type: string;
-          uploaded_paper_id: string | null;
-          context_mode: string;
         }>(`/api/chat/conversations/${conversationId}`);
 
         if (response?.code === 200 && response.data) {
           setConversationDetail(response.data);
-
-          const isFolderChat = response.data.conversation_type === "folder_rag";
-          setIsFolderChatActive(isFolderChat);
-
           return response.data;
         }
       } catch (error) {
@@ -237,7 +228,7 @@ export function useConversationData(params: UseConversationDataParams) {
       }
       return null;
     },
-    [getToken, setConversationDetail, setIsFolderChatActive]
+    [getToken, setConversationDetail]
   );
 
   /**
@@ -288,15 +279,8 @@ export function useConversationData(params: UseConversationDataParams) {
             total_tokens: number;
             create_time: string;
             update_time: string;
-            message_type: string;
             reasoning_content: string | null;
             reasoning_tokens: number | null;
-            context_text: string | null;
-            context_range: {
-              start: number;
-              end: number;
-              page?: number;
-            } | null;
             is_liked: boolean;
             is_disliked: boolean;
             has_multiple_versions: boolean;

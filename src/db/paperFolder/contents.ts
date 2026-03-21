@@ -24,9 +24,8 @@ export interface FolderConversationItem {
   item_type: "conversation";
   conversation_id: string;
   title: string;
-  conversation_type: string;
-  message_count: number;
-  last_message_at: Date;
+  create_time: Date;
+  update_time: Date;
   added_at: Date;
   notes: string | null;
 }
@@ -34,8 +33,7 @@ export interface FolderConversationItem {
 export type FolderContentItem = FolderPaperItem | FolderConversationItem;
 
 /**
- * 获取文件夹内的所有内容（论文 + 对话统一列表）
- * 返回统一的 items 列表，通过 item_type 区分类型
+ * 获取文件夹内的所有内容（论文、对话）
  */
 export const getFolderContents = async (params: {
   folder_id: string;
@@ -78,9 +76,8 @@ export const getFolderContents = async (params: {
           select: {
             conversation_id: true,
             title: true,
-            conversationType: true,
-            message_count: true,
-            last_message_at: true,
+            create_time: true,
+            update_time: true,
           },
         },
       },
@@ -112,9 +109,8 @@ export const getFolderContents = async (params: {
           item_type: "conversation",
           conversation_id: item.conversation.conversation_id,
           title: item.conversation.title,
-          conversation_type: item.conversation.conversationType,
-          message_count: item.conversation.message_count,
-          last_message_at: item.conversation.last_message_at,
+          create_time: item.conversation.create_time,
+          update_time: item.conversation.update_time,
           added_at: item.added_at,
           notes: item.notes,
         });
@@ -139,7 +135,6 @@ export const getFolderContents = async (params: {
 
 /**
  * 批量查询内容的文件夹加入状态
- * 无需传入 item_type，直接通过 ID 查询所有两种类型（uploaded_paper、conversation）
  */
 export const batchGetFolderItemStatus = async (
   user_id: string,

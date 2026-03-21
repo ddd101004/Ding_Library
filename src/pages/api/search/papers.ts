@@ -13,7 +13,7 @@ import {
   searchPapers as searchLocalPapers,
   SearchPapersParams,
 } from "@/db/paper";
-import { createSearchHistory } from "@/db/aminer/searchHistory";
+import { createSearchHistory } from "@/db/search/searchHistory";
 import logger from "@/helper/logger";
 import {
   PaperSearchResponse,

@@ -29,7 +29,6 @@ interface HistoryItem {
     folder_name: string;
   } | null;
   dateGroup?: 'recent' | 'within30Days' | 'earlier';
-  conversation_type?: "general" | "paper_reading" | "folder_rag";
   paper_info?: PaperInfo[];
 }
 
@@ -41,7 +40,6 @@ interface GroupSectionProps {
   onThreeDotClick: (id: string, e: React.MouseEvent) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
   onExport: (id: string, e: React.MouseEvent) => void;
-  onAddToFolder: (id: string, e: React.MouseEvent) => void;
   loading: boolean;
   error: string | null;
   exporting?: string | null;
@@ -55,7 +53,6 @@ const GroupSection: React.FC<GroupSectionProps> = ({
   onThreeDotClick,
   onDelete,
   onExport,
-  onAddToFolder,
   loading,
   error,
   exporting,
@@ -100,7 +97,6 @@ const GroupSection: React.FC<GroupSectionProps> = ({
             onThreeDotClick={onThreeDotClick}
             onDelete={onDelete}
             onExport={onExport}
-            onAddToFolder={onAddToFolder}
             exporting={exporting}
           />
         ))}

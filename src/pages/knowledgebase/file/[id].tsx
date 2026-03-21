@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import WithSidebarLayout from "../../../components/layout/WithSidebarLayout";
 import { apiGet } from "@/api/request";
+import SearchModal from "../../../components/chat/common/SearchModal";
 
 export default function FileDetailPage() {
   const router = useRouter();
@@ -46,6 +47,7 @@ export default function FileDetailPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-gray-500">加载中...</div>
         </div>
+        <SearchModal />
       </WithSidebarLayout>
     );
   }
@@ -56,6 +58,7 @@ export default function FileDetailPage() {
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-gray-500">{error || "未找到文件信息"}</div>
         </div>
+        <SearchModal />
       </WithSidebarLayout>
     );
   }
@@ -80,7 +83,7 @@ export default function FileDetailPage() {
       `}</style>
       <div className="relative">
         {/* 头部：返回按钮和标题 */}
-        <div className="flex items-center cursor-pointer ml-[305px]" onClick={handleBack}>
+        <div className="flex items-center cursor-pointer ml-[105px]" onClick={handleBack}>
           <img src="/paper/paper-details.png" alt="详情" className="w-[6px] h-[10px]" />
           <span className="ml-[10px] text-sm text-[#666666]">文件详情</span>
         </div>
@@ -89,7 +92,7 @@ export default function FileDetailPage() {
         <div className="w-full h-px bg-[#E0E1E5] mt-6" />
 
         {/* 内容容器 */}
-        <div className="relative mt-[23px] ml-[305px] mr-[305px] w-[calc(100vw-610px)] min-h-[600px]">
+        <div className="relative mt-[23px] ml-[105px] mr-[305px] w-[calc(100vw-410px)] min-h-[600px]">
           {/* 文件标题 */}
           <div className="mt-[22px]">
             <h1 className="text-2xl font-medium text-[#333333]">{fileData.title}</h1>
@@ -188,6 +191,7 @@ export default function FileDetailPage() {
           )}
         </div>
       </div>
+      <SearchModal />
     </WithSidebarLayout>
   );
 }

@@ -14,8 +14,6 @@ import {
 } from "@/db/chatConversation";
 import { createBatchCitations } from "@/db/messageCitation";
 import {
-  createAttachmentsFromPaperIds,
-  countConversationPapers,
   getConversationPapers,
 } from "@/db/messageAttachment";
 import { generateConversationTitle } from "@/service/chat/conversationUtils";
@@ -48,7 +46,6 @@ export interface MessageRequestParams {
 export interface ConversationValidationResult {
   success: true;
   conversation: NonNullable<Awaited<ReturnType<typeof getConversationById>>>;
-  isPaperReading: boolean;
 }
 
 /**
@@ -142,13 +139,9 @@ export async function validateConversation(
     return { success: false, errorMessage: "对话不存在" };
   }
 
-  // 4. 判断对话类型
-  const isPaperReading = conversation.conversationType === "paper_reading";
-
   return {
     success: true,
     conversation,
-    isPaperReading,
   };
 }
 
@@ -186,13 +179,9 @@ export async function validateAndGetConversation(
     return { success: false, errorMessage: "对话不存在" };
   }
 
-  // 4. 判断对话类型
-  const isPaperReading = conversation.conversationType === "paper_reading";
-
   return {
     success: true,
     conversation,
-    isPaperReading,
   };
 }
 
@@ -204,38 +193,12 @@ export async function validateAndGetConversation(
 export async function prepareUserMessage(
   params: MessageRequestParams
 ): Promise<UserMessagePrepareResult | UserMessagePrepareError> {
-  const { conversation_id, content, cited_paper_ids, attachment_ids } = params;
+  const { conversation_id, content, cited_paper_ids } = params;
 
-  // AI伴读论文数量限制：每个会话最多5篇论文
-  const MAX_PAPERS_PER_CONVERSATION = 5;
-
-  // 1. 如果有新附件，先检查论文数量是否超限
-  if (attachment_ids && attachment_ids.length > 0) {
-    // 获取当前会话已关联的论文数量（去重）
-    const currentPaperCount = await countConversationPapers(conversation_id);
-
-    // 计算新增的不重复论文数量
-    // 由于 countConversationPapers 返回的是去重数量，我们需要确保新增的附件不会导致超限
-    // 这里简单处理：总数（现有 + 新增）不超过限制
-    // 注意：同一论文可能被多次引用，但实际只算一次
-    const totalPotentialCount = currentPaperCount + attachment_ids.length;
-
-    if (totalPotentialCount > MAX_PAPERS_PER_CONVERSATION) {
-      const remainingSlots = MAX_PAPERS_PER_CONVERSATION - currentPaperCount;
-      return {
-        success: false,
-        errorMessage: `每个AI伴读会话最多支持上传${MAX_PAPERS_PER_CONVERSATION}篇论文，当前已有${currentPaperCount}篇，还可上传${Math.max(
-          0,
-          remainingSlots
-        )}篇`,
-      };
-    }
-  }
-
-  // 2. 获取当前消息数量
+  // 1. 获取当前消息数量
   const messageCount = await getMessageCount(conversation_id);
 
-  // 3. 创建用户消息
+  // 2. 创建用户消息
   const userMessage = await createUserMessage({
     conversation_id,
     content,
@@ -246,18 +209,13 @@ export async function prepareUserMessage(
     return { success: false, errorMessage: "创建用户消息失败" };
   }
 
-  // 4. 如果有引用论文，创建引用关系
+  // 3. 如果有引用论文，创建引用关系
   if (cited_paper_ids && cited_paper_ids.length > 0) {
     await createBatchCitations(
       userMessage.message_id,
       cited_paper_ids,
       conversation_id
     );
-  }
-
-  // 5. 如果有附件，创建附件关系
-  if (attachment_ids && attachment_ids.length > 0) {
-    await createAttachmentsFromPaperIds(userMessage.message_id, attachment_ids);
   }
 
   return {
@@ -318,7 +276,6 @@ export async function executeAutoSearch(params: {
   conversationId: string;
   content: string;
   messageId: string;
-  isPaperReading: boolean;
   autoSearchPapers: boolean | undefined;
   conversationAutoSearch: boolean;
   logPrefix?: string;
@@ -327,7 +284,6 @@ export async function executeAutoSearch(params: {
     conversationId,
     content,
     messageId,
-    isPaperReading,
     autoSearchPapers,
     conversationAutoSearch,
     logPrefix = "",
@@ -336,7 +292,7 @@ export async function executeAutoSearch(params: {
   // 判断是否需要执行自动论文检索
   // 只有当明确传了 auto_search_papers: true 时才执行检索
   // 避免因前端未传参数而使用会话旧设置导致的意外检索
-  const shouldAutoSearch = !isPaperReading && autoSearchPapers === true;
+  const shouldAutoSearch = autoSearchPapers === true;
 
   if (!shouldAutoSearch) {
     return { searchResult: null, relatedPapers: undefined };
@@ -462,23 +418,25 @@ export async function getAttachmentContents(
 }
 
 /**
- * 获取会话中所有关联论文的解析内容
- * 用于普通聊天场景，获取整个会话关联的论文内容作为 LLM 上下文
+ * 获取会话中所有附件的解析内容（用于普通聊天场景）
+ * 从会话的历史消息中获取所有关联的论文内容
  *
- * @param conversationId 会话 ID
- * @returns 论文内容列表
+ * @param conversationId 会话ID
+ * @returns 附件内容列表
  */
 export async function getConversationAttachmentContents(
   conversationId: string
 ): Promise<AttachmentContent[]> {
+  // 获取会话中所有关联的论文
   const papers = await getConversationPapers(conversationId);
 
-  return papers
-    .filter((paper) => paper.parsed_content) // 只返回有内容的
-    .map((paper) => ({
-      id: paper.id,
-      title: paper.title,
-      content: paper.parsed_content,
-      file_name: paper.file_name,
-    }));
+  // 转换为 AttachmentContent 格式
+  return papers.map((paper) => ({
+    id: paper.id,
+    title: paper.title,
+    content: paper.parsed_content || paper.abstract || "",
+    file_name: paper.file_name,
+  }));
 }
+
+

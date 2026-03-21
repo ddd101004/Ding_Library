@@ -9,10 +9,8 @@ import {
   executeAutoSearch,
   formatRelatedPapers,
   finalizeConversationMessageCount,
-  getConversationAttachmentContents,
   MessageRequestParams,
   ConversationValidationResult,
-  AttachmentContent,
 } from "@/service/chat/messageService";
 import {
   setupSSEHeaders,
@@ -46,7 +44,6 @@ const handlePost = async (
     conversation_id: req.body.conversation_id,
     content: req.body.content,
     cited_paper_ids: req.body.cited_paper_ids,
-    attachment_ids: req.body.attachment_ids,
     is_deep_think: req.body.is_deep_think,
     auto_search_papers: req.body.auto_search_papers,
   };
@@ -54,7 +51,6 @@ const handlePost = async (
   let messageId: string | null = null;
   let isClientDisconnected = false;
   let conversation: ConversationValidationResult["conversation"] | null = null;
-  let isPaperReading = false;
   const state: StreamState = {
     partialContent: "",
     reasoningContent: "",
@@ -71,7 +67,6 @@ const handlePost = async (
         });
         logger.info("客户端断开连接，消息已保存", {
           messageId,
-          conversationType: conversation?.conversationType,
         });
       } catch (error) {
         logger.error("客户端断开时保存消息失败", {
@@ -89,7 +84,6 @@ const handlePost = async (
     }
 
     conversation = validationResult.conversation;
-    isPaperReading = validationResult.isPaperReading;
 
     const userMessageResult = await prepareUserMessage(params);
     if (!userMessageResult.success) {
@@ -108,7 +102,6 @@ const handlePost = async (
       conversationId: params.conversation_id,
       content: params.content,
       messageId: userMessage.message_id,
-      isPaperReading,
       autoSearchPapers: params.auto_search_papers,
       conversationAutoSearch: conversation.autoSearchPapers,
       logPrefix: "",
@@ -139,20 +132,6 @@ const handlePost = async (
         () => isClientDisconnected
       );
 
-      let attachmentContents: AttachmentContent[] = [];
-
-      if (!isPaperReading) {
-        attachmentContents = await getConversationAttachmentContents(
-          params.conversation_id
-        );
-        if (attachmentContents.length > 0) {
-          logger.info("普通对话加载附件内容", {
-            conversationId: params.conversation_id,
-            attachmentCount: attachmentContents.length,
-          });
-        }
-      }
-
       const tokenStats = await callLLMByConversationType({
         conversation,
         conversationId: params.conversation_id,
@@ -160,11 +139,6 @@ const handlePost = async (
         userId,
         onToken: onTokenCallback,
         relatedPapers,
-        attachmentContents,
-        contextText: params.context_text,
-        operationType: params.operation_type,
-        targetLanguage: params.target_language,
-        currentMessageAttachmentIds: params.attachment_ids,
         is_deep_think: params.is_deep_think,
       });
 
@@ -178,22 +152,16 @@ const handlePost = async (
           messageUpdateData.reasoningContent = state.reasoningContent;
         }
 
-        if (isPaperReading && tokenStats) {
-          messageUpdateData.input_tokens = tokenStats.input_tokens;
-          messageUpdateData.output_tokens = tokenStats.output_tokens;
-          messageUpdateData.total_tokens = tokenStats.total_tokens;
-          messageUpdateData.reasoningTokens = tokenStats.reasoning_tokens;
-        }
-
-        if (isPaperReading) {
-          messageUpdateData.messageType = params.operation_type;
-          if (params.context_text) {
-            messageUpdateData.contextText = params.context_text;
-          }
-          if (params.context_range) {
-            messageUpdateData.contextRange = params.context_range;
-          }
-        }
+        // messageType、contextText、contextRange 已移除，不再保存
+        // if (isPaperReading) {
+        //   messageUpdateData.messageType = params.operation_type;
+        //   if (params.context_text) {
+        //     messageUpdateData.contextText = params.context_text;
+        //   }
+        //   if (params.context_range) {
+        //     messageUpdateData.contextRange = params.context_range;
+        //   }
+        // }
 
         await updateMessage(messageId, messageUpdateData);
 
@@ -210,12 +178,6 @@ const handlePost = async (
         const doneData: Record<string, unknown> = {
           message_id: messageId,
         };
-
-        if (isPaperReading && tokenStats) {
-          doneData.input_tokens = tokenStats.input_tokens;
-          doneData.output_tokens = tokenStats.output_tokens;
-          doneData.total_tokens = tokenStats.total_tokens;
-        }
 
         sendSSEEvent(res, "done", doneData);
       }
@@ -237,7 +199,6 @@ const handlePost = async (
     const errorMessage = error instanceof Error ? error.message : String(error);
     logger.error("处理流式消息失败", {
       error: errorMessage,
-      conversationType: conversation?.conversationType,
     });
     if (!res.writableEnded) {
       sendSSEError(res, "操作失败: " + errorMessage);

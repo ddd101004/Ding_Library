@@ -54,9 +54,6 @@ interface ChatSplitLayoutProps {
   userInfo: { username: string } | null;
   isAiResponding: boolean;
   conversationId: string | string[] | undefined;
-  isFolderChatActive: boolean;
-  folderId: string | string[] | undefined;
-  folderName: string | string[] | undefined;
   isSidebarOpen: boolean;
   onToggleCollapse: (messageId: string) => void;
   onCopy: (messageId: string) => void;
@@ -82,9 +79,6 @@ export default function ChatSplitLayout({
   userInfo,
   isAiResponding,
   conversationId,
-  isFolderChatActive,
-  folderId,
-  folderName,
   isSidebarOpen,
   onToggleCollapse,
   onCopy,
@@ -107,28 +101,6 @@ export default function ChatSplitLayout({
   const { containerRef: scrollContainerRef1 } = useAutoHideScrollbar({ delay: 1000, proximity: 50 });
   const { containerRef: scrollContainerRef2 } = useAutoHideScrollbar({ delay: 1000, proximity: 50 });
   const { containerRef: scrollContainerRef3 } = useAutoHideScrollbar({ delay: 1000, proximity: 50 });
-
-  const folderBackButton = (
-    <div className="flex items-center h-full px-4" style={{ marginLeft: '0px', transform: 'translate(20px, -10px)' }}>
-      <img
-        src="/paper/paper-details.png"
-        alt="返回"
-        className="w-[10px] h-[10px] cursor-pointer mr-3"
-        onClick={() => {
-          router.back();
-        }}
-      />
-      <span
-        className="text-[#333333]"
-        style={{
-          fontWeight: 500,
-          fontSize: '14px'
-        }}
-      >
-        {Array.isArray(folderName) ? folderName[0] : folderName}
-      </span>
-    </div>
-  );
 
   const renderMessageList = () => (
     <>
@@ -233,9 +205,6 @@ export default function ChatSplitLayout({
                   ref={scrollContainerRef1}
                   className="flex-1 overflow-y-auto overflow-x-hidden auto-hide-scrollbar"
                 >
-                  <div className="h-[70px] flex-shrink-0">
-                    {isFolderChatActive && folderName && folderBackButton}
-                  </div>
                   {renderMessageList()}
                 </div>
                 <div className="flex-shrink-0 pb-2">

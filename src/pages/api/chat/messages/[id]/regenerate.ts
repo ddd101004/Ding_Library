@@ -65,8 +65,6 @@ const handlePost = async (
     return sendSSEError(res, "会话不存在");
   }
 
-  const isPaperReading = conversation.conversationType === "paper_reading";
-
   // 同步更新会话的 is_deep_think 字段
   if (typeof is_deep_think === "boolean") {
     await updateConversation(conversation_id, { is_deep_think });
@@ -145,7 +143,6 @@ const handlePost = async (
         messageCount: messageCount + 1,
         state,
         tokenStats,
-        isPaperReading,
       });
     }
   } catch (error: unknown) {

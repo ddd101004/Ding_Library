@@ -22,7 +22,6 @@ interface MessageInputProps {
   onCloseFunction?: () => void;
   isFromOtherPage: boolean;
   showRelatedPapers?: boolean;
-  isFolderChat?: boolean;
 }
 
 const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
@@ -41,7 +40,6 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
   onCloseFunction,
   isFromOtherPage,
   showRelatedPapers = false,
-  isFolderChat = false,
 }, ref) => {
   const [sendButtonHover, setSendButtonHover] = React.useState(false);
   const backgroundOffset = 0;
@@ -95,7 +93,6 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
             onSend={onSend}
             disabled={isLoading}
             currentFunction={currentFunction}
-            isFolderChat={isFolderChat}
           />
         </div>
       </div>

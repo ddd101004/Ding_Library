@@ -28,7 +28,6 @@ export default function ChatHome() {
   const [isPaperSearchActive, setIsPaperSearchActive] = useState(false);
   const [inputText, setInputText] = useState("");
   const [sendButtonHover, setSendButtonHover] = useState(false);
-  const [isAiReadingActive, setIsAiReadingActive] = useState(false);
 
   const avatarPopupRef = useRef<HTMLDivElement>(null);
   const chatInputRef = useRef<ChatInputRef>(null);
@@ -198,12 +197,6 @@ export default function ChatHome() {
     });
   };
 
-  // 处理关闭AI伴读功能
-  const handleCloseAiReading = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsAiReadingActive(false);
-  };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
@@ -263,20 +256,7 @@ export default function ChatHome() {
                 <div
                   className="flex items-center transition-all duration-300"
                   style={{ marginTop: `${backgroundOffset > 0 ? 80 : 0}px` }}
-                >
-                  {/* AI伴读功能标签 */}
-                  {isAiReadingActive && (
-                    <>
-                      <FunctionSelection
-                        functionType="aiReading"
-                        onClose={handleCloseAiReading}
-                        isFileParsing={false}
-                      />
-                      <div className="w-[1px] h-[30px] bg-[#E0E1E5] rounded-[1px] mx-3"></div>
-                    </>
-                  )}
-
-                  {/* 输入框 */}
+                >                  {/* 输入框 */}
                   <div className="flex-1">
                     <ChatInput
                       ref={chatInputRef}
@@ -306,7 +286,6 @@ export default function ChatHome() {
                     onSendButtonHover={setSendButtonHover}
                     onSend={handleSend}
                     isSending={isSending}
-                    isAiReadingActive={isAiReadingActive}
                     onNavigateFunction={handleNavigateFunction}
                   />
                 </div>

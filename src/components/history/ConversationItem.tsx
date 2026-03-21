@@ -29,7 +29,6 @@ interface ConversationItem {
   message_count: number;
   create_time: string;
   last_message_preview?: string;
-  conversation_type?: "general" | "paper_reading" | "folder_rag";
   paper_info?: PaperInfo[];
 }
 
@@ -42,7 +41,6 @@ interface ConversationItemProps {
   onThreeDotClick: (id: string, e: React.MouseEvent) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
   onExport: (id: string, e: React.MouseEvent) => void;
-  onAddToFolder: (id: string, e: React.MouseEvent) => void;
   exporting?: string | null;
 }
 
@@ -53,7 +51,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   onThreeDotClick,
   onDelete,
   onExport,
-  onAddToFolder,
   exporting,
 }) => {
   const getDisplayContent = () => {
@@ -80,10 +77,8 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
       {/* 图标 */}
       <div className="absolute left-[60px] top-1/2 -translate-y-1/2">
         <Image
-          src={conv.conversation_type === "paper_reading"
-            ? "/chat-page/chat-page-alreadyreading@2x.png"
-            : "/chat-page/chat-page-history-commontag.png"}
-          alt={conv.conversation_type === "paper_reading" ? "AI伴读" : "普通对话"}
+          src="/chat-page/chat-page-history-commontag.png"
+          alt="普通对话"
           width={40}
           height={50}
           className="w-[25px] h-[30px]"
@@ -124,26 +119,6 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         {isSelected ? (
           <TooltipProvider>
             <>
-              {/* 加入知识库按钮 */}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    className="w-5 h-5 flex items-center justify-center mr-[30px]"
-                    onClick={(e) => onAddToFolder(conv.conversation_id, e)}
-                  >
-                    <Image
-                      src="/slibar/slibar-myfiles@2x.png"
-                      alt="加入知识库"
-                      width={20}
-                      height={20}
-                    />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>加入知识库</p>
-                </TooltipContent>
-              </Tooltip>
-
               {/* 导出按钮 */}
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -25,7 +25,7 @@ const VALID_ITEM_TYPES: FolderItemType[] = [
 /**
  * POST - 添加内容到文件夹（支持单个或批量）
  *
- * 支持两种内容类型:
+ * 支持内容类型:
  * - uploaded_paper: 用户上传论文 (user_uploaded_papers表)
  * - conversation: 对话 (chat_conversations表)
  *
@@ -146,7 +146,7 @@ const handlePost = async (
     item_id: item.item_id,
     folder_id: item.folder_id,
     item_type: type,
-    content_id: item.uploaded_paper_id || item.conversation_id,
+    content_id: item.uploaded_paper_id || item.paper_id,
     added_at: item.added_at,
   });
 };
@@ -156,7 +156,6 @@ const handlePost = async (
  *
  * 返回统一的 items 列表，通过 item_type 区分类型:
  * - uploaded_paper: 用户上传论文
- * - conversation: 对话
  */
 const handleGet = async (
   req: NextApiRequest,

@@ -5,7 +5,6 @@ import { Prisma } from "@prisma/client";
 
 /**
  * 创建新的对话会话
- * 支持普通对话、AI 伴读对话和文件夹知识库对话
  */
 export const createConversation = async (data: {
   user_id: string;
@@ -14,11 +13,6 @@ export const createConversation = async (data: {
   is_deep_think?: boolean;
   context_window?: number;
   max_tokens?: number;
-  // AI 伴读扩展字段
-  conversation_type?: "general" | "paper_reading" | "folder_rag";
-  uploaded_paper_id?: string;
-  folder_id?: string; // 文件夹知识库对话关联的文件夹ID
-  context_mode?: "full_paper" | "selected_text" | "auto";
 }) => {
   try {
     const conversation = await prisma.chatConversation.create({
@@ -31,11 +25,6 @@ export const createConversation = async (data: {
         max_tokens: data.max_tokens || CONVERSATION_MAX_TOKENS,
         message_count: 0,
         last_message_at: new Date(),
-        // AI 伴读扩展字段
-        conversationType: data.conversation_type || "general",
-        uploadedPaperId: data.uploaded_paper_id || null,
-        folderId: data.folder_id || null,
-        contextMode: data.context_mode || "auto",
       },
     });
     return conversation;
@@ -48,8 +37,6 @@ export const createConversation = async (data: {
 
 /**
  * 根据conversation_id获取会话详情
- * 如果是伴读对话，同时返回关联的论文信息
- * 如果是文件夹知识库对话，同时返回关联的文件夹信息
  */
 export const getConversationById = async (conversation_id: string) => {
   try {
@@ -57,32 +44,6 @@ export const getConversationById = async (conversation_id: string) => {
       where: {
         conversation_id,
         deleted_at: null,
-      },
-      include: {
-        uploadedPaper: {
-          select: {
-            id: true,
-            title: true,
-            authors: true,
-            abstract: true,
-            keywords: true,
-            fileName: true,
-            filePath: true,
-            fileSize: true,
-            fileType: true,
-            parseStatus: true,
-            parsedContent: true,
-            pageCount: true,
-            wordCount: true,
-          },
-        },
-        folder: {
-          select: {
-            folder_id: true,
-            folder_name: true,
-            description: true,
-          },
-        },
       },
     });
     return conversation;
@@ -95,17 +56,12 @@ export const getConversationById = async (conversation_id: string) => {
 
 /**
  * 获取用户的会话列表（分页）
- * 支持按对话类型筛选、论文筛选和文件夹筛选
  */
 export const getConversationsByUserId = async (params: {
   user_id: string;
   page?: number;
   limit?: number;
   search?: string;
-  // 筛选条件
-  conversation_type?: "general" | "paper_reading" | "folder_rag";
-  uploaded_paper_id?: string;
-  folder_id?: string; // 文件夹ID筛选
 }) => {
   try {
     const {
@@ -113,30 +69,12 @@ export const getConversationsByUserId = async (params: {
       page = 1,
       limit = 20,
       search,
-      conversation_type,
-      uploaded_paper_id,
-      folder_id,
     } = params;
 
     const where: Prisma.ChatConversationWhereInput = {
       user_id,
       deleted_at: null,
     };
-
-    // 按对话类型筛选
-    if (conversation_type) {
-      where.conversationType = conversation_type;
-    }
-
-    // 按关联论文筛选
-    if (uploaded_paper_id) {
-      where.uploadedPaperId = uploaded_paper_id;
-    }
-
-    // 按关联文件夹筛选
-    if (folder_id) {
-      where.folderId = folder_id;
-    }
 
     // 如果有搜索关键词，添加搜索条件
     if (search) {
@@ -162,22 +100,6 @@ export const getConversationsByUserId = async (params: {
           select: {
             content: true,
             role: true,
-          },
-        },
-        // 如果是伴读对话，返回关联论文的基本信息
-        uploadedPaper: {
-          select: {
-            id: true,
-            title: true,
-            fileName: true,
-            fileType: true,
-          },
-        },
-        // 如果是文件夹知识库对话，返回关联文件夹的基本信息
-        folder: {
-          select: {
-            folder_id: true,
-            folder_name: true,
           },
         },
       },
@@ -317,21 +239,8 @@ export const getConversationsByUserId = async (params: {
 
     // 格式化返回数据，添加最后一条消息预览和论文汇总
     const conversationsWithPreview = conversations.map((conv) => {
-      // 构建论文汇总列表（包含初始论文 + 后续追加的论文）
+      // 构建论文汇总列表
       const papersList = papersSummaryMap.get(conv.conversation_id) || [];
-
-      // 如果是伴读对话，将初始论文加入列表（放在最前面，如果不存在的话）
-      if (conv.uploadedPaper && !papersList.some((p) => p.id === conv.uploadedPaper!.id)) {
-        papersList.unshift({
-          id: conv.uploadedPaper.id,
-          type: "uploaded" as const,
-          title: conv.uploadedPaper.title,
-          authors: null, // uploadedPaper 查询未包含 authors
-          abstract: null, // uploadedPaper 查询未包含 abstract
-          file_name: conv.uploadedPaper.fileName,
-          create_time: conv.create_time, // 使用会话创建时间
-        });
-      }
 
       // 取最近5篇
       const finalPapersList = papersList.slice(0, 5);
@@ -350,19 +259,7 @@ export const getConversationsByUserId = async (params: {
             ? conv.messages[0].content.slice(0, 50) +
               (conv.messages[0].content.length > 50 ? "..." : "")
             : "",
-        // AI 伴读扩展字段
-        conversation_type: conv.conversationType,
-        uploaded_paper_id: conv.uploadedPaperId,
-        folder_id: conv.folderId,
-        context_mode: conv.contextMode,
-        // 关联文件夹信息（仅文件夹知识库对话有）
-        folder_info: conv.folder
-          ? {
-              folder_id: conv.folder.folder_id,
-              folder_name: conv.folder.folder_name,
-            }
-          : null,
-        // 会话论文汇总（最近5篇，包含初始论文 + 后续追加的论文）
+        // 会话论文汇总（最近5篇）
         paper_info: finalPapersList,
       };
     });

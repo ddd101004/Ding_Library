@@ -48,19 +48,6 @@ export const useConversation = () => {
         is_deep_think: isDeepThinkActive,
       };
 
-      // 如果是AI伴读功能，需要添加AI伴读相关的字段
-      if (currentFunction === "aiReading") {
-        // AI伴读模式下，收集所有文件的 uploadedPaperId
-        const paperIds = uploadedFiles
-          .filter((file) => file.uploadedPaperId)
-          .map((file) => file.uploadedPaperId);
-
-        if (paperIds.length > 0) {
-          requestBody.uploaded_paper_ids = paperIds;
-          requestBody.conversation_type = "paper_reading";
-          requestBody.context_mode = "auto";
-        }
-      }
 
       const createRes = await apiPost("/api/chat/conversations", requestBody);
 
@@ -86,10 +73,6 @@ export const useConversation = () => {
       // 根据功能类型选择跳转路径
       let pathname = "/chatconversation";
 
-      // 如果是AI伴读功能，跳转到AI伴读页面
-      if (currentFunction === "aiReading") {
-        pathname = "/ai-reading-chat";
-      }
 
       // 跳转到对话页面
       router.push({

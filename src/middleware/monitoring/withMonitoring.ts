@@ -88,7 +88,7 @@ export interface MonitoringOptions {
  *   },
  *   {
  *     monitorType: 'external_api',
- *     apiProvider: 'aminer',
+ *     apiProvider: 'wanfang',
  *     operationName: 'searchPapers',
  *     extractMetadata: (req) => ({ keyword: req.body.keyword }),
  *     extractResultCount: (data) => data?.length || 0,

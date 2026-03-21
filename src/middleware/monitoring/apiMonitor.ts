@@ -2,11 +2,11 @@ import logger from "@/helper/logger";
 
 /**
  * 第三方 API 调用监控（通用版）
- * 适用于所有外部 API 调用：AMiner, OpenAI, 微信, 腾讯云, 等等
+ * 适用于所有外部 API 调用：Wanfang, EBSCO, OpenAI, 微信, 腾讯云, 等等
  *
  * @example
- * // AMiner API
- * const monitor = new ExternalApiMonitor('aminer', 'searchPapers', { keyword: 'AI' });
+ * // Wanfang API
+ * const monitor = new ExternalApiMonitor('wanfang', 'searchPapers', { keyword: 'AI' });
  *
  * // OpenAI API
  * const monitor = new ExternalApiMonitor('openai', 'chat-completion', { model: 'deepseek-v3' });
@@ -94,9 +94,9 @@ export class ExternalApiMonitor {
  * 用于监控数据库查询性能，自动检测慢查询
  *
  * @example
- * const monitor = new DatabaseMonitor('batchUpsert', 'aminer_papers');
+ * const monitor = new DatabaseMonitor('batchUpsert', 'papers');
  * try {
- *   await prisma.aminerPaper.createMany({...});
+ *   await prisma.paper.createMany({...});
  *   monitor.success(100);
  * } catch (error) {
  *   monitor.failure(error);

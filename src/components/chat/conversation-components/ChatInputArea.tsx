@@ -19,7 +19,6 @@ interface ChatInputAreaProps {
   onCloseFunction: () => void;
   isFromOtherPage: boolean;
   showRelatedPapers?: boolean;
-  isFolderChat?: boolean;
   style?: React.CSSProperties;
 }
 
@@ -40,7 +39,6 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
   onCloseFunction,
   isFromOtherPage,
   showRelatedPapers = false,
-  isFolderChat = false,
   style,
 }, ref) => {
   // 计算样式类 - 响应式布局
@@ -78,7 +76,6 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
           onCloseFunction={onCloseFunction}
           isFromOtherPage={isFromOtherPage}
           showRelatedPapers={showRelatedPapers}
-          isFolderChat={isFolderChat}
         />
         </div>
       </div>

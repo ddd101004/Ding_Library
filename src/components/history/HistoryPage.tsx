@@ -6,7 +6,6 @@ import { apiGet, apiDel } from "@/api/request";
 import { toast } from "sonner";
 import { useAutoHideScrollbar } from "@/hooks/use-auto-hide-scrollbar";
 import AvatarHoverMenu from "../chat/common/AvatarHoverMenu";
-import AddToFolderModal from "./AddToFolderModal";
 
 // 论文信息接口
 interface PaperInfo {
@@ -38,7 +37,6 @@ interface HistoryItem {
     folder_name: string;
   } | null;
   dateGroup: "recent" | "within30Days" | "earlier";
-  conversation_type?: "general" | "paper_reading" | "folder_rag";
   paper_info?: PaperInfo[];
 }
 
@@ -63,7 +61,6 @@ interface BaseConversationItem {
     folder_name: string;
   } | null;
   dateGroup: "recent" | "within30Days" | "earlier";
-  conversation_type?: "general" | "paper_reading" | "folder_rag";
 }
 
 // 历史记录项目接口
@@ -203,9 +200,6 @@ const History: React.FC = () => {
   >(null);
   const [exporting, setExporting] = useState<string | null>(null);
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
-  const [showAddToFolderModal, setShowAddToFolderModal] = useState<boolean>(false);
-  const [conversationToAdd, setConversationToAdd] = useState<string | null>(null);
-  const [conversationTitleToAdd, setConversationTitleToAdd] = useState<string>("");
   const router = useRouter();
 
   const { containerRef: scrollContainerRef } = useAutoHideScrollbar();
@@ -519,53 +513,19 @@ const History: React.FC = () => {
     }
   };
 
-  // 处理单击进入会话 - 根据对话类型跳转到不同页面
+  // 处理单击进入会话
   const handleConversationClick = async (conversationId: string) => {
+    sessionStorage.removeItem(`hasLoaded_${conversationId}`);
+    sessionStorage.setItem("navigationSource", "history");
+    sessionStorage.setItem("targetConversationId", conversationId);
 
-
-    try {
-      const response = await apiGet<{
-        conversation_type: "general" | "paper_reading" | "folder_rag";
-        title: string;
-        uploaded_paper_id?: string;
-      }>(`/api/chat/conversations/${conversationId}`);
-
-      if (response?.code !== 200 || !response?.data) {
-        toast.error("获取对话信息失败");
-        return;
-      }
-
-      const conversationData = response.data;
-      const { conversation_type, uploaded_paper_id } = conversationData;
-
-      sessionStorage.removeItem(`hasLoaded_${conversationId}`);
-      sessionStorage.setItem("navigationSource", "history");
-      sessionStorage.setItem("targetConversationId", conversationId);
-
-      if (conversation_type === "paper_reading") {
-
-        router.push({
-          pathname: "/ai-reading-chat",
-          query: {
-            conversation_id: conversationId,
-            uploadedPaperId: uploaded_paper_id || "",
-            fromHistory: "true",
-          },
-        });
-      } else {
-
-        router.push({
-          pathname: "/chatconversation",
-          query: {
-            conversationId: conversationId,
-            fromHistory: "true",
-          },
-        });
-      }
-    } catch (error: any) {
-      console.error("获取对话信息失败:", error);
-      toast.error("获取对话信息失败，请重试");
-    }
+    router.push({
+      pathname: "/chatconversation",
+      query: {
+        conversationId: conversationId,
+        fromHistory: "true",
+      },
+    });
   };
 
   // 处理单击三个点图标（切换选中状态）
@@ -710,56 +670,6 @@ const History: React.FC = () => {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-  };
-
-  // 处理加入知识库
-  const handleAddToFolder = (conversationId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    // 查找对应的会话标题
-    const allConversations = [...conversations, ...searchResults];
-    const conversation = allConversations.find(
-      (conv) => conv.conversation_id === conversationId
-    );
-
-    if (!conversation) {
-      toast.error("未找到会话信息");
-      return;
-    }
-
-    setConversationToAdd(conversationId);
-    setConversationTitleToAdd(conversation.title || "未命名会话");
-    setShowAddToFolderModal(true);
-  };
-
-  // 处理添加到知识库成功后的回调
-  const handleAddToFolderSuccess = (folderId: string, folderName: string) => {
-    const folderInfo = {
-      folder_id: folderId,
-      folder_name: folderName,
-    };
-
-    // 更新 conversations 和 searchResults 中的对应会话
-    const updateConversation = (conv: HistoryItem) => {
-      if (conv.conversation_id === conversationToAdd) {
-        return {
-          ...conv,
-          conversation_type: "folder_rag" as const,
-          folder_info: folderInfo,
-        };
-      }
-      return conv;
-    };
-
-    setConversations((prev) => prev.map(updateConversation));
-    setSearchResults((prev) => prev.map(updateConversation));
-  };
-
-  // 关闭加入知识库弹窗
-  const handleCloseAddToFolderModal = () => {
-    setShowAddToFolderModal(false);
-    setConversationToAdd(null);
-    setConversationTitleToAdd("");
   };
 
   const getDateGroup = (
@@ -927,17 +837,6 @@ const History: React.FC = () => {
           onConfirm={handleConfirmDelete}
         />
 
-        {/* 加入知识库弹窗 */}
-        {conversationToAdd && (
-          <AddToFolderModal
-            isOpen={showAddToFolderModal}
-            onClose={handleCloseAddToFolderModal}
-            conversationId={conversationToAdd}
-            conversationTitle={conversationTitleToAdd}
-            onSuccess={handleAddToFolderSuccess}
-          />
-        )}
-
         {/* 标题和搜索框区域 - 保持左对齐 */}
         <div className="w-full max-w-[1200px] flex flex-col gap-6">
           {/* 标题区域 */}
@@ -998,7 +897,6 @@ const History: React.FC = () => {
               onThreeDotClick={handleThreeDotClick}
               onDelete={handleDeleteClick}
               onExport={handleExportConversation}
-              onAddToFolder={handleAddToFolder}
               loading={isLoading && !isLoadingMore}
               error={error}
               exporting={exporting}
@@ -1014,7 +912,6 @@ const History: React.FC = () => {
                 onThreeDotClick={handleThreeDotClick}
                 onDelete={handleDeleteClick}
                 onExport={handleExportConversation}
-                onAddToFolder={handleAddToFolder}
                 loading={false}
                 error={null}
                 exporting={exporting}
@@ -1031,7 +928,6 @@ const History: React.FC = () => {
                 onThreeDotClick={handleThreeDotClick}
                 onDelete={handleDeleteClick}
                 onExport={handleExportConversation}
-                onAddToFolder={handleAddToFolder}
                 loading={false}
                 error={null}
                 exporting={exporting}

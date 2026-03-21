@@ -1,7 +1,7 @@
 import { NextApiResponse } from "next";
 import { updateMessage } from "@/db/chatMessage";
 import { updateConversation } from "@/db/chatConversation";
-import { callChatLLMStream, callPaperReadingLLMStream } from "./llmService";
+import { callChatLLMStream } from "./llmService";
 import { RelatedPaper } from "./autoRelatedPapers";
 import { AttachmentContent } from "./messageService";
 import { getRecentMessages } from "@/db/chatMessage/query";
@@ -20,7 +20,6 @@ export interface TokenStats {
 }
 
 export interface ConversationInfo {
-  conversationType: string;
   is_deep_think?: boolean;
 }
 
@@ -78,13 +77,8 @@ export async function callLLMByConversationType(params: {
   userId: string;
   onToken: TokenCallback;
   relatedPapers?: RelatedPaper[];
-  attachmentContents?: AttachmentContent[];
   ragSearchResults?: RAGSearchResultItem[];
   history?: HistoryMessage[];
-  contextText?: string;
-  operationType?: string;
-  targetLanguage?: string;
-  currentMessageAttachmentIds?: string[];
   is_deep_think?: boolean;
 }): Promise<TokenStats | null> {
   const {
@@ -95,30 +89,16 @@ export async function callLLMByConversationType(params: {
     onToken,
     is_deep_think,
   } = params;
-  const isPaperReading = conversation.conversationType === "paper_reading";
 
-  if (isPaperReading) {
-    return await callPaperReadingLLMStream({
-      conversation_id: conversationId,
-      userInput,
-      contextText: params.contextText,
-      operationType: params.operationType as any,
-      targetLanguage: params.targetLanguage,
-      overrideDeepThink: is_deep_think,
-      currentMessageAttachmentIds: params.currentMessageAttachmentIds,
-      onToken,
-    });
-  } else {
-    await callChatLLMStream(
-      conversationId,
-      userInput,
-      onToken,
-      params.relatedPapers,
-      params.attachmentContents,
-      is_deep_think
-    );
-    return null;
-  }
+  await callChatLLMStream(
+    conversationId,
+    userInput,
+    onToken,
+    params.relatedPapers,
+    undefined,
+    is_deep_think
+  );
+  return null;
 }
 
 export function sendSSEEvent(
@@ -149,7 +129,6 @@ export async function finalizeStreamResponse(params: {
   messageCount: number;
   state: StreamState;
   tokenStats: TokenStats | null;
-  isPaperReading: boolean;
 }): Promise<void> {
   const {
     res,
@@ -158,7 +137,6 @@ export async function finalizeStreamResponse(params: {
     messageCount,
     state,
     tokenStats,
-    isPaperReading,
   } = params;
 
   await updateMessage(messageId, {
@@ -179,12 +157,6 @@ export async function finalizeStreamResponse(params: {
     type: "done",
     message_id: messageId,
   };
-
-  if (isPaperReading && tokenStats) {
-    doneData.input_tokens = tokenStats.input_tokens;
-    doneData.output_tokens = tokenStats.output_tokens;
-    doneData.total_tokens = tokenStats.total_tokens;
-  }
 
   res.write(`data: ${JSON.stringify(doneData)}\n\n`);
 }

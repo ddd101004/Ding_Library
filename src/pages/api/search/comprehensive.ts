@@ -13,7 +13,7 @@ import { WanfangPaperItem } from "@/type";
 import logger from "@/helper/logger";
 import { parseLimitParam } from "@/utils/parsePageParams";
 import { validateString } from "@/utils/validateString";
-import { createSearchHistory } from "@/db/aminer/searchHistory";
+import { createSearchHistory } from "@/db/search/searchHistory";
 
 /**
  * POST - 综合搜索

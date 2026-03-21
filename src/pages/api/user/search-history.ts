@@ -11,7 +11,7 @@ import {
   deleteSearchHistory,
   deleteSearchHistoryByKeyword,
   clearUserSearchHistory,
-} from "@/db/aminer/searchHistory";
+} from "@/db/search/searchHistory";
 import { parsePageNumber, parseLimitParam } from "@/utils/parsePageParams";
 import { validateString, validateId } from "@/utils/validateString";
 

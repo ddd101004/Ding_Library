@@ -98,7 +98,7 @@ model Paper {
   id String @id @default(uuid())
 
   // 数据源标识
-  source    String @db.VarChar(20) // 数据来源: ebsco, aminer, wanfang
+  source    String @db.VarChar(20) // 数据来源: ebsco, wanfang
   source_id String @db.VarChar(200) // 来源系统的唯一ID
 
   // EBSCO 特定标识符（仅 EBSCO 来源使用）
@@ -323,29 +323,19 @@ model ChatConversation {
   // 论文检索功能开关
   autoSearchPapers Boolean @default(false) @map("auto_search_papers") // 是否自动检索相关论文
 
-  // AI伴读功能扩展字段
-  conversationType String  @default("general") @map("conversation_type") @db.VarChar(20) // 对话类型: general-普通对话, paper_reading-论文伴读, folder_rag-文件夹知识库对话
-  uploadedPaperId  String? @map("uploaded_paper_id") @db.VarChar(36) // 关联的用户上传论文ID (paper_reading类型使用)
-  folderId         String? @map("folder_id") @db.VarChar(36) // 关联的文件夹ID (folder_rag类型使用)
-  contextMode      String  @default("auto") @map("context_mode") @db.VarChar(20) // 上下文模式: full_paper-全文, selected_text-选中文本, auto-自动
-
   last_message_at DateTime  @default(now())
   create_time     DateTime  @default(now())
   update_time     DateTime  @updatedAt
   deleted_at      DateTime?
 
   // 关联
-  user          User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  uploadedPaper UserUploadedPaper? @relation(fields: [uploadedPaperId], references: [id], onDelete: SetNull)
-  folder        PaperFolder?       @relation(fields: [folderId], references: [folder_id], onDelete: SetNull)
-  messages      ChatMessage[]
-  citations     MessageCitation[] // 对话关联的论文引用
-  folderItems   FolderItem[]      // 文件夹关联
+  user        User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  messages    ChatMessage[]
+  citations   MessageCitation[] // 对话关联的论文引用
+  folderItems FolderItem[]      // 对话所在的文件夹
 
   @@index([user_id, last_message_at])
   @@index([user_id, is_pinned])
-  @@index([uploadedPaperId])
-  @@index([folderId])
   @@map("chat_conversations")
 }
 
@@ -473,9 +463,8 @@ model PaperFolder {
   update_time DateTime @updatedAt
 
   // 关联
-  user          User               @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  items         FolderItem[]
-  conversations ChatConversation[] // 关联的文件夹知识库对话
+  user  User         @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  items FolderItem[]
 
   @@index([user_id, sort_order])
   @@map("paper_folders")
@@ -627,9 +616,8 @@ model UserUploadedPaper {
 
   // 关联
   user               User                 @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  conversations      ChatConversation[]
   messageAttachments MessageAttachment[]
-  folderItems        FolderItem[]    // 文件夹关联
+  folderItems        FolderItem[]         // 文件夹关联
 
   @@index([userId])
   @@index([createTime])

@@ -13,7 +13,6 @@ export function useChatState() {
     functionType,
     isDeepThink,
     isPaperSearch,
-    isFolderChat,
   } = router.query;
 
   // ============ 基础状态 ============
@@ -27,7 +26,6 @@ export function useChatState() {
   // ============ 功能模式状态 ============
   const [isDeepThinkActive, setIsDeepThinkActive] = useState(false);
   const [isPaperSearchActive, setIsPaperSearchActive] = useState(false);
-  const [isFolderChatActive, setIsFolderChatActive] = useState(false);
   const [currentFunction, setCurrentFunction] = useState<string | null>(null);
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
 
@@ -79,13 +77,7 @@ export function useChatState() {
 
     setIsPaperSearchActive(newIsPaperSearch);
     isPaperSearchActiveRef.current = newIsPaperSearch;
-
-    const newIsFolderChat =
-      isFolderChat === "true" ||
-      (Array.isArray(isFolderChat) && isFolderChat[0] === "true");
-
-    setIsFolderChatActive(newIsFolderChat);
-  }, [functionType, isDeepThink, isPaperSearch, isFolderChat]);
+  }, [functionType, isDeepThink, isPaperSearch]);
 
   // ============ 从历史记录检测 ============
   useEffect(() => {
@@ -171,8 +163,6 @@ export function useChatState() {
     isDeepThinkActive,
     setIsDeepThinkActive,
     isPaperSearchActive,
-    isFolderChatActive,
-    setIsFolderChatActive,
     currentFunction,
     setCurrentFunction,
     selectedButton,

@@ -11,7 +11,6 @@ export interface AddItemToFolderResult {
     folder_id: string;
     paper_id: string | null;
     uploaded_paper_id: string | null;
-    conversation_id: string | null;
     notes: string | null;
     added_at: Date;
     create_time: Date;
@@ -21,10 +20,10 @@ export interface AddItemToFolderResult {
 }
 
 /**
- * 添加内容到文件夹（支持两种类型：用户上传论文、对话）
- * @param data.item_type - 内容类型: "uploaded_paper" | "conversation"
+ * 添加内容到文件夹（支持用户上传论文、对话）
+ * @param data.item_type - 内容类型: "uploaded_paper", "conversation"
  * @param data.item_id - 内容ID
- * @param data.user_id - 用户ID（用于验证对话归属）
+ * @param data.user_id - 用户ID（用于验证）
  */
 export const addItemToFolder = async (data: {
   folder_id: string;
@@ -49,17 +48,13 @@ export const addItemToFolder = async (data: {
         return { success: false, error: "uploaded_paper_not_found" };
       }
     } else if (item_type === "conversation") {
-      const conversation = await prisma.chatConversation.findFirst({
-        where: {
-          conversation_id: item_id,
-          user_id,
-          deleted_at: null,
-        },
+      const conversation = await prisma.chatConversation.findUnique({
+        where: { conversation_id: item_id },
         select: { conversation_id: true },
       });
       if (!conversation) {
         logger.warn(
-          `添加到文件夹失败: 对话不存在或无权访问 (conversation_id: ${item_id})`
+          `添加到文件夹失败: 对话不存在 (conversation_id: ${item_id})`
         );
         return { success: false, error: "conversation_not_found" };
       }
@@ -74,12 +69,14 @@ export const addItemToFolder = async (data: {
         uploadedPaper: { connect: { id: item_id } },
         notes,
       };
-    } else {
+    } else if (item_type === "conversation") {
       createData = {
         folder: { connect: { folder_id } },
         conversation: { connect: { conversation_id: item_id } },
         notes,
       };
+    } else {
+      return { success: false, error: "invalid_item_type" };
     }
 
     const item = await prisma.folderItem.create({
@@ -93,7 +90,6 @@ export const addItemToFolder = async (data: {
         folder_id: item.folder_id,
         paper_id: item.paper_id,
         uploaded_paper_id: item.uploaded_paper_id,
-        conversation_id: item.conversation_id,
         notes: item.notes,
         added_at: item.added_at,
         create_time: item.create_time,

@@ -159,7 +159,7 @@ export default function WithSidebarLayout({
   // 根据路由设置活跃图标
   useEffect(() => {
     const { pathname } = router;
-    if (pathname === "/knowledge-base") setActiveIcon("knowledge");
+    if (pathname === "/knowledge-base" || pathname.startsWith("/knowledgebase")) setActiveIcon("knowledge");
     else if (pathname === "/history") setActiveIcon("history");
     else if (pathname === "/academic-search") setActiveIcon("academic");
     else if (pathname.startsWith("/paper")) setActiveIcon("academic");
@@ -193,65 +193,17 @@ export default function WithSidebarLayout({
   ) => {
     e.stopPropagation();
 
-    try {
-      // 获取对话详细信息，包括类型
-      const response = await apiGet<{
-        conversation_type: "general" | "paper_reading";
-        title: string;
-        uploaded_paper_id?: string;
-      }>(`/api/chat/conversations/${conversationId}`);
+    // 清除会话加载标记，确保重新加载
+    sessionStorage.removeItem(`hasLoaded_${conversationId}`);
 
-      if (response?.code !== 200 || !response?.data) {
-        // 如果获取失败，默认跳转到普通对话页面
-        sessionStorage.removeItem(`hasLoaded_${conversationId}`);
-        router.push({
-          pathname: "/chatconversation",
-          query: {
-            conversationId,
-            fromHistory: "true"
-          },
-        });
-        return;
-      }
-
-      const conversationData = response.data;
-      const { conversation_type, uploaded_paper_id } = conversationData;
-
-      // 清除会话加载标记，确保重新加载
-      sessionStorage.removeItem(`hasLoaded_${conversationId}`);
-
-      // 根据对话类型跳转到不同页面
-      // AI伴读功能已移除，阻止跳转到AI伴读页面
-      if (conversation_type === "paper_reading") {
-        // 普通对话跳转到普通对话页面
-        router.push({
-          pathname: "/chatconversation",
-          query: {
-            conversationId,
-            fromHistory: "true"
-          },
-        });
-      } else {
-        // 普通对话跳转到普通对话页面
-        router.push({
-          pathname: "/chatconversation",
-          query: {
-            conversationId,
-            fromHistory: "true"
-          },
-        });
-      }
-    } catch (error) {
-      // 出错时默认跳转到普通对话页面
-      sessionStorage.removeItem(`hasLoaded_${conversationId}`);
-      router.push({
-        pathname: "/chatconversation",
-        query: {
-          conversationId,
-          fromHistory: "true"
-        },
-      });
-    }
+    // 跳转到普通对话页面
+    router.push({
+      pathname: "/chatconversation",
+      query: {
+        conversationId,
+        fromHistory: "true"
+      },
+    });
   };
 
   const handleNewChat = async (e: React.MouseEvent) => {

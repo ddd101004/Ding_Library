@@ -26,17 +26,7 @@ const handlePost = async (
   res: NextApiResponse,
   userId: string
 ) => {
-  const {
-    title,
-    model,
-    is_deep_think,
-    context_window,
-    max_tokens,
-    // AI 伴读扩展参数
-    conversation_type = "general",
-    uploaded_paper_ids, // 支持多篇论文
-    context_mode = "auto",
-  } = req.body;
+  const { title, model, is_deep_think, context_window, max_tokens } = req.body;
   // 参数校验
   if (title) {
     const titleResult = validateString(title, "对话标题", {
@@ -44,21 +34,6 @@ const handlePost = async (
     });
     if (!titleResult.valid) {
       return sendWarnningResponse(res, titleResult.error || "对话标题校验失败");
-    }
-  }
-
-  // 确保 uploaded_paper_ids 是数组
-  const paperIds: string[] = Array.isArray(uploaded_paper_ids)
-    ? uploaded_paper_ids
-    : uploaded_paper_ids
-    ? [uploaded_paper_ids]
-    : [];
-
-  // 校验所有论文 ID
-  for (const paperId of paperIds) {
-    const paperIdResult = validateId(paperId, "论文 ID");
-    if (!paperIdResult.valid) {
-      return sendWarnningResponse(res, paperIdResult.error || "论文 ID 校验失败");
     }
   }
 
@@ -75,9 +50,6 @@ const handlePost = async (
     is_deep_think: is_deep_think || false,
     context_window: context_window || 10,
     max_tokens: max_tokens || CONVERSATION_MAX_TOKENS,
-    conversation_type,
-    uploaded_paper_id: undefined,
-    context_mode,
   });
 
   if (!conversation) {
@@ -86,7 +58,6 @@ const handlePost = async (
 
   logger.info("创建对话成功", {
     conversationId: conversation.conversation_id,
-    conversationType: conversation_type,
     userId,
   });
 
@@ -103,10 +74,6 @@ const handlePost = async (
     message_count: conversation.message_count,
     last_message_at: conversation.last_message_at,
     create_time: conversation.create_time,
-    // AI 伴读扩展字段
-    conversation_type: conversation.conversationType,
-    uploaded_paper_id: conversation.uploadedPaperId,
-    context_mode: conversation.contextMode,
   };
 
   sendSuccessResponse(res, "会话创建成功", responseData);
@@ -114,25 +81,19 @@ const handlePost = async (
 
 /**
  * GET - 获取会话列表
- * 支持按对话类型筛选
  */
 const handleGet = async (
   req: NextApiRequest,
   res: NextApiResponse,
   userId: string
 ) => {
-  const { page, limit, search, conversation_type } = req.query;
+  const { page, limit, search } = req.query;
 
   const result = await getConversationsByUserId({
     user_id: userId,
     page: parsePageNumber(page),
     limit: parseLimitParam(limit),
     search: search as string,
-    conversation_type: conversation_type as
-      | "general"
-      | "paper_reading"
-      | undefined,
-    uploaded_paper_id: undefined,
   });
 
   if (!result) {

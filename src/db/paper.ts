@@ -339,7 +339,7 @@ export async function upsertPaper(
 
 /**
  * 根据 source + source_id 更新或创建论文（通用 Upsert）
- * 支持 ebsco, aminer, wanfang 等多种数据源
+ * 支持 ebsco, wanfang 等多种数据源
  */
 export async function upsertPaperBySource(
   source: string,

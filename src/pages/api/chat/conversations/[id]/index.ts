@@ -63,23 +63,7 @@ const handleGet = async (
     message_count: conversation.message_count,
     create_time: conversation.create_time,
     update_time: conversation.update_time,
-    // AI 伴读扩展字段
-    conversation_type: conversation.conversationType,
-    uploaded_paper_id: conversation.uploadedPaperId,
-    context_mode: conversation.contextMode,
   };
-
-  // 如果是伴读对话，返回所有关联的论文列表
-  if (conversation.conversationType === "paper_reading") {
-    // 获取会话中所有关联的论文（通过 MessageAttachment）
-    const papers = await getConversationPapers(conversation_id);
-
-    // 为每篇论文添加签名 URL
-    responseData.papers = papers.map((paper) => ({
-      ...paper,
-      file_url: paper.file_path ? getFileUrl(paper.file_path) : null,
-    }));
-  }
 
   sendSuccessResponse(res, "获取成功", responseData);
 };
