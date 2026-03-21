@@ -41,16 +41,6 @@ export const getMessagesByConversationId = async (params: {
           },
           orderBy: { citation_order: "asc" },
         },
-        attachments: {
-          include: {
-            uploadedPaper: {
-              select: {
-                parseStatus: true,
-              },
-            },
-          },
-          orderBy: { attachment_order: "asc" },
-        },
       },
     });
 
@@ -158,23 +148,15 @@ export const getMessagesByConversationId = async (params: {
         total_tokens: msg.total_tokens,
         create_time: msg.create_time,
         update_time: msg.update_time,
-        reasoning_content: msg.reasoningContent,
-        reasoning_tokens: msg.reasoningTokens,
+        reasoning_content: msg.reasoning_content,
+        reasoning_tokens: msg.reasoning_tokens,
         is_liked: feedbackStatus.is_liked,
         is_disliked: feedbackStatus.is_disliked,
         has_multiple_versions,
-        citations: msg.citations.map(citation => ({
+        citations: msg.citations.map((citation) => ({
           ...citation,
         })),
-        attachments: msg.attachments.map((att) => ({
-          id: att.id,
-          uploaded_paper_id: att.uploaded_paper_id,
-          file_name: att.file_name,
-          file_type: att.file_type,
-          file_size: att.file_size.toString(),
-          attachment_order: att.attachment_order,
-          parse_status: att.uploadedPaper?.parseStatus,
-        })),
+        attachments: [],
       };
     });
 
@@ -199,21 +181,10 @@ export const getMessageById = async (message_id: string, user_id?: string) => {
     const message = await prisma.chatMessage.findUnique({
       where: { message_id },
       include: {
-        conversation: true,
         citations: {
           include: {
             paper: true,
           },
-        },
-        attachments: {
-          include: {
-            uploadedPaper: {
-              select: {
-                parseStatus: true,
-              },
-            },
-          },
-          orderBy: { attachment_order: "asc" },
         },
       },
     });
@@ -240,21 +211,12 @@ export const getMessageById = async (message_id: string, user_id?: string) => {
       total_tokens: message.total_tokens,
       create_time: message.create_time,
       update_time: message.update_time,
-      reasoning_content: message.reasoningContent,
-      reasoning_tokens: message.reasoningTokens,
+      reasoning_content: message.reasoning_content,
+      reasoning_tokens: message.reasoning_tokens,
       is_liked: feedbackStatus.is_liked,
       is_disliked: feedbackStatus.is_disliked,
-      conversation: message.conversation,
       citations: message.citations,
-      attachments: message.attachments.map((att) => ({
-        id: att.id,
-        uploaded_paper_id: att.uploaded_paper_id,
-        file_name: att.file_name,
-        file_type: att.file_type,
-        file_size: att.file_size.toString(),
-        attachment_order: att.attachment_order,
-        parse_status: att.uploadedPaper?.parseStatus,
-      })),
+      attachments: [],
     };
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);

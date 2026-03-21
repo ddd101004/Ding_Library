@@ -12,7 +12,6 @@ import {
   deleteConversation,
   verifyConversationOwner,
 } from "@/db/chatConversation";
-import { getConversationPapers } from "@/db/messageAttachment";
 
 // getFileUrl 已移除，使用本地路径
 // 生成文件访问 URL（兼容本地和 COS）

@@ -11,7 +11,6 @@ import {
   getConversationsByUserId,
 } from "@/db/chatConversation";
 import { createUserMessage } from "@/db/chatMessage/crud";
-import { createAttachmentsFromPaperIds } from "@/db/messageAttachment";
 import { parsePageNumber, parseLimitParam } from "@/utils/parsePageParams";
 import { validateString, validateId } from "@/utils/validateString";
 import logger from "@/helper/logger";

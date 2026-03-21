@@ -23,9 +23,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
   const [sendButtonHover, setSendButtonHover] = useState(false);
   const [currentFunction, setCurrentFunction] = useState<string | null>(null);
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
-  const [selectedTopicType, setSelectedTopicType] = useState<string | null>(
-    null
-  );
   const [isGeneratingQuestion, setIsGeneratingQuestion] = useState(false);
 
   const textareaRef = useRef<ChatInputRef>(null);
@@ -78,13 +75,9 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
     if (functionType) {
       setCurrentFunction(functionType);
       if (functionType === "deepStudy") {
-        // 深度学习模式下默认选择"前沿技术介绍"
-        const defaultTopicType = "cuttingEdge";
-        setSelectedButton(defaultTopicType);
-        setSelectedTopicType(defaultTopicType);
-        // 自动触发关键词加载
+        // 深度学习模式：直接加载关键词
         setTimeout(() => {
-          handleTopicButtonClick(defaultTopicType);
+          handleTopicButtonClick("deepStudy");
         }, 100);
       }
     }
@@ -114,9 +107,9 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
   // 当选择主题时更新输入框
   useEffect(() => {
     if (selectedTopic) {
-      // 深度学习模式：生成问题而不是直接设置关键词
-      if (currentFunction === "deepStudy" && selectedTopicType) {
-        generateQuestion(selectedTopic, selectedTopicType);
+      // 深度学习模式：生成问题
+      if (currentFunction === "deepStudy") {
+        generateQuestion(selectedTopic, "deepStudy");
       } else {
         // 快问快答模式：直接设置问题
         setInputText(selectedTopic);
@@ -128,7 +121,7 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
         }, 0);
       }
     }
-  }, [selectedTopic, currentFunction, selectedTopicType]);
+  }, [selectedTopic, currentFunction]);
 
   // 发送消息
   const handleSend = async () => {
@@ -169,22 +162,12 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
     }
   };
 
-  // 处理主题类型选择
-  const handleTopicTypeSelect = (type: string) => {
-    setSelectedButton(type);
-    setSelectedTopicType(type);
-    handleTopicButtonClick(type);
-  };
-
   // 生成问题的函数
   const generateQuestion = async (topic: string, topicType: string) => {
     setIsGeneratingQuestion(true);
     try {
-      // 构建组合关键词：主题类型 + 具体关键词
-      const topicTypeLabel =
-        deepStudyTopics.find((t) => t.key === topicType)?.label || topicType;
-      const combinedKeyword = `${topicTypeLabel}、${topic}`;
-
+      // 直接使用关键词
+      const combinedKeyword = topic;
 
       const response = await apiPost("/api/ai/questions", {
         keyword: combinedKeyword,
@@ -210,30 +193,6 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
       setIsGeneratingQuestion(false);
     }
   };
-
-  // 深度学习主题类型配置
-  const deepStudyTopics = [
-    {
-      key: "cuttingEdge",
-      icon: "chat-page-produce.png",
-      label: "前沿技术介绍",
-    },
-    {
-      key: "basicResearch",
-      icon: "chat-page-method.png",
-      label: "基础研究方法",
-    },
-    {
-      key: "coreTechnology",
-      icon: "chat-page-skill.@2x.png",
-      label: "核心技术介绍",
-    },
-    {
-      key: "coreConcepts",
-      icon: "chat-page-meaning.png",
-      label: "核心概念解释",
-    },
-  ];
 
   return (
     <>

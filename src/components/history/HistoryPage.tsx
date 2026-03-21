@@ -642,8 +642,11 @@ const History: React.FC = () => {
       setConversationToAdd(null);
       setSelectedFolder(null);
     } catch (err: any) {
-      const errorMessage = err.response?.data?.message || err.message || '添加失败';
-      toast.error(errorMessage);
+      // 如果是警告（503），API 拦截器已经显示过 toast 了，不需要重复显示
+      if (!err.isWarning) {
+        const errorMessage = err.response?.data?.message || err.message || '添加失败';
+        toast.error(errorMessage);
+      }
       setShowFolderSelector(false);
     }
   };

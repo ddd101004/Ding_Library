@@ -12,7 +12,7 @@ export interface MessageVersionInfo {
   allVersions: Array<{
     message_id: string;
     content: string;
-    reasoningContent: string | null;
+    reasoning_content: string | null;
     create_time: Date;
     parent_message_id: string | null;
     status: string;
@@ -61,7 +61,7 @@ export const batchGetMessageVersionInfo = async (
       select: {
         message_id: true,
         content: true,
-        reasoningContent: true,
+        reasoning_content: true,
         create_time: true,
         parent_message_id: true,
         status: true,
@@ -108,7 +108,7 @@ export const batchGetMessageVersionInfo = async (
           return {
             message_id: v.message_id,
             content: v.content,
-            reasoningContent: v.reasoningContent,
+            reasoning_content: v.reasoning_content,
             create_time: v.create_time,
             parent_message_id: v.parent_message_id,
             status: v.status,

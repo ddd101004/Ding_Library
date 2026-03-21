@@ -108,34 +108,6 @@ export const getConversationsByUserId = async (params: {
     // 获取所有会话 ID
     const conversationIds = conversations.map((c) => c.conversation_id);
 
-    // 批量查询用户上传的论文（通过 MessageAttachment）
-    const uploadedPapers = await prisma.messageAttachment.findMany({
-      where: {
-        message: {
-          conversation_id: { in: conversationIds },
-        },
-      },
-      include: {
-        message: {
-          select: {
-            conversation_id: true,
-          },
-        },
-        uploadedPaper: {
-          select: {
-            id: true,
-            title: true,
-            authors: true,
-            abstract: true,
-            fileName: true,
-          },
-        },
-      },
-      orderBy: {
-        create_time: "desc",
-      },
-    });
-
     // 批量查询检索的论文（通过 MessageCitation，citation_type = "auto_related"）
     const searchedPapers = await prisma.messageCitation.findMany({
       where: {
@@ -167,11 +139,10 @@ export const getConversationsByUserId = async (params: {
       string,
       Array<{
         id: string;
-        type: "uploaded" | "searched";
+        type: "searched";
         title: string;
         authors: Prisma.JsonValue | string | null;
         abstract: string | null;
-        file_name?: string;
         source?: string;
         source_id?: string;
         publication_name?: string | null;
@@ -180,27 +151,6 @@ export const getConversationsByUserId = async (params: {
         create_time: Date;
       }>
     >();
-
-    // 处理上传的论文
-    for (const att of uploadedPapers) {
-      const convId = att.message.conversation_id;
-      if (!papersSummaryMap.has(convId)) {
-        papersSummaryMap.set(convId, []);
-      }
-      const papers = papersSummaryMap.get(convId)!;
-      // 去重：检查是否已存在相同 ID 的论文
-      if (att.uploadedPaper && !papers.some((p) => p.id === att.uploaded_paper_id)) {
-        papers.push({
-          id: att.uploaded_paper_id,
-          type: "uploaded",
-          title: att.uploadedPaper.title,
-          authors: att.uploadedPaper.authors,
-          abstract: att.uploadedPaper.abstract,
-          file_name: att.file_name,
-          create_time: att.create_time,
-        });
-      }
-    }
 
     // 处理检索的论文
     for (const citation of searchedPapers) {

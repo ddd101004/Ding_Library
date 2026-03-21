@@ -97,15 +97,18 @@ export const addItemToFolder = async (data: {
       },
     };
   } catch (error: unknown) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logger.error(`添加内容到文件夹失败: ${errorMessage}`, { error });
-
+    // 检查是否是唯一约束错误（内容已存在）
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
+      // 内容已存在是正常情况，不记录错误日志
       return { success: false, error: "item_already_in_folder" };
     }
+
+    // 其他错误才记录
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    logger.error(`添加内容到文件夹失败: ${errorMessage}`, { error });
 
     return { success: false, error: "unknown_error" };
   }

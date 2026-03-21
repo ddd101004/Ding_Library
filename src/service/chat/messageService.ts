@@ -13,9 +13,6 @@ import {
   getConversationById,
 } from "@/db/chatConversation";
 import { createBatchCitations } from "@/db/messageCitation";
-import {
-  getConversationPapers,
-} from "@/db/messageAttachment";
 import { generateConversationTitle } from "@/service/chat/conversationUtils";
 import {
   autoSearchRelatedPapers,
@@ -427,16 +424,8 @@ export async function getAttachmentContents(
 export async function getConversationAttachmentContents(
   conversationId: string
 ): Promise<AttachmentContent[]> {
-  // 获取会话中所有关联的论文
-  const papers = await getConversationPapers(conversationId);
-
-  // 转换为 AttachmentContent 格式
-  return papers.map((paper) => ({
-    id: paper.id,
-    title: paper.title,
-    content: paper.parsed_content || paper.abstract || "",
-    file_name: paper.file_name,
-  }));
+  // AI伴读功能已移除，不再返回上传的论文内容
+  return [];
 }
 
 

@@ -10,7 +10,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   const [topics, setTopics] = useState<string[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [refreshCount, setRefreshCount] = useState(0);
-  const [loadedTopicType, setLoadedTopicType] = useState<string | null>(null); // 记录已加载的主题类型
+  const [hasLoadedKeywords, setHasLoadedKeywords] = useState(false); // 标记是否已加载关键词
   const { preloadData, isLoading } = usePreload();
 
   const quickQADefaults = [
@@ -21,24 +21,18 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
     "大数据分析对企业决策有什么帮助？",
   ];
 
-  const deepLearningDefaults = {
-    cuttingEdge: [
-      "多模态模型", "RAG技术", "大语言模型", "扩散模型", "强化学习", "自动驾驶",
-      "量子计算", "边缘计算", "联邦学习", "知识图谱", "智能体", "生成式AI", "神经渲染"
-    ],
-    basicResearch: [
-      "实验设计", "数据统计", "假设检验", "文献综述", "变量控制", "样本选择",
-      "误差分析", "信度效度", "研究伦理", "数据分析", "模型验证", "结果解释", "论文写作"
-    ],
-    coreTechnology: [
-      "Transformer", "注意力机制", "卷积网络", "循环网络", "梯度下降", "反向传播",
-      "激活函数", "损失函数", "优化器", "正则化", "批量归一化", "Dropout", "预训练"
-    ],
-    coreConcepts: [
-      "深度学习", "机器学习", "人工智能", "自然语言处理", "计算机视觉", "监督学习",
-      "无监督学习", "强化学习", "迁移学习", "表征学习", "元学习", "小样本学习", "自监督学习"
-    ]
-  };
+  // 深度学习默认关键词（备用，当API调用失败时使用）
+  const deepLearningDefaults = [
+    "深度学习", "机器学习", "人工智能", "神经网络", "Transformer",
+    "注意力机制", "卷积网络", "循环网络", "强化学习", "生成对抗网络",
+    "迁移学习", "监督学习", "无监督学习"
+  ];
+
+  // 深度学习主题池（用于生成多样化的关键词）
+  const deepLearningTopics = [
+    "深度学习", "机器学习", "人工智能", "数据科学", "计算机视觉",
+    "自然语言处理", "强化学习", "神经网络", "大数据分析", "云计算"
+  ];
 
   // 使用 useRef 跟踪最新的 refreshCount
   const refreshCountRef = useRef(refreshCount);
@@ -83,31 +77,41 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
     }
   }, [preloadData]);
 
-  // 获取深度学习关键词
-  const fetchDeepLearningKeywords = useCallback(async (type: string, forceRefresh = false) => {
+  // 获取深度学习关键词（简化版，直接生成13个随机关键词）
+  const fetchDeepLearningKeywords = useCallback(async (forceRefresh = false) => {
+    // 非强制刷新时，立即设置默认关键词以提升用户体验
+    if (!forceRefresh) {
+      setTopics(deepLearningDefaults);
+    }
+
     const timestamp = Date.now(); // 使用时间戳避免缓存
+
+    // 从主题池中随机选择一个主题
+    const randomTopic = deepLearningTopics[Math.floor(Math.random() * deepLearningTopics.length)];
+
     const keywords = await preloadData(
       "/api/ai/keywords",
       {
-        keyword: type,
+        keyword: randomTopic, // 使用随机选择的主题
         count: 13,
         _t: forceRefresh ? timestamp : undefined
       },
       {
-        cacheKey: forceRefresh ? `deepLearning_${type}_keywords_${timestamp}` : `deepLearning_${type}_keywords`,
-        defaultData: deepLearningDefaults[type as keyof typeof deepLearningDefaults] || [],
+        cacheKey: forceRefresh ? `deepLearning_keywords_${randomTopic}_${timestamp}` : `deepLearning_keywords_${randomTopic}`,
+        defaultData: deepLearningDefaults,
       }
     );
     setTopics(keywords);
-  }, [preloadData]);
+  }, [preloadData, deepLearningTopics]);
 
   const handleTopicButtonClick = useCallback((type: string) => {
-    // 当主题类型变化时，重新加载关键词
-    if (loadedTopicType !== type) {
-      fetchDeepLearningKeywords(type, false);
-      setLoadedTopicType(type);
+    // 深度学习模式：直接加载关键词，不区分主题类型
+    if (currentFunction === "deepStudy" && !hasLoadedKeywords) {
+      fetchDeepLearningKeywords(false);
+      setHasLoadedKeywords(true); // 标记已加载
     }
-  }, [loadedTopicType, fetchDeepLearningKeywords]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFunction, hasLoadedKeywords]);
 
   const handleTopicClick = useCallback((topic: string) => {
     setSelectedTopic(topic);
@@ -117,20 +121,25 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   const handleRefreshClick = useCallback(() => {
     if (currentFunction === "quickQA") {
       fetchQuickQAQuestions(true);
-    } else if (currentFunction === "deepStudy" && selectedButton) {
-      fetchDeepLearningKeywords(selectedButton, true);
+    } else if (currentFunction === "deepStudy") {
+      fetchDeepLearningKeywords(true);
       // 强制刷新，重新加载关键词
     } else {
       console.warn("无法换一批：缺少必要的参数");
     }
-  }, [currentFunction, selectedButton, fetchQuickQAQuestions, fetchDeepLearningKeywords]);
+  }, [currentFunction, fetchQuickQAQuestions, fetchDeepLearningKeywords]);
 
   // 初始加载
   useEffect(() => {
     if (currentFunction === "quickQA") {
       fetchQuickQAQuestions(false);
+    } else if (currentFunction === "deepStudy" && !hasLoadedKeywords) {
+      // 深度学习模式：首次进入时立即加载关键词
+      fetchDeepLearningKeywords(false);
+      setHasLoadedKeywords(true);
     }
-  }, [currentFunction, fetchQuickQAQuestions]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentFunction]);
 
   return {
     topics,

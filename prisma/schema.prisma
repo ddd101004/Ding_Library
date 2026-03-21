@@ -208,34 +208,6 @@ model Paper {
   @@map("papers")
 }
 
-/// 论文下载日志表 - 记录用户的PDF下载行为
-model PaperDownloadLog {
-  id String @id @default(uuid())
-
-  // 关联信息
-  paper_id String // 论文ID
-  user_id  String? // 用户ID (可为空，支持游客下载)
-
-  // 下载信息
-  download_type   String // 下载类型: pdf, fulltext
-  download_status Int // 下载状态: 1-成功, 0-失败
-  fail_reason     String? @db.Text // 失败原因
-
-  // 来源信息
-  ip_address String? // IP地址
-  user_agent String? @db.Text // User Agent
-  referer    String? @db.Text // 来源页面
-
-  // 系统字段
-  create_time DateTime @default(now()) // 创建时间
-  update_time DateTime @updatedAt // 更新时间
-
-  @@index([paper_id])
-  @@index([user_id])
-  @@index([create_time])
-  @@map("paper_download_logs")
-}
-
 /// EBSCO同步日志表 - 记录每次同步任务的执行情况
 model EbscoSyncLog {
   id String @id @default(uuid())

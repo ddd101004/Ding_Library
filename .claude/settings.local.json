@@ -16,7 +16,9 @@
       "Bash(python:*)",
       "Bash(node:*)",
       "Bash(cat:*)",
-      "Bash(git mv:*)"
+      "Bash(git mv:*)",
+      "Bash(powershell:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
