@@ -355,12 +355,9 @@ model ChatMessage {
   output_tokens Int? @default(0)
   total_tokens  Int? @default(0)
 
-  // AI伴读功能扩展字段
-  messageType      String   @default("text") @map("message_type") @db.VarChar(20) // 消息类型: text-普通文本, deepthink-深度思考, translate-翻译, summarize-总结, explain-解释
-  reasoningTokens  Int?     @map("reasoning_tokens") // 推理tokens
-  reasoningContent String?  @map("reasoning_content") @db.LongText // 推理过程
-  contextText      String?  @map("context_text") @db.LongText // 引用的论文文本片段
-  contextRange     Json?    @map("context_range") // 文本位置信息 {start, end, page}
+  // DeepSeek-R1 深度思考功能
+  reasoning_tokens  Int?     @map("reasoning_tokens") // 推理tokens
+  reasoning_content String?  @map("reasoning_content") @db.LongText // 推理过程
   cost             Decimal? @db.Decimal(10, 6) // API调用费用
   responseTimeMs   Int?     @map("response_time_ms") // 响应时间 (毫秒)
 
@@ -379,7 +376,6 @@ model ChatMessage {
   conversation ChatConversation    @relation(fields: [conversation_id], references: [conversation_id], onDelete: Cascade)
   citations    MessageCitation[]
   feedbacks    MessageFeedback[]
-  attachments  MessageAttachment[]
 
   @@index([conversation_id, message_order])
   @@index([parent_message_id])
@@ -423,31 +419,6 @@ model MessageCitation {
   @@map("message_citations")
 }
 
-/// 消息附件表 - 存储消息与用户上传文件的关联关系
-model MessageAttachment {
-  id                String @id @default(uuid()) @db.VarChar(36)
-  message_id        String @db.VarChar(36)
-  uploaded_paper_id String @db.VarChar(36)
-
-  // 冗余字段 - 提高查询效率，避免多表关联
-  file_name String @db.VarChar(255) // 文件名
-  file_type String @db.VarChar(50) // 文件类型 (pdf/doc/docx/txt)
-  file_size BigInt // 文件大小 (字节)
-
-  // 排序
-  attachment_order Int @default(1) // 附件顺序
-
-  create_time DateTime @default(now())
-
-  // 关联
-  message       ChatMessage       @relation(fields: [message_id], references: [message_id], onDelete: Cascade)
-  uploadedPaper UserUploadedPaper @relation(fields: [uploaded_paper_id], references: [id], onDelete: Cascade)
-
-  @@unique([message_id, uploaded_paper_id])
-  @@index([message_id])
-  @@index([uploaded_paper_id])
-  @@map("message_attachments")
-}
 
 /// 论文文件夹表 - 存储用户创建的论文收藏文件夹
 model PaperFolder {
@@ -615,9 +586,8 @@ model UserUploadedPaper {
   deletedAt  DateTime? @map("deleted_at")
 
   // 关联
-  user               User                 @relation(fields: [userId], references: [user_id], onDelete: Cascade)
-  messageAttachments MessageAttachment[]
-  folderItems        FolderItem[]         // 文件夹关联
+  user        User         @relation(fields: [userId], references: [user_id], onDelete: Cascade)
+  folderItems FolderItem[] // 文件夹关联
 
   @@index([userId])
   @@index([createTime])

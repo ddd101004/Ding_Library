@@ -35,7 +35,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
   // 检查文件类型是否支持
   const isSupportedFileType = (fileName: string): boolean => {
     const ext = fileName.split('.').pop()?.toLowerCase();
-    return ['pdf', 'doc', 'docx', 'txt'].includes(ext || '');
+    return ['pdf', 'docx', 'txt'].includes(ext || '');
   };
 
   // 检查文件大小是否超过限制
@@ -83,7 +83,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
 
     // 检查文件类型
     if (!isSupportedFileType(file.name)) {
-      toast.error('不支持的文件类型，请上传 PDF、Word 或 TXT 格式的文件');
+      toast.error('不支持的文件类型，仅支持 PDF、DOCX、TXT 格式（不支持 DOC 和 MD）');
       return;
     }
 
@@ -471,7 +471,7 @@ export default function ImportModal({ isOpen, onClose, onFileImported, onRefresh
         ref={fileInputRef}
         type="file"
         className="hidden"
-        accept=".pdf,.doc,.docx,.txt"
+        accept=".pdf,.docx,.txt"
         onChange={handleFileUpload}
         disabled={isProcessing}
       />

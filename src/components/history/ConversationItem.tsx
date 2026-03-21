@@ -41,6 +41,7 @@ interface ConversationItemProps {
   onThreeDotClick: (id: string, e: React.MouseEvent) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
   onExport: (id: string, e: React.MouseEvent) => void;
+  onAddToFolder?: (id: string, e: React.MouseEvent) => void;
   exporting?: string | null;
 }
 
@@ -51,6 +52,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
   onThreeDotClick,
   onDelete,
   onExport,
+  onAddToFolder,
   exporting,
 }) => {
   const getDisplayContent = () => {
@@ -119,6 +121,28 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
         {isSelected ? (
           <TooltipProvider>
             <>
+              {/* 导入知识库按钮 */}
+              {onAddToFolder && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <button
+                      className="w-5 h-5 flex items-center justify-center mr-[30px]"
+                      onClick={(e) => onAddToFolder(conv.conversation_id, e)}
+                    >
+                      <Image
+                        src="/slibar/slibar-createbase@2x.png"
+                        alt="导入知识库"
+                        width={20}
+                        height={20}
+                      />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>导入知识库</p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+
               {/* 导出按钮 */}
               <Tooltip>
                 <TooltipTrigger asChild>

@@ -10,7 +10,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   const [topics, setTopics] = useState<string[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [refreshCount, setRefreshCount] = useState(0);
-  const [hasInitialized, setHasInitialized] = useState(false); // 标记是否已初始化
+  const [loadedTopicType, setLoadedTopicType] = useState<string | null>(null); // 记录已加载的主题类型
   const { preloadData, isLoading } = usePreload();
 
   const quickQADefaults = [
@@ -102,13 +102,12 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   }, [preloadData]);
 
   const handleTopicButtonClick = useCallback((type: string) => {
-    // 仅在首次进入深度学习模式时初始化关键词
-    if (!hasInitialized) {
+    // 当主题类型变化时，重新加载关键词
+    if (loadedTopicType !== type) {
       fetchDeepLearningKeywords(type, false);
-      setHasInitialized(true);
+      setLoadedTopicType(type);
     }
-    // 后续点击不同主题按钮不会刷新关键词
-  }, [hasInitialized, currentFunction, fetchDeepLearningKeywords]);
+  }, [loadedTopicType, fetchDeepLearningKeywords]);
 
   const handleTopicClick = useCallback((topic: string) => {
     setSelectedTopic(topic);
@@ -120,7 +119,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
       fetchQuickQAQuestions(true);
     } else if (currentFunction === "deepStudy" && selectedButton) {
       fetchDeepLearningKeywords(selectedButton, true);
-      // 重置初始化状态，但已加载的关键词保持不变
+      // 强制刷新，重新加载关键词
     } else {
       console.warn("无法换一批：缺少必要的参数");
     }

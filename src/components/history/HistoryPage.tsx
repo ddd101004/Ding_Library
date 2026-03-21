@@ -200,6 +200,13 @@ const History: React.FC = () => {
   >(null);
   const [exporting, setExporting] = useState<string | null>(null);
   const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
+
+  // 文件夹相关 state
+  const [folders, setFolders] = useState<Array<{folder_id: string; folder_name: string}>>([]);
+  const [showFolderSelector, setShowFolderSelector] = useState<boolean>(false);
+  const [conversationToAdd, setConversationToAdd] = useState<string | null>(null);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+
   const router = useRouter();
 
   const { containerRef: scrollContainerRef } = useAutoHideScrollbar();
@@ -576,6 +583,78 @@ const History: React.FC = () => {
     setConversationToDelete(null);
   };
 
+  // 获取用户文件夹列表
+  const fetchFolders = async (): Promise<Array<{folder_id: string; folder_name: string}>> => {
+    try {
+      const response = await apiGet('/api/folders');
+      if (response?.code === 200 && response?.data?.folders) {
+        const folderList = response.data.folders.map((f: any) => ({
+          folder_id: f.folder_id,
+          folder_name: f.folder_name,
+        }));
+        setFolders(folderList);
+        return folderList;
+      }
+      return [];
+    } catch (err: any) {
+      console.error('获取文件夹列表失败:', err);
+      toast.error('获取文件夹列表失败');
+      return [];
+    }
+  };
+
+  // 处理添加到文件夹按钮点击
+  const handleAddToFolder = async (conversationId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    // 先获取文件夹列表
+    const folderList = await fetchFolders();
+
+    // 如果没有文件夹，提示用户
+    if (folderList.length === 0) {
+      toast.error('请先创建文件夹');
+      return;
+    }
+
+    // 设置要添加的对话ID并显示选择器
+    setConversationToAdd(conversationId);
+    setSelectedFolder(folderList[0].folder_id);
+    setShowFolderSelector(true);
+  };
+
+  // 确认添加到文件夹
+  const handleConfirmAddToFolder = async () => {
+    if (!conversationToAdd || !selectedFolder) {
+      setShowFolderSelector(false);
+      return;
+    }
+
+    try {
+      const { apiPost } = await import('@/api/request');
+
+      await apiPost(`/api/folders/${selectedFolder}/items`, {
+        item_type: 'conversation',
+        item_id: conversationToAdd,
+      });
+
+      toast.success('已添加到文件夹');
+      setShowFolderSelector(false);
+      setConversationToAdd(null);
+      setSelectedFolder(null);
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.message || err.message || '添加失败';
+      toast.error(errorMessage);
+      setShowFolderSelector(false);
+    }
+  };
+
+  // 取消添加到文件夹
+  const handleCancelAddToFolder = () => {
+    setShowFolderSelector(false);
+    setConversationToAdd(null);
+    setSelectedFolder(null);
+  };
+
   // 处理导出会话
   const handleExportConversation = async (
     conversationId: string,
@@ -837,6 +916,59 @@ const History: React.FC = () => {
           onConfirm={handleConfirmDelete}
         />
 
+        {/* 文件夹选择器弹窗 */}
+        {showFolderSelector && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center">
+            <div
+              className="absolute inset-0 bg-black bg-opacity-50"
+              onClick={handleCancelAddToFolder}
+            />
+            <div
+              className="relative bg-white rounded-[20px] border border-[#E9ECF2] shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] w-[500px] max-h-[600px] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h3 className="text-[20px] font-medium text-[#333333] p-6 pb-4 text-center">
+                选择文件夹
+              </h3>
+
+              <div className="flex-1 overflow-y-auto px-6 pb-6">
+                <div className="space-y-2">
+                  {folders.map((folder) => (
+                    <div
+                      key={folder.folder_id}
+                      onClick={() => setSelectedFolder(folder.folder_id)}
+                      className={`w-full px-4 py-3 rounded-[12px] cursor-pointer transition-colors ${
+                        selectedFolder === folder.folder_id
+                          ? 'bg-[#0D9488] text-white'
+                          : 'bg-[#F8F9FA] text-[#333333] hover:bg-[#E9ECF2]'
+                      }`}
+                    >
+                      <div className="text-[16px] font-medium">
+                        {folder.folder_name}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="flex justify-center space-x-[20px] px-6 pb-6 pt-2">
+                <button
+                  onClick={handleCancelAddToFolder}
+                  className="w-[140px] h-[50px] rounded-[12px] border border-[#C8C9CC] bg-white text-[#333333] font-medium text-[16px] hover:bg-gray-50 transition-colors"
+                >
+                  取消
+                </button>
+                <button
+                  onClick={handleConfirmAddToFolder}
+                  className="w-[140px] h-[50px] rounded-[12px] bg-[#0D9488] text-white font-medium text-[16px] hover:bg-[#0F766E] transition-colors"
+                >
+                  确认
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* 标题和搜索框区域 - 保持左对齐 */}
         <div className="w-full max-w-[1200px] flex flex-col gap-6">
           {/* 标题区域 */}
@@ -897,6 +1029,7 @@ const History: React.FC = () => {
               onThreeDotClick={handleThreeDotClick}
               onDelete={handleDeleteClick}
               onExport={handleExportConversation}
+              onAddToFolder={handleAddToFolder}
               loading={isLoading && !isLoadingMore}
               error={error}
               exporting={exporting}
@@ -912,6 +1045,7 @@ const History: React.FC = () => {
                 onThreeDotClick={handleThreeDotClick}
                 onDelete={handleDeleteClick}
                 onExport={handleExportConversation}
+                onAddToFolder={handleAddToFolder}
                 loading={false}
                 error={null}
                 exporting={exporting}
@@ -928,6 +1062,7 @@ const History: React.FC = () => {
                 onThreeDotClick={handleThreeDotClick}
                 onDelete={handleDeleteClick}
                 onExport={handleExportConversation}
+                onAddToFolder={handleAddToFolder}
                 loading={false}
                 error={null}
                 exporting={exporting}
