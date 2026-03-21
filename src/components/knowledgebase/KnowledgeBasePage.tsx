@@ -308,7 +308,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
         className={`fixed top-0 z-40 bg-gradient-to-r from-[#F0FDFA] to-[#ECFDF5] transition-all duration-300 ${
           isSidebarOpen ? "left-[193px] sm:left-[209px] md:left-[225px]" : "left-[85px] sm:left-[80px]"
         }`}
-        style={{ right: '80px' }}
+        style={{ right: '5px' }}
       >
         <div className="h-[84px] flex items-center px-6 gap-6">
           {/* 知识库标题 */}
@@ -444,7 +444,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
       {/* 占位元素，防止内容被固定导航栏遮挡 */}
       <div className="h-[84px]" />
 
-      <div className="flex h-full w-full">
+      <div className="flex h-full w-full overflow-hidden">
       {/* 知识库弹窗（创建/编辑） */}
       <KnowledgeBaseModal
         isOpen={showKnowledgeBaseModal}
@@ -468,7 +468,7 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
       {/* 右侧内容区域 - 响应式布局 */}
       <div
         ref={scrollContainerRef}
-        className="flex-1 bg-white overflow-y-auto min-w-0 auto-hide-scrollbar"
+        className="flex-1 bg-white min-w-0 ml-[10px]"
       >
         {showDetailPage && selectedFolder ? (
           // 文件夹详情页面

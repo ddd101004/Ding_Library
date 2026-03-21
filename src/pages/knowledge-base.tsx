@@ -13,6 +13,7 @@ export default function KnowledgeBase() {
         title="知识库"
         backgroundColor="#FFFFFF"
         isKnowledgeBase={true}
+        skipMainContent={true}
       >
         <KnowledgeBasePage />
       </WithSidebarLayout>

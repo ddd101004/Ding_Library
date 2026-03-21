@@ -466,7 +466,7 @@ export default function AcademicSearchPage() {
         `}
       >
         {/* 搜索框区域 - 所有标签页统一布局：居中显示，固定宽度1199px */}
-        <div className="mx-auto w-[1199px]">
+        <div className="mx-auto w-full max-w-[1199px] px-4">
             <div
               ref={headerRef}
               className={`${isScrolled ? "fixed top-0 left-0 right-0 z-50 bg-white shadow-lg py-4" : "mb-8"} transition-all duration-300`}
@@ -523,8 +523,8 @@ export default function AcademicSearchPage() {
             )}
           </div>
 
-        {/* 搜索结果区域 - 居中显示，固定宽度1199px */}
-        <div className="mx-auto w-[1199px]">
+        {/* 搜索结果区域 - 居中显示，响应式宽度 */}
+        <div className="mx-auto w-full max-w-[1199px] px-4">
             {/* 中文发现 */}
             {currentTab === "中文发现" && (
               <ChineseDiscoveryTab

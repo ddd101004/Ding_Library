@@ -12,7 +12,7 @@ interface CitationModalProps {
   paperId?: string;
 }
 
-type CitationFormat = "APA" | "MLA" | "Chicago" | "BibTeX" | "RIS";
+type CitationFormat = "APA" | "MLA" | "Chicago" | "GB/T 7714-2015" | "BibTeX" | "RIS";
 type DownloadFormat = "BibTeX" | "RIS";
 
 interface CitationData {
@@ -46,6 +46,7 @@ export default function CitationModal({
     "APA",
     "MLA",
     "Chicago",
+    "GB/T 7714-2015",
     "BibTeX",
     "RIS",
   ];
@@ -201,24 +202,24 @@ export default function CitationModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-start justify-center z-50 pt-[10vh]">
+    <div className="fixed inset-0 flex items-center justify-center z-50 p-4">
       {/* 背景遮罩 */}
       <div
         className="absolute inset-0 bg-black bg-opacity-50"
         onClick={onClose}
       />
 
-      {/* 弹窗主体 */}
-      <div className=" mt-[100px] relative bg-white shadow-lg flex flex-col w-[864px] h-[593px] shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-[20px] border border-[#E9ECF2]">
+      {/* 弹窗主体 - 使用相对单位实现等比例缩放 */}
+      <div className="relative bg-white shadow-lg flex flex-col w-full max-w-[864px] max-h-[90vh] shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-[20px] border border-[#E9ECF2] overflow-hidden">
         {/* 引用标题 */}
-        <div className="font-medium mt-[26px] ml-[32px] font-[500] text-[30px] text-[#333333]">
+        <div className="font-medium mt-[3%] ml-[4%] font-[500] text-[clamp(20px,3vw,30px)] text-[#333333]">
           引用
         </div>
 
         {/* 关闭按钮 */}
         <button
           onClick={onClose}
-          className="absolute z-10 hover:opacity-70 transition-opacity flex items-center justify-center top-[31px] right-[31px] w-[18px] h-[18px] p-0 bg-transparent border-none cursor-pointer"
+          className="absolute z-10 hover:opacity-70 transition-opacity flex items-center justify-center top-[3%] right-[4%] w-[clamp(14px,2vw,18px)] h-[clamp(14px,2vw,18px)] p-0 bg-transparent border-none cursor-pointer"
         >
           <img
             src="/paper/paper-critationclose.png"
@@ -228,114 +229,117 @@ export default function CitationModal({
         </button>
 
         {/* 横线 */}
-        <div className="w-[803px] h-[1px] bg-[#E0E1E5] rounded-[1px] mt-[26px] ml-[26px]" />
+        <div className="w-[92%] h-[1px] bg-[#E0E1E5] rounded-[1px] mt-[3%] ml-[4%]" />
 
-        {/* 选择区域 */}
-        <div className="flex items-center justify-start mx-[30px] mt-[30px]">
-          {/* 引用格式选择 */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => {
-                setShowFormatDropdown(!showFormatDropdown);
-              }}
-              className="flex items-center justify-between w-[300px] h-[36px] bg-[#F7F8FA] rounded-[4px] border border-[#C8C9CC] px-[20px] text-base"
-            >
-              <span>{citationFormat}</span>
-              <img
-                src="/chat-page/chat-page-open.png"
-                alt="下拉"
-                width={10}
-                height={6}
-                className={`w-[10px] h-[6px] transition-transform duration-200 ${
-                  showFormatDropdown ? "rotate-180" : ""
-                }`}
-              />
-            </button>
+        {/* 可滚动内容区域 */}
+        <div className="flex-1 overflow-y-auto px-[4%]">
+          {/* 选择区域 */}
+          <div className="flex items-center justify-start mt-[3%]">
+            {/* 引用格式选择 */}
+            <div className="relative w-full max-w-[350px]" ref={dropdownRef}>
+              <button
+                onClick={() => {
+                  setShowFormatDropdown(!showFormatDropdown);
+                }}
+                className="flex items-center justify-between w-full h-[clamp(32px,4vw,36px)] bg-[#F7F8FA] rounded-[4px] border border-[#C8C9CC] px-[clamp(12px,2vw,20px)] text-[clamp(12px,1.5vw,16px)]"
+              >
+                <span>{citationFormat}</span>
+                <img
+                  src="/chat-page/chat-page-open.png"
+                  alt="下拉"
+                  width={10}
+                  height={6}
+                  className={`w-[clamp(8px,1vw,10px)] h-[clamp(5px,0.8vw,6px)] transition-transform duration-200 ${
+                    showFormatDropdown ? "rotate-180" : ""
+                  }`}
+                />
+              </button>
 
-            {showFormatDropdown && (
-              <div className="absolute top-full left-0 bg-white shadow-lg z-10 w-[300px] border border-[#C8C9CC] border-t-0 rounded-b-[4px]">
-                {citationFormats.map((format) => (
-                  <button
-                    key={format}
-                    onClick={() => {
-                      setCitationFormat(format);
-                      setShowFormatDropdown(false);
-                    }}
-                    className="w-full text-left px-3 py-2 hover:bg-gray-100 text-base text-[#333333]"
-                  >
-                    {format}
-                  </button>
-                ))}
+              {showFormatDropdown && (
+                <div className="absolute top-full left-0 bg-white shadow-lg z-10 w-full border border-[#C8C9CC] border-t-0 rounded-b-[4px] max-h-[200px] overflow-y-auto">
+                  {citationFormats.map((format) => (
+                    <button
+                      key={format}
+                      onClick={() => {
+                        setCitationFormat(format);
+                        setShowFormatDropdown(false);
+                      }}
+                      className="w-full text-left px-3 py-2 hover:bg-gray-100 text-[clamp(12px,1.5vw,16px)] text-[#333333]"
+                    >
+                      {format}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 引用内容区域 */}
+          <div className="w-full min-h-[clamp(80px,10vw,100px)] max-h-[clamp(100px,15vw,150px)] bg-[#F7F8FA] rounded-[4px] border border-[#C8C9CC] my-[clamp(12px,2vw,20px)] p-[clamp(8px,1.5vw,12px)] overflow-y-auto scrollbar-thin">
+            {isLoading ? (
+              <div className="text-[#999999] text-center flex items-center justify-center min-h-[60px] text-[clamp(12px,1.5vw,16px)]">
+                加载中...
+              </div>
+            ) : (
+              <div className="text-[#333333] whitespace-pre-wrap text-[clamp(12px,1.5vw,16px)] break-words">
+                {citationData?.formatted_text || "暂无引用内容"}
               </div>
             )}
           </div>
+
+          {/* 下载文字 */}
+          <div className="mt-[clamp(20px,3vw,39px)] font-[500] text-[clamp(14px,1.8vw,18px)] text-[#333333]">
+            下载
+          </div>
+
+          {/* 下载说明文字 */}
+          <div className="mt-[clamp(12px,1.5vw,18px)] text-[clamp(12px,1.5vw,16px)] text-[#999999] leading-relaxed">
+            下载可以被引用管理软件(如 BibTex、EndNote、ProCite、RefWorks 和
+            ReferenceManager)导入的 BibTex 或 RIS 格式的引用文件。
+          </div>
+
+          {/* 下载格式选择 */}
+          <div className="flex items-center mt-[clamp(15px,2vw,25px)] pb-[clamp(15px,2vw,20px)]">
+            {downloadFormats.map((format, index) => (
+              <React.Fragment key={format}>
+                {index > 0 && <div className="w-[clamp(15px,2vw,39px)]" />}
+                <button
+                  onClick={() => setDownloadFormat(format as "BibTeX" | "RIS")}
+                  className="flex items-center"
+                >
+                  {downloadFormat === format ? (
+                    <img
+                      src="/chat-page/point1.png"
+                      alt="选中"
+                      width={20}
+                      height={20}
+                      className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)]"
+                    />
+                  ) : (
+                    <div className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)] bg-white rounded-[10px] border border-[#C8C9CC]" />
+                  )}
+                  <span className="ml-[clamp(8px,1.2vw,11px)] text-[clamp(12px,1.5vw,16px)] text-[#333333]">
+                    {format}
+                  </span>
+                </button>
+              </React.Fragment>
+            ))}
+          </div>
         </div>
 
-        {/* 引用内容区域 */}
-        <div className="w-[804px] h-[100px] bg-[#F7F8FA] rounded-[4px] border border-[#C8C9CC] my-[20px] mx-auto mt-[20px] mb-0 p-[12px] overflow-y-auto scrollbar-thin">
-          {isLoading ? (
-            <div className="text-base text-[#999999] text-center leading-[76px]">
-              加载中...
-            </div>
-          ) : (
-            <div className="text-base text-[#333333] whitespace-pre-wrap">
-              {citationData?.formatted_text || "暂无引用内容"}
-            </div>
-          )}
-        </div>
-
-        {/* 下载文字 */}
-        <div className="ml-[30px] mt-[39px] font-[500] text-base text-[#333333]">
-          下载
-        </div>
-
-        {/* 下载说明文字 */}
-        <div className="ml-[30px] mt-[18px] text-base text-[#999999]">
-          下载可以被引用管理软件(如 BibTex、EndNote、ProCite、RefWorks 和
-          ReferenceManager)导入的 BibTex 或 RIS 格式的引用文件。
-        </div>
-
-        {/* 下载格式选择 */}
-        <div className="flex items-center ml-[30px] mt-[25px]">
-          {downloadFormats.map((format, index) => (
-            <React.Fragment key={format}>
-              {index > 0 && <div className="w-[39px]" />}
-              <button
-                onClick={() => setDownloadFormat(format as "BibTeX" | "RIS")}
-                className="flex items-center"
-              >
-                {downloadFormat === format ? (
-                  <img
-                    src="/chat-page/point1.png"
-                    alt="选中"
-                    width={20}
-                    height={20}
-                    className="w-[20px] h-[20px]"
-                  />
-                ) : (
-                  <div className="w-[20px] h-[20px] bg-white rounded-[10px] border border-[#C8C9CC]" />
-                )}
-                <span className="ml-[11px] text-base text-[#333333]">
-                  {format}
-                </span>
-              </button>
-            </React.Fragment>
-          ))}
-        </div>
-
-        {/* 按钮区域 */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-end p-[30px]">
+        {/* 按钮区域 - 固定在底部 */}
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-0 p-[clamp(15px,2vw,30px)] border-t border-[#E0E1E5] bg-white">
           {/* 取消按钮 */}
           <button
             onClick={onClose}
-            className="flex items-center justify-center w-[128px] h-[40px] bg-white rounded-[20px] border border-[#C8C9CC] text-base text-[#666666] cursor-pointer mr-[20px]"
+            className="flex items-center justify-center w-full sm:w-[clamp(90px,12vw,128px)] h-[clamp(32px,4vw,40px)] bg-white rounded-[20px] border border-[#C8C9CC] text-[clamp(12px,1.5vw,16px)] text-[#666666] cursor-pointer sm:mr-[clamp(12px,2vw,20px)]"
           >
             取消
           </button>
           {/* 确认按钮 */}
           <button
             onClick={handleConfirm}
-            className="citation-confirm-btn flex items-center justify-center w-[128px] h-[40px] bg-[#0D9488] rounded-[20px] text-base text-white border-none cursor-pointer hover:scale-[1.01] transition-transform"
+            className="citation-confirm-btn flex items-center justify-center w-full sm:w-[clamp(90px,12vw,128px)] h-[clamp(32px,4vw,40px)] bg-[#0D9488] rounded-[20px] text-[clamp(12px,1.5vw,16px)] text-white border-none cursor-pointer hover:scale-[1.01] transition-transform"
           >
             确认
           </button>

@@ -206,10 +206,10 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
   }, []);
 
   return (
-    <div className="relative">
+    <div className="relative w-full max-w-6xl mx-auto px-4">
       {/* 头部：图标和详情文字 */}
       <div
-        className="flex items-center cursor-pointer ml-[305px]"
+        className="flex items-center cursor-pointer"
         onClick={onBack}
       >
         <img
@@ -224,7 +224,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
       <div className="w-full h-px bg-[#E0E1E5] mt-6" />
 
       {/* 白色卡片容器 */}
-      <div className="relative mt-[23px] ml-[305px] mr-[305px] w-[calc(100vw-610px)] h-[1060px] overflow-y-auto overflow-x-hidden scrollbar-thin">
+      <div className="relative mt-[23px] w-full h-[1060px] overflow-y-auto overflow-x-hidden scrollbar-thin">
         {/* 导航区域 - 修复鼠标事件处理 */}
         <div
           ref={navTriggerRef}

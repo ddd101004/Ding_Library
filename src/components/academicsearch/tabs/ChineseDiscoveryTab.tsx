@@ -141,7 +141,7 @@ export default function ChineseDiscoveryTab({
   return (
     <>
       <div
-        className="font-medium text-[20px] text-[#333333] mb-8"
+        className="font-medium text-[18px] sm:text-[20px] text-[#333333] mb-8"
       >
         共找到 {total} 个结果
       </div>
@@ -153,7 +153,7 @@ export default function ChineseDiscoveryTab({
               ref={el => {
                 paperRefs.current[index] = el;
               }}
-              className="w-full min-h-[270px] bg-white rounded-[20px] border border-[#E0E1E5] hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer p-[21px] relative"
+              className="w-full min-h-[240px] sm:min-h-[270px] bg-white rounded-[20px] border border-[#E0E1E5] hover:border-blue-300 hover:shadow-md transition-all duration-200 cursor-pointer p-4 sm:p-[21px] relative"
               onClick={(e) => {
                 // 如果点击的是收藏按钮，不触发论文点击
                 if ((e.target as HTMLElement).closest('.favorite-button')) {
@@ -164,7 +164,7 @@ export default function ChineseDiscoveryTab({
             >
               {/* 引用按钮 */}
               <div
-                className="favorite-button absolute flex items-center justify-center cursor-pointer hover:shadow-md transition-all duration-200 w-[56px] h-[36px] bg-white border border-[#C8C9CC] rounded-[18px] bottom-[20px] right-[20px]"
+                className="favorite-button absolute flex items-center justify-center cursor-pointer hover:shadow-md transition-all duration-200 w-[52px] sm:w-[56px] h-[34px] sm:h-[36px] bg-white border border-[#C8C9CC] rounded-[18px] bottom-[15px] sm:bottom-[20px] right-[15px] sm:right-[20px]"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleQuoteClick(paper, e);
@@ -173,11 +173,11 @@ export default function ChineseDiscoveryTab({
                 <img
                   src="/paper/paper-quote@2x.png"
                   alt="引用"
-                  className="w-[17px] h-[16px]"
+                  className="w-[15px] h-[14px] sm:w-[17px] sm:h-[16px]"
                 />
               </div>
               {/* 标题显示 */}
-              <h4 className="font-medium text-[20px] mb-2">
+              <h4 className="font-medium text-[18px] sm:text-[20px] mb-2">
                 {paper.title_zh || paper.title}
               </h4>
               {/* 显示前两个作者，包含首字母头像 */}

@@ -10,7 +10,9 @@
       "Bash(pnpm add:*)",
       "Bash(findstr:*)",
       "Bash(mysql:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(taskkill:*)",
+      "Bash(npx kill-port:*)"
     ],
     "deny": [],
     "ask": []

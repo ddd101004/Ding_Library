@@ -119,7 +119,11 @@ const MainContent: React.FC<MainContentProps> = ({
       ) : (
         <div
           ref={scrollContainerRef}
-          className={`flex-1 overflow-y-auto overflow-x-hidden auto-hide-scrollbar ${
+          className={`flex-1 overflow-x-hidden ${
+            isKnowledgeBase
+              ? "" // 知识库页面：不需要滚动条
+              : "overflow-y-auto auto-hide-scrollbar" // 其他页面：保留滚动条
+          } ${
             isKnowledgeBase
               ? ""
               : isSmallScreen ? "p-2 sm:p-3 md:p-4" : "p-6 sm:p-7 md:p-8"

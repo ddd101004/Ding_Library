@@ -526,6 +526,19 @@ export const formatCitation = (
       case "CHICAGO":
         return `${authorList}. "${paper.title}." ${paper.publication_name || ""} ${paper.volume || ""}${paper.issue ? ` (${paper.issue})` : ""} (${paper.publication_year || "n.d."}): ${paper.start_page || ""}.`;
 
+      case "GBT7714":
+      case "GB/T7714":
+      case "GB/T 7714-2015":
+        // GB/T 7714-2015 中国国家标准格式
+        // 格式：作者. 题名[J]. 期刊名, 年, 卷(期): 起-止页码.
+        // 中文作者用"等"，英文作者用"et al."
+        const isChineseAuthors = authorsArray.some(author => /[\u4e00-\u9fa5]/.test(author));
+        const authorListGBT = isChineseAuthors
+          ? authorsArray.slice(0, 3).join(", ") + (authorsArray.length > 3 ? ", 等" : "")
+          : authorList; // 英文作者保持原样
+
+        return `${authorListGBT}. ${paper.title}[J]. ${paper.publication_name || ""}${paper.publication_year ? `, ${paper.publication_year}` : ""}${paper.volume ? `, ${paper.volume}` : ""}${paper.issue ? `(${paper.issue})` : ""}${paper.start_page ? `: ${paper.start_page}` : ""}.`;
+
       case "BIBTEX":
         const firstAuthor =
           authorsArray.length > 0

@@ -334,7 +334,7 @@ export default function FolderDetailPage({
   return (
     <div className="w-full h-full p-3 sm:p-4 md:p-6 pt-0 flex flex-col">
       {/* 固定的头部区域 - 包含分割线以上的所有内容 */}
-      <div className="flex-shrink-0 mt-5">
+      <div className="flex-shrink-0 mt-2.5">
         {/* 文件夹标题栏 */}
         <div className="mb-4 sm:mb-5 md:mb-6">
           <div className="flex items-center justify-between flex-wrap gap-2 sm:gap-0">
@@ -450,7 +450,7 @@ export default function FolderDetailPage({
 
       {/* 固定表头 */}
       {!isLoading && folderContents.length > 0 && (
-        <div className="flex-shrink-0 mb-3 sm:mb-4">
+        <div className="flex-shrink-0 mb-3 sm:mb-4 -mt-[10px]">
           {/* 表头 */}
           <div className="flex w-full">
             <div className="w-10 sm:w-14 md:w-20 flex justify-center flex-shrink-0">
@@ -498,7 +498,7 @@ export default function FolderDetailPage({
       <div className="flex-[1_1_0] min-h-0 flex flex-col">
         <div
           ref={scrollContainerRef}
-          className="overflow-y-auto auto-hide-scrollbar h-[calc(100%-50px)]"
+          className="overflow-y-auto auto-hide-scrollbar h-[calc(100%-140px)]"
         >
         {(isDeleting || isMoving) && (
           <>
@@ -531,17 +531,19 @@ export default function FolderDetailPage({
             {/* 表格内容 */}
             {folderContents.map((item, index) => (
               <div key={item.item_id}>
-                <div className="flex items-center h-12 sm:h-14 md:h-16 w-full">
+                <div
+                  className="flex items-center h-12 sm:h-14 md:h-16 w-full cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => handleCheckboxClick(item.item_id)}
+                >
                   {/* 复选框列 */}
                   <div className="w-10 sm:w-14 md:w-20 flex justify-center flex-shrink-0">
                     <div
-                      onClick={() => handleCheckboxClick(item.item_id)}
                       className={cn(
                         "w-5 h-5 bg-white rounded border relative transition-colors",
                         selectedItems.has(item.item_id)
                           ? "border-[#0D9488] bg-[#0D9488]"
                           : "border-[#666666] bg-white",
-                        isDeleting || isMoving || isImporting ? 'cursor-not-allowed opacity-50' : 'cursor-pointer hover:border-[#0D9488]'
+                        isDeleting || isMoving || isImporting ? 'cursor-not-allowed opacity-50' : ''
                       )}
                     >
                       {selectedItems.has(item.item_id) && (
@@ -577,7 +579,10 @@ export default function FolderDetailPage({
                   </div>
 
                   {/* 操作列 */}
-                  <div className="w-24 sm:w-32 md:w-40 text-gray-700 flex-shrink-0 flex items-center justify-center mr-[50px]">
+                  <div
+                    className="w-24 sm:w-32 md:w-40 text-gray-700 flex-shrink-0 flex items-center justify-center mr-[50px]"
+                    onClick={(e) => e.stopPropagation()}
+                  >
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -604,12 +609,11 @@ export default function FolderDetailPage({
 
         {/* 底部操作按钮 */}
         {showBulkActions && (
-          <div>
+          <div className="fixed bottom-2 left-0 right-0 z-100 flex justify-center px-4 transition-all duration-300 ease-in-out">
             {/* 按钮容器 */}
             <div
               className={cn(
-                "fixed bottom-2 z-100 transition-all duration-300 ease-in-out",
-                sidebarOpen ? "w-[calc(100%-755px)] left-[700px]" : "w-[calc(100%-535px)] left-[490px]",
+                "w-full max-w-4xl bg-white rounded-lg shadow-lg transition-all duration-300 ease-in-out",
                 isDeleting || isMoving ? "opacity-50 pointer-events-none" : "opacity-100 pointer-events-auto"
               )}
             >

@@ -29,7 +29,7 @@ export const STRING_LIMITS = {
 
   // 消息引用相关 (参考: MessageCitation 表)
   citation_type: { min: 1, max: 20 }, // 引用类型 (db: VarChar(20))
-  citation_format: { min: 1, max: 20 }, // 引用格式 (db: VarChar(20))
+  citation_format: { min: 1, max: 30 }, // 引用格式 (db: VarChar(20)) - 增加以支持 GB/T 7714-2015
   search_keywords: { min: 1, max: 500 }, // 搜索关键词 (db: VarChar(500))
 
   // 文件夹相关 (参考: PaperFolder 表)

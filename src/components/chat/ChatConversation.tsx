@@ -768,7 +768,14 @@ export default function ChatConversation({
 
       {/* 返回按钮 - 仅在从知识库进入时显示 */}
       {from === 'knowledgebase' && folderId && (
-        <div className="fixed top-6 left-[96px] z-50">
+        <div
+          className="fixed top-6 z-50 transition-all duration-300"
+          style={{
+            left: isSidebarOpen
+              ? 'calc(14rem + 24px)'  // 侧边栏宽度(224px) + 间距(24px)
+              : 'calc(5rem + 24px)'    // 侧边栏宽度(80px) + 间距(24px)
+          }}
+        >
           <button
             onClick={() => router.push({
               pathname: '/knowledge-base',
