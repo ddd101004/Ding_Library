@@ -89,21 +89,21 @@ export default function SearchModal() {
   if (!isSearchModalOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div
         ref={modalRef}
-        className="bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-[20px] border border-[#E9ECF2] w-[1000px] p-6 max-h-[600px]"
+        className="bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-[20px] border border-[#E9ECF2] w-full max-w-[1000px] p-[clamp(15px,2vw,24px)] max-h-[90vh]"
         style={{
           height: `${calculateModalHeight()}px`,
         }}
       >
         {/* 搜索框 */}
         <div className="mb-2 -mt-1">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-[clamp(8px,1.2vw,12px)]">
             <img
               src="/slibar/slibar-questions-answers.png"
               alt="学术搜索"
-              className="w-5 h-5"
+              className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)]"
             />
             <input
               ref={inputRef}
@@ -112,23 +112,23 @@ export default function SearchModal() {
               onChange={(e) => setSearchKeyword(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder="一站式学术搜索-文献/期刊/学者/用户"
-              className="flex-1 p-4 text-lg focus:outline-none border-none border-none border-none border-none"
+              className="flex-1 p-[clamp(10px,1.5vw,16px)] text-[clamp(14px,1.8vw,18px)] focus:outline-none border-none bg-transparent"
                           />
           </div>
         </div>
 
         {/* 分隔线 - 在搜索图标下方30px */}
         <div
-          className="w-[940px] h-[1px] bg-[#E0E1E5] rounded-[1px] mx-auto mt-[15px]"
+          className="w-full h-px bg-[#E0E1E5] rounded-[1px] mx-auto mt-[clamp(10px,1.5vw,15px)]"
         ></div>
 
         {/* 搜索历史 */}
         <div className="-mt-3">
           {searchHistory.length > 0 && (
             <>
-              <div className="flex justify-between items-center px-[40px] mt-4">
+              <div className="flex justify-between items-center px-[clamp(20px,3vw,40px)] mt-[clamp(12px,2vw,16px)]">
                 <h3
-                  className="text-primary text-[16px] font-normal leading-[40px] font-[500] text-[#333333]"
+                  className="text-[clamp(14px,1.8vw,16px)] font-[500] text-[#333333] leading-[clamp(32px,4vw,40px)]"
                 >
                   搜索历史
                 </h3>
@@ -139,25 +139,25 @@ export default function SearchModal() {
                   <img
                     src="/settings/settings-delete.png"
                     alt="清空历史"
-                    className="w-[19px] h-[22px]"
+                    className="w-[clamp(15px,2vw,19px)] h-[clamp(18px,2.2vw,22px)]"
                   />
                 </button>
               </div>
-              <div className="flex flex-wrap gap-3 mt-1 px-[40px] pb-4">
+              <div className="flex flex-wrap gap-[clamp(8px,1.2vw,12px)] mt-[clamp(4px,0.6vw,4px)] px-[clamp(20px,3vw,40px)] pb-4">
                 {searchHistory.map((keyword: any, index: any) => (
                   <div
                     key={index}
-                    className="relative group w-[120px] h-[40px] bg-white rounded-[20px] border border-[#C8C9CC] hover:border-[#6FCF97] transition-colors"
+                    className="relative group w-[clamp(90px,12vw,120px)] h-[clamp(32px,4vw,40px)] bg-white rounded-[20px] border border-[#C8C9CC] hover:border-[#6FCF97] transition-colors"
                   >
                     <button
                       onClick={() => handleHistoryClick(keyword)}
-                      className="w-full h-full flex items-center justify-center px-3 text-gray-700 hover:text-[#6FCF97] transition-colors rounded-[20px] text-primary text-[16px] font-normal leading-[40px]"
+                      className="w-full h-full flex items-center justify-center px-[clamp(8px,1.2vw,12px)] text-gray-700 hover:text-[#6FCF97] transition-colors rounded-[20px] text-[clamp(12px,1.5vw,16px)]"
                     >
                       <span className="truncate block text-center" title={keyword}>{keyword}</span>
                     </button>
                     <button
                       onClick={(e) => handleRemoveHistory(e, keyword)}
-                      className="absolute -top-1 -right-1 w-4 h-4 bg-white rounded-full flex items-center justify-center text-[10px] text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors group-hover:opacity-100 border border-[#C8C9CC]"
+                      className="absolute -top-1 -right-1 w-[clamp(14px,1.8vw,16px)] h-[clamp(14px,1.8vw,16px)] bg-white rounded-full flex items-center justify-center text-[clamp(8px,1.2vw,10px)] text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors group-hover:opacity-100 border border-[#C8C9CC]"
                     >
                       ×
                     </button>
@@ -167,7 +167,7 @@ export default function SearchModal() {
             </>
           )}
           {searchHistory.length === 0 && (
-            <div className="flex items-center justify-center py-8 text-gray-400 text-sm">
+            <div className="flex items-center justify-center py-8 text-gray-400 text-[clamp(12px,1.5vw,14px)]">
               暂无搜索历史
             </div>
           )}

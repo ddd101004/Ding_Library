@@ -12,7 +12,8 @@
       "Bash(mysql:*)",
       "Bash(ls:*)",
       "Bash(taskkill:*)",
-      "Bash(npx kill-port:*)"
+      "Bash(npx kill-port:*)",
+      "Bash(python:*)"
     ],
     "deny": [],
     "ask": []

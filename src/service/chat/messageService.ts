@@ -40,15 +40,6 @@ export interface MessageRequestParams {
   attachment_ids?: string[];
   is_deep_think?: boolean;
   auto_search_papers?: boolean;
-  // AI 伴读扩展参数
-  context_text?: string;
-  context_range?: {
-    start: number;
-    end: number;
-    page?: number;
-  };
-  operation_type?: string;
-  target_language?: string;
 }
 
 /**

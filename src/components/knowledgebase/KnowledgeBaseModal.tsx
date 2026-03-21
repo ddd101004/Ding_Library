@@ -139,105 +139,103 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="w-[864px] bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)]bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-[20px] border border-[#E9ECF2] relative">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="w-full max-w-[864px] bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-[20px] border border-[#E9ECF2] relative max-h-[90vh] overflow-hidden flex flex-col">
         <button
           onClick={onClose}
-          className="absolute top-[31px] right-[31px] w-[18px] h-[18px] flex items-center justify-center text-[18px] text-gray-500 hover:text-gray-700"
+          className="absolute z-10 top-[3%] right-[4%] w-[clamp(14px,2vw,18px)] h-[clamp(14px,2vw,18px)] flex items-center justify-center text-[clamp(14px,2vw,18px)] text-gray-500 hover:text-gray-700"
         >
           ×
         </button>
 
         <h3
-          className="text-[30px] font-[500] text-gray-900 pt-[25px] pl-[30px]"
+          className="text-[clamp(20px,3vw,30px)] font-[500] text-gray-900 pt-[3%] pl-[4%]"
         >
           {modalTitle}
         </h3>
 
         <div
-          className="bg-[#E0E1E5] w-[calc(100%-60px)] h-[1px] ml-[30px] mt-[26px] mb-[30px]"
+          className="bg-[#E0E1E5] w-[92%] h-[1px] ml-[4%] mt-[3%] mb-[3%]"
         ></div>
 
-        <div
-          className="flex items-start mb-[39px] pl-[30px]"
-        >
-          <span className="text-[16px] font-[500] text-gray-900 mr-[19px]">
-            封面
-          </span>
-          <div
-            className="relative w-[350px] h-[165px] rounded-[4px] overflow-hidden cursor-pointer group bg-gray-100"
-            onClick={() => fileInputRef.current?.click()}
-          >
-            <img
-              src={coverImage || "/slibar/slibar-directory@2x.png"}
-              alt="封面"
-              className={cn(
-                "w-full h-full object-cover transition-opacity duration-200",
-                imageLoaded ? "opacity-100" : "opacity-0"
+        <div className="flex-1 overflow-y-auto px-[4%]">
+          <div className="flex items-start mb-[clamp(20px,3vw,39px)]">
+            <span className="text-[clamp(14px,1.8vw,16px)] font-[500] text-gray-900 mr-[clamp(10px,1.5vw,19px)] flex-shrink-0">
+              封面
+            </span>
+            <div
+              className="relative w-full max-w-[350px] h-[clamp(120px,20vw,165px)] rounded-[4px] overflow-hidden cursor-pointer group bg-gray-100"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <img
+                src={coverImage || "/slibar/slibar-directory@2x.png"}
+                alt="封面"
+                className={cn(
+                  "w-full h-full object-cover transition-opacity duration-200",
+                  imageLoaded ? "opacity-100" : "opacity-0"
+                )}
+                onLoad={() => setImageLoaded(true)}
+              />
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                  <div className="w-8 h-8 border-2 border-gray-300 border-t-[#0D9488] rounded-full animate-spin"></div>
+                </div>
               )}
-              onLoad={() => setImageLoaded(true)}
-            />
-            {!imageLoaded && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                <div className="w-8 h-8 border-2 border-gray-300 border-t-[#0D9488] rounded-full animate-spin"></div>
-              </div>
-            )}
-            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              <div className="text-white text-center">
-                <svg
-                  className="w-8 h-8 mx-auto mb-2"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                <p className="text-sm">点击上传封面</p>
-              </div>
-            </div>
-            {isUploading && (
-              <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <div className="text-white text-center">
-                  <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
-                  <p className="text-sm">上传中...</p>
+                  <svg
+                    className="w-8 h-8 mx-auto mb-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <p className="text-sm">点击上传封面</p>
                 </div>
               </div>
-            )}
+              {isUploading && (
+                <div className="absolute inset-0 bg-black bg-opacity-70 flex items-center justify-center">
+                  <div className="text-white text-center">
+                    <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+                    <p className="text-sm">上传中...</p>
+                  </div>
+                </div>
+              )}
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              className="hidden"
+              accept="image/jpeg,image/jpg,image/png"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  handleCoverUpload(file);
+                }
+              }}
+            />
           </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            className="hidden"
-            accept="image/jpeg,image/jpg,image/png"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) {
-                handleCoverUpload(file);
-              }
-            }}
-          />
-        </div>
 
-        <p
-          className="text-[14px] text-[#999999] mb-[30px] pl-[76px] pr-[30px]"
-        >
-          支持jpg、jpeg、png等格式，建议上传 284*112 尺寸的图片，大小不超过 2MB
-        </p>
+          <p
+            className="text-[clamp(12px,1.5vw,14px)] text-[#999999] mb-[clamp(20px,3vw,30px)]"
+          >
+            支持jpg、jpeg、png等格式，建议上传 284*112 尺寸的图片，大小不超过 2MB
+          </p>
 
-        <div className="pl-[30px] pr-[30px]">
-          <div className="mb-[20px]">
-            <div className="w-full h-[36px] bg-white rounded-[4px] border border-[#E1E2E6] flex items-center">
-              <div className="flex items-center ml-[21px]">
+          <div className="mb-[clamp(15px,2vw,20px)]">
+            <div className="w-full h-[clamp(32px,4vw,36px)] bg-white rounded-[4px] border border-[#E1E2E6] flex items-center">
+              <div className="flex items-center ml-[clamp(12px,2vw,21px)]">
                 <div
                   className="w-[7px] h-[6px] bg-[#FF4B4B] rounded-[50%] mr-[5px]"
                 ></div>
                 <span
-                  className="text-[16px] mr-[20px] text-[#999999]"
+                  className="text-[clamp(12px,1.5vw,16px)] mr-[clamp(12px,2vw,20px)] text-[#999999]"
                 >
                   知识库名称
                 </span>
@@ -249,17 +247,17 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
                 type="text"
                 value={folderName}
                 onChange={(e) => setFolderName(e.target.value)}
-                className="flex-1 px-[15px] border-0 focus:outline-none text-[16px] bg-transparent ml-[15px]"
+                className="flex-1 px-[clamp(10px,1.5vw,15px)] border-0 focus:outline-none text-[clamp(12px,1.5vw,16px)] bg-transparent ml-[clamp(10px,1.5vw,15px)]"
                 placeholder="请输入知识库名称"
               />
             </div>
           </div>
 
-          <div className="mb-[30px]">
-            <div className="w-full h-[80px] bg-white rounded-[4px] border border-[#E1E2E6] flex items-start">
-              <div className="flex items-center ml-[21px] mt-3">
+          <div className="mb-[clamp(20px,3vw,30px)]">
+            <div className="w-full h-[clamp(60px,10vw,80px)] bg-white rounded-[4px] border border-[#E1E2E6] flex items-start">
+              <div className="flex items-center ml-[clamp(12px,2vw,21px)] mt-3">
                 <span
-                  className="text-[16px] mr-[20px] text-[#999999]"
+                  className="text-[clamp(12px,1.5vw,16px)] mr-[clamp(12px,2vw,20px)] text-[#999999]"
                 >
                   知识库介绍
                 </span>
@@ -270,7 +268,7 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="flex-1 px-[15px] py-2 border-0 focus:outline-none text-[16px] bg-transparent resize-none ml-[15px] mt-[4px]"
+                className="flex-1 px-[clamp(10px,1.5vw,15px)] py-2 border-0 focus:outline-none text-[clamp(12px,1.5vw,16px)] bg-transparent resize-none ml-[clamp(10px,1.5vw,15px)] mt-[4px]"
                 placeholder="请输入知识库介绍"
                 rows={3}
               />
@@ -278,25 +276,21 @@ const KnowledgeBaseModal: React.FC<KnowledgeBaseModalProps> = ({
           </div>
         </div>
 
-        <div
-          className="flex justify-end pb-[30px] pl-[30px] pr-[30px]"
-        >
-          <div className="flex space-x-3 w-full justify-end">
-            <button
-              onClick={onClose}
-              disabled={isLoading}
-              className="w-[128px] h-[40px] bg-white rounded-[20px] border border-[#C8C9CC] text-[16px] text-[#666666] hover:bg-gray-50 transition-colors disabled:opacity-50"
-            >
-              取消
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="w-[128px] h-[40px] bg-[#0D9488] text-white rounded-[20px] text-[16px] hover:bg-[#0F766E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {submitButtonText}
-            </button>
-          </div>
+        <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-0 p-[clamp(15px,2vw,30px)] border-t border-[#E0E1E5]">
+          <button
+            onClick={onClose}
+            disabled={isLoading}
+            className="w-full sm:w-[clamp(90px,12vw,128px)] h-[clamp(32px,4vw,40px)] bg-white rounded-[20px] border border-[#C8C9CC] text-[clamp(12px,1.5vw,16px)] text-[#666666] hover:bg-gray-50 transition-colors disabled:opacity-50 sm:mr-[clamp(12px,2vw,20px)]"
+          >
+            取消
+          </button>
+          <button
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="w-full sm:w-[clamp(90px,12vw,128px)] h-[clamp(32px,4vw,40px)] bg-[#0D9488] text-white rounded-[20px] text-[clamp(12px,1.5vw,16px)] hover:bg-[#0F766E] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {submitButtonText}
+          </button>
         </div>
       </div>
     </div>

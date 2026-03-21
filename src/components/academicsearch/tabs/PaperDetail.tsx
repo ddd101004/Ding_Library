@@ -206,29 +206,29 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
   }, []);
 
   return (
-    <div className="relative w-full max-w-6xl mx-auto px-4">
+    <div className="relative w-full px-4 sm:px-6">
       {/* 头部：图标和详情文字 */}
       <div
-        className="flex items-center cursor-pointer"
+        className="flex items-center cursor-pointer py-4"
         onClick={onBack}
       >
         <img
           src="/paper/paper-details.png"
           alt="详情"
-          className="w-[6px] h-[10px]"
+          className="w-[clamp(5px,1vw,6px)] h-[clamp(8px,1.5vw,10px)]"
         />
-        <span className="ml-[10px] text-sm text-[#666666]">详情</span>
+        <span className="ml-[clamp(8px,1.5vw,10px)] text-sm text-[#666666]">详情</span>
       </div>
 
       {/* 分隔线 */}
-      <div className="w-full h-px bg-[#E0E1E5] mt-6" />
+      <div className="w-full h-px bg-[#E0E1E5]" />
 
       {/* 白色卡片容器 */}
-      <div className="relative mt-[23px] w-full h-[1060px] overflow-y-auto overflow-x-hidden scrollbar-thin">
+      <div className="relative mt-[clamp(15px,3vw,23px)] w-full h-auto min-h-[600px] overflow-y-auto overflow-x-hidden scrollbar-thin pb-8">
         {/* 导航区域 - 修复鼠标事件处理 */}
         <div
           ref={navTriggerRef}
-          className="relative mt-[31px]"
+          className="relative mt-[clamp(20px,4vw,31px)]"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
@@ -237,93 +237,93 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
             <img
               src="/paper/papers-navigation.png"
               alt="导航"
-              className="w-[20px] h-[17px] mr-[10px]"
+              className="w-[clamp(16px,2.5vw,20px)] h-[clamp(14px,2vw,17px)] mr-[clamp(8px,1.2vw,10px)]"
             />
-            导航
+            <span className="text-[clamp(12px,1.5vw,14px)]">导航</span>
           </div>
 
           {/* 悬停弹窗 */}
           {showNavMenu && (
             <div
               ref={navMenuRef}
-              className="absolute top-full left-0 z-50 w-[140px] h-[98px] bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-md border border-[#E9ECF2] mt-2 px-[10px] flex flex-col justify-between"
+              className="absolute top-full left-0 z-50 w-[clamp(120px,18vw,140px)] h-[clamp(80px,12vw,98px)] bg-white shadow-[0px_10px_29px_1px_rgba(89,106,178,0.1)] rounded-md border border-[#E9ECF2] mt-2 px-[clamp(8px,1.2vw,10px)] flex flex-col justify-between"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handlePopupMouseLeave}
             >
               {/* 详情选项 */}
               <div
-                className={`w-[120px] h-8 rounded-md flex items-center justify-center mr-[10px] mt-[10px] cursor-pointer ${
+                className={`w-full h-8 rounded-md flex items-center justify-center mr-[10px] mt-[10px] cursor-pointer ${
                   selectedOption === "detail" ? "bg-[#F1F6FF]" : "bg-transparent"
                 }`}
                 onMouseEnter={() => setSelectedOption("detail")}
                 onClick={() => handleNavOptionClick("detail")}
               >
-                <span className="text-lg text-[#333333] font-normal">详情</span>
+                <span className="text-[clamp(14px,2vw,18px)] text-[#333333] font-normal">详情</span>
               </div>
 
               {/* 摘要选项 */}
               <div
-                className={`w-[120px] h-8 rounded-md flex items-center justify-center mr-[10px] mb-[10px] cursor-pointer ${
+                className={`w-full h-8 rounded-md flex items-center justify-center mr-[10px] mb-[10px] cursor-pointer ${
                   selectedOption === "abstract" ? "bg-[#F1F6FF]" : "bg-transparent"
                 }`}
                 onMouseEnter={() => setSelectedOption("abstract")}
                 onClick={() => handleNavOptionClick("abstract")}
               >
-                <span className="text-lg text-[#333333] font-normal">摘要</span>
+                <span className="text-[clamp(14px,2vw,18px)] text-[#333333] font-normal">摘要</span>
               </div>
             </div>
           )}
         </div>
 
         {/* 其余部分保持不变... */}
-        <div className="relative -ml-[50px]">
+        <div className="relative">
           {/* 论文标题区域 */}
-          <div className="mt-[22px] ml-[50px]">
+          <div className="mt-[clamp(15px,3vw,22px)] px-4 sm:px-6">
             {/* 中文标题 */}
             {chineseTitle ? (
-              <div className="text-lg font-medium text-[#333333]">
+              <div className="text-[clamp(16px,2.5vw,18px)] font-medium text-[#333333]">
                 {chineseTitle}
               </div>
             ) : (
               // 回退：如果没有中文标题，显示英文标题
               englishTitle && (
-                <div className="text-lg font-medium text-[#333333]">
+                <div className="text-[clamp(16px,2.5vw,18px)] font-medium text-[#333333]">
                   {englishTitle}
                 </div>
               )
             )}
 
-            <div className="flex items-center justify-between mt-[41px]">
-              <span className="text-base text-[#999999]">
+            <div className="flex items-center justify-between mt-[clamp(25px,4vw,41px)]">
+              <span className="text-[clamp(12px,1.5vw,16px)] text-[#999999]">
                 {paper.year || "未知年份"}
               </span>
 
               {/* 收藏按钮 - 与年份在同一行 */}
               <div
                 className="flex items-center justify-center cursor-pointer hover:shadow-md transition-all duration-200 bg-white border border-[#C8C9CC] rounded-2xl flex-shrink-0"
-                style={{ width: "56px", height: "40px" }}
+                style={{ width: "clamp(48px,10vw,56px)", height: "clamp(32px,5vw,40px)" }}
                 onClick={handleCitationClick}
               >
                 <img
                   src="/paper/paper-quote@2x.png"
                   alt="引用"
-                  className="w-[17px] h-[16px]"
+                  className="w-[clamp(14px,2vw,17px)] h-[clamp(13px,2vw,16px)]"
                 />
               </div>
             </div>
           </div>
 
           {/* 信息表格 */}
-          <div className="w-[calc(100%-55px)] min-h-[182px] bg-white rounded-2xl border border-[#E0E1E5] mt-[50px] ml-[50px] p-5">
+          <div className="w-full min-h-[clamp(150px,20vw,182px)] bg-white rounded-2xl border border-[#E0E1E5] mt-[clamp(30px,5vw,50px)] mx-4 sm:mx-6 p-[clamp(15px,2vw,20px)]">
             <div className="flex flex-col h-full">
               {/* 第一行：出版社 */}
-              <div className="flex items-center justify-start h-10 mb-[10px] pl-[20px]">
+              <div className="flex items-center justify-start h-10 mb-[10px] px-[clamp(12px,2vw,20px)]">
                 <img
                   src="/paper/paper-type@2x.png"
                   alt="出版社"
-                  className="w-[20px] h-[20px] mr-[19px]"
+                  className="w-[clamp(16px,2.5vw,20px)] h-[clamp(16px,2.5vw,20px)] mr-[clamp(12px,2vw,19px)]"
                 />
-                <span className="text-base text-[#333333] font-medium">
+                <span className="text-[clamp(12px,1.5vw,16px)] text-[#333333] font-medium">
                   {(() => {
                     const venueText =
                       typeof paper.venue === "string"
@@ -339,10 +339,10 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
               </div>
 
               {/* 第一条分隔线 */}
-              <div className="w-[calc(100%+40px)] h-px bg-[#E0E1E5] -ml-[20px] -mr-[20px]" />
+              <div className="w-full h-px bg-[#E0E1E5] -mx-[clamp(15px,2vw,20px)] my-2" />
 
               {/* 第二行：作者 */}
-              <div className="flex items-center justify-start min-h-[60px] my-5 flex-wrap gap-9 pl-[20px] content-center">
+              <div className="flex items-center justify-start min-h-[60px] my-5 flex-wrap gap-[clamp(20px,3vw,36px)] px-[clamp(12px,2vw,20px)] content-center">
                 {paper.authors && paper.authors.length > 0 ? (
                   paper.authors.map((author, index) => {
                     // 处理两种数据格式：字符串数组或对象数组
@@ -354,29 +354,29 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                           author={typeof author === 'string' ? { name: author } : author}
                           size="medium"
                         />
-                        <span className="text-base text-[#999999] ml-[3px]">
+                        <span className="text-[clamp(12px,1.5vw,16px)] text-[#999999] ml-[3px]">
                           {authorName}
                         </span>
                       </div>
                     );
                   })
                 ) : (
-                  <span className="text-base text-[#999999]">
+                  <span className="text-[clamp(12px,1.5vw,16px)] text-[#999999]">
                     未知作者
                   </span>
                 )}
               </div>
 
               {/* 第二条分隔线 */}
-              <div className="w-[calc(100%+40px)] h-px bg-[#E0E1E5] -ml-[20px] -mr-[20px]" />
+              <div className="w-full h-px bg-[#E0E1E5] -mx-[clamp(15px,2vw,20px)] my-2" />
 
               {/* 第三行：URL */}
               <div className="flex items-center h-10 mt-5">
                 {paper.url ? (
                   <>
                     {/* 第一列：链接文字 */}
-                    <div className="w-[180px] pl-[70px] h-10 flex items-center">
-                      <span className="text-base text-[#999999]">
+                    <div className="w-[clamp(120px,18vw,180px)] px-[clamp(12px,2vw,70px)] h-10 flex items-center">
+                      <span className="text-[clamp(12px,1.5vw,16px)] text-[#999999]">
                         链接
                       </span>
                     </div>
@@ -385,7 +385,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                     <div className="w-px h-20 bg-[#E0E1E5] ml-0" />
 
                     {/* 第二列：官方网址 */}
-                    <div className="flex-1 ml-5 h-10 flex items-center">
+                    <div className="flex-1 ml-[clamp(15px,2vw,20px)] h-10 flex items-center">
                       <a
                         href={paper.url}
                         target="_blank"
@@ -395,9 +395,9 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                         <img
                           src="/paper/paper-shinyoffitialwebsite@2x.png"
                           alt="官方网站"
-                          className="w-[20px] h-[20px]"
+                          className="w-[clamp(16px,2.5vw,20px)] h-[clamp(16px,2.5vw,20px)]"
                         />
-                        <span className="ml-[11px] text-base">
+                        <span className="ml-[11px] text-[clamp(12px,1.5vw,16px)]">
                           官方网址
                         </span>
                       </a>
@@ -406,8 +406,8 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                 ) : (
                   <div className="flex items-center">
                     {/* 第一列：链接文字 */}
-                    <div className="w-[180px] pl-[20px] h-10 flex items-center">
-                      <span className="text-base text-[#999999]">
+                    <div className="w-[clamp(120px,18vw,180px)] px-[clamp(12px,2vw,20px)] h-10 flex items-center">
+                      <span className="text-[clamp(12px,1.5vw,16px)] text-[#999999]">
                         链接
                       </span>
                     </div>
@@ -416,8 +416,8 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
                     <div className="w-px h-10 bg-[#E0E1E5] ml-0" />
 
                     {/* 第二列：暂无链接 */}
-                    <div className="flex-1 ml-5 h-10 flex items-center">
-                      <span className="text-base text-[#999999]">
+                    <div className="flex-1 ml-[clamp(15px,2vw,20px)] h-10 flex items-center">
+                      <span className="text-[clamp(12px,1.5vw,16px)] text-[#999999]">
                         暂无链接
                       </span>
                     </div>
@@ -430,27 +430,27 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
           {/* 摘要部分 */}
           <div
             id="abstract-section"
-            className="flex flex-col mt-[60px] ml-[50px] mr-0"
+            className="flex flex-col mt-[clamp(40px,6vw,60px)] px-4 sm:px-6"
           >
             {/* 摘要标题行 */}
-            <div className="flex justify-between items-center">
-              <div className="text-lg font-medium text-[#333333]">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+              <div className="text-[clamp(16px,2.5vw,18px)] font-medium text-[#333333]">
                 摘要
               </div>
 
               {/* 翻译选项框 - 外文发现不显示 */}
               {!isForeignDiscovery && (
-                <div className="w-[180px] h-10 bg-[#F7F8FA] rounded-2xl border border-[#C8C9CC] flex items-center relative z-10 p-0 box-border">
+                <div className="w-[clamp(150px,22vw,180px)] h-10 bg-[#F7F8FA] rounded-2xl border border-[#C8C9CC] flex items-center relative z-10 p-0 box-border">
                   {/* 中文选项 */}
                   <button
-                    className={`h-9 w-[90px] flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
+                    className={`h-9 w-1/2 flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
                       translateMode === "zh"
-                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-1"
-                        : "bg-transparent shadow-none ml-1 mr-0"
+                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-[2px]"
+                        : "bg-transparent shadow-none ml-[2px] mr-0"
                     }`}
                     onClick={() => setTranslateMode("zh")}
                   >
-                    <span className={`font-medium text-base select-none ${
+                    <span className={`font-medium text-[clamp(12px,1.5vw,16px)] select-none ${
                       translateMode === "zh" ? "text-[#0D9488]" : "text-[#999999]"
                     }`}>
                       中文
@@ -459,14 +459,14 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
 
                   {/* 英文选项 */}
                   <button
-                    className={`h-9 w-[90px] flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
+                    className={`h-9 w-1/2 flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
                       translateMode === "en"
-                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-1"
-                        : "bg-transparent shadow-none ml-1 mr-0"
+                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-[2px]"
+                        : "bg-transparent shadow-none ml-[2px] mr-0"
                     }`}
                     onClick={() => setTranslateMode("en")}
                   >
-                    <span className={`font-medium text-base select-none ${
+                    <span className={`font-medium text-[clamp(12px,1.5vw,16px)] select-none ${
                       translateMode === "en" ? "text-[#0D9488]" : "text-[#999999]"
                     }`}>
                       英文
@@ -477,7 +477,7 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
             </div>
 
             {/* 摘要内容 */}
-            <div className="mt-5 text-base text-[#666666] leading-[1.6] w-full">
+            <div className="mt-5 text-[clamp(12px,1.5vw,16px)] text-[#666666] leading-[1.6] w-full">
               {/* 根据语言模式显示对应的摘要 */}
               {translateMode === "zh" ? (
                 chineseAbstract ? (

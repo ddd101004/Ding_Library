@@ -49,10 +49,6 @@ const handlePost = async (
     attachment_ids: req.body.attachment_ids,
     is_deep_think: req.body.is_deep_think,
     auto_search_papers: req.body.auto_search_papers,
-    context_text: req.body.context_text,
-    context_range: req.body.context_range,
-    operation_type: req.body.operation_type || "analyze",
-    target_language: req.body.target_language || "英文",
   };
 
   let messageId: string | null = null;
