@@ -60,18 +60,6 @@ export const getFolderContents = async (params: {
       skip: (page - 1) * limit,
       take: limit,
       include: {
-        paper: {
-          select: {
-            id: true,
-            title: true,
-            authors: true,
-            publication_name: true,
-            publication_year: true,
-            abstract: true,
-            doi: true,
-            has_fulltext: true,
-          },
-        },
         uploadedPaper: {
           select: {
             id: true,
@@ -100,21 +88,7 @@ export const getFolderContents = async (params: {
     const items: FolderContentItem[] = [];
 
     dbItems.forEach((item) => {
-      if (item.paper) {
-        items.push({
-          item_id: item.item_id,
-          item_type: "paper",
-          paper_id: item.paper.id,
-          title: item.paper.title,
-          authors: item.paper.authors,
-          publication_name: item.paper.publication_name,
-          year: item.paper.publication_year,
-          abstract: item.paper.abstract,
-          has_fulltext: item.paper.has_fulltext,
-          added_at: item.added_at,
-          notes: item.notes,
-        });
-      } else if (item.uploadedPaper) {
+      if (item.uploadedPaper) {
         items.push({
           item_id: item.item_id,
           item_type: "uploaded_paper",
@@ -163,7 +137,7 @@ export const getFolderContents = async (params: {
 
 /**
  * 批量查询内容的文件夹加入状态
- * 无需传入 item_type，直接通过 ID 查询所有三种类型
+ * 无需传入 item_type，直接通过 ID 查询所有两种类型（uploaded_paper、conversation）
  */
 export const batchGetFolderItemStatus = async (
   user_id: string,

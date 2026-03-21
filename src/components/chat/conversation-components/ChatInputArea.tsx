@@ -8,8 +8,6 @@ interface ChatInputAreaProps {
   inputOnChange: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSend: () => void;
-  uploadedFiles: any[];
-  onRemoveFile: (index: number) => void;
   isRecording: boolean;
   toggleRecording: () => void;
   isDeepThinkActive: boolean;
@@ -20,13 +18,9 @@ interface ChatInputAreaProps {
   currentFunction: string | null;
   onCloseFunction: () => void;
   isFromOtherPage: boolean;
-  onAddFile: () => void;
-  totalFileCount?: number;
   showRelatedPapers?: boolean;
   isFolderChat?: boolean;
-  isFileParsing?: boolean;
   style?: React.CSSProperties;
-  hideFileTags?: boolean;
 }
 
 const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
@@ -35,8 +29,6 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
   inputOnChange,
   onKeyDown,
   onSend,
-  uploadedFiles,
-  onRemoveFile,
   isRecording,
   toggleRecording,
   isDeepThinkActive,
@@ -47,13 +39,9 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
   currentFunction,
   onCloseFunction,
   isFromOtherPage,
-  onAddFile,
-  totalFileCount = uploadedFiles.length,
   showRelatedPapers = false,
   isFolderChat = false,
-  isFileParsing = false,
   style,
-  hideFileTags = false,
 }, ref) => {
   // 计算样式类 - 响应式布局
   const inputAreaStyle = {
@@ -79,8 +67,6 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
           onChange={inputOnChange}
           onKeyDown={onKeyDown}
           onSend={onSend}
-          uploadedFiles={uploadedFiles}
-          onRemoveFile={onRemoveFile}
           isRecording={isRecording}
           toggleRecording={toggleRecording}
           isDeepThinkActive={isDeepThinkActive}
@@ -91,12 +77,8 @@ const ChatInputArea = forwardRef<ChatInputRef, ChatInputAreaProps>(({
           currentFunction={currentFunction}
           onCloseFunction={onCloseFunction}
           isFromOtherPage={isFromOtherPage}
-          onAddFile={onAddFile}
-          totalFileCount={totalFileCount}
           showRelatedPapers={showRelatedPapers}
           isFolderChat={isFolderChat}
-          isFileParsing={isFileParsing}
-          hideFileTags={hideFileTags}
         />
         </div>
       </div>

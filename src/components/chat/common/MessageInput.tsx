@@ -11,8 +11,6 @@ interface MessageInputProps {
   onChange: (value: string) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   onSend: () => void;
-  uploadedFiles: any[];
-  onRemoveFile: (index: number) => void;
   isRecording: boolean;
   toggleRecording: () => void;
   isDeepThinkActive: boolean;
@@ -23,12 +21,8 @@ interface MessageInputProps {
   currentFunction?: string | null;
   onCloseFunction?: () => void;
   isFromOtherPage: boolean;
-  onAddFile?: () => void;
-  totalFileCount?: number;
   showRelatedPapers?: boolean;
   isFolderChat?: boolean;
-  isFileParsing?: boolean;
-  hideFileTags?: boolean;
 }
 
 const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
@@ -36,8 +30,6 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
   onChange,
   onKeyDown,
   onSend,
-  uploadedFiles,
-  onRemoveFile,
   isRecording,
   toggleRecording,
   isDeepThinkActive,
@@ -48,12 +40,8 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
   currentFunction,
   onCloseFunction,
   isFromOtherPage,
-  onAddFile = () => {},
-  totalFileCount = 0,
   showRelatedPapers = false,
   isFolderChat = false,
-  isFileParsing = false,
-  hideFileTags = false,
 }, ref) => {
   const [sendButtonHover, setSendButtonHover] = React.useState(false);
   const backgroundOffset = 0;
@@ -104,13 +92,10 @@ const MessageInput = forwardRef<ChatInputRef, MessageInputProps>(({
             onToggleRecording={toggleRecording}
             sendButtonHover={sendButtonHover}
             onSendButtonHover={setSendButtonHover}
-            onAddFile={onAddFile}
             onSend={onSend}
             disabled={isLoading}
             currentFunction={currentFunction}
-            totalFileCount={totalFileCount}
             isFolderChat={isFolderChat}
-            isFileParsing={isFileParsing}
           />
         </div>
       </div>

@@ -2,7 +2,7 @@ import logger from "@/helper/logger";
 import prisma from "@/utils/prismaProxy";
 import { Prisma } from "@prisma/client";
 
-export type FolderItemType = "paper" | "uploaded_paper" | "conversation";
+export type FolderItemType = "uploaded_paper" | "conversation";
 
 export interface AddItemToFolderResult {
   success: boolean;
@@ -21,8 +21,8 @@ export interface AddItemToFolderResult {
 }
 
 /**
- * 添加内容到文件夹（支持三种类型：论文、用户上传论文、对话）
- * @param data.item_type - 内容类型: "paper" | "uploaded_paper" | "conversation"
+ * 添加内容到文件夹（支持两种类型：用户上传论文、对话）
+ * @param data.item_type - 内容类型: "uploaded_paper" | "conversation"
  * @param data.item_id - 内容ID
  * @param data.user_id - 用户ID（用于验证对话归属）
  */
@@ -37,16 +37,7 @@ export const addItemToFolder = async (data: {
     const { folder_id, item_type, item_id, user_id, notes } = data;
 
     // 验证内容是否存在并获取信息
-    if (item_type === "paper") {
-      const paper = await prisma.paper.findUnique({
-        where: { id: item_id },
-        select: { id: true },
-      });
-      if (!paper) {
-        logger.warn(`添加到文件夹失败: 第三方论文不存在 (paper_id: ${item_id})`);
-        return { success: false, error: "paper_not_found" };
-      }
-    } else if (item_type === "uploaded_paper") {
+    if (item_type === "uploaded_paper") {
       const uploadedPaper = await prisma.userUploadedPaper.findUnique({
         where: { id: item_id },
         select: { id: true },
@@ -77,13 +68,7 @@ export const addItemToFolder = async (data: {
     }
 
     let createData: Prisma.FolderItemCreateInput;
-    if (item_type === "paper") {
-      createData = {
-        folder: { connect: { folder_id } },
-        paper: { connect: { id: item_id } },
-        notes,
-      };
-    } else if (item_type === "uploaded_paper") {
+    if (item_type === "uploaded_paper") {
       createData = {
         folder: { connect: { folder_id } },
         uploadedPaper: { connect: { id: item_id } },

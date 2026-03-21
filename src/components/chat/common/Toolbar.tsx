@@ -19,11 +19,8 @@ interface ToolbarProps {
   disabled?: boolean;
   isSending?: boolean;
   currentFunction?: string | null;
-  totalFileCount?: number;
   isAiReadingActive?: boolean;
   isFolderChat?: boolean;
-  isFileParsing?: boolean;
-  onAddFile?: () => void;
   onNavigateFunction?: (functionType: string) => void;
 }
 
@@ -40,10 +37,8 @@ export default function Toolbar({
   disabled = false,
   isSending = false,
   currentFunction = null,
-  totalFileCount = 0,
   isAiReadingActive = false,
   isFolderChat = false,
-  isFileParsing = false,
   onNavigateFunction
 }: ToolbarProps) {
 
@@ -60,19 +55,19 @@ export default function Toolbar({
   };
 
   const handleSend = () => {
-    if (!disabled && !isSending && !isFileParsing) onSend();
+    if (!disabled && !isSending) onSend();
   };
 
   const handleMouseEnter = () => {
-    if (!disabled && !isSending && !isFileParsing) onSendButtonHover(true);
+    if (!disabled && !isSending) onSendButtonHover(true);
   };
 
   const handleMouseLeave = () => {
-    if (!disabled && !isSending && !isFileParsing) onSendButtonHover(false);
+    if (!disabled && !isSending) onSendButtonHover(false);
   };
 
   // isOverallDisabled 只用于发送按钮
-  const isOverallDisabled = disabled || isSending || isFileParsing;
+  const isOverallDisabled = disabled || isSending;
 
   // 深度思考和论文搜索不受文件解析影响
   const isControlDisabled = disabled || isSending;
@@ -264,11 +259,6 @@ export default function Toolbar({
             )}
           </button>
         </TooltipTrigger>
-        {isFileParsing && (
-          <TooltipContent>
-            <p>文件解析中</p>
-          </TooltipContent>
-        )}
       </Tooltip>
       </div>
     </div>

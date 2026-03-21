@@ -303,9 +303,7 @@ export default function ChatHome() {
                     onSendButtonHover={setSendButtonHover}
                     onSend={handleSend}
                     isSending={isSending}
-                    totalFileCount={0}
                     isAiReadingActive={isAiReadingActive}
-                    isFileParsing={false}
                     onNavigateFunction={handleNavigateFunction}
                   />
                 </div>

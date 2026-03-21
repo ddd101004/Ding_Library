@@ -18,7 +18,6 @@ import { validateString, validateId } from "@/utils/validateString";
 
 // 合法的内容类型
 const VALID_ITEM_TYPES: FolderItemType[] = [
-  "paper",
   "uploaded_paper",
   "conversation",
 ];
@@ -26,8 +25,7 @@ const VALID_ITEM_TYPES: FolderItemType[] = [
 /**
  * POST - 添加内容到文件夹（支持单个或批量）
  *
- * 支持三种内容类型:
- * - paper: 第三方数据源论文 (papers表)
+ * 支持两种内容类型:
  * - uploaded_paper: 用户上传论文 (user_uploaded_papers表)
  * - conversation: 对话 (chat_conversations表)
  *
@@ -108,7 +106,7 @@ const handlePost = async (
   if (!VALID_ITEM_TYPES.includes(type)) {
     return sendWarnningResponse(
       res,
-      "无效的内容类型，请使用 paper、uploaded_paper 或 conversation"
+      "无效的内容类型，请使用 uploaded_paper 或 conversation"
     );
   }
 
@@ -123,8 +121,6 @@ const handlePost = async (
   if (!result.success) {
     // 根据错误类型返回不同的错误信息
     switch (result.error) {
-      case "paper_not_found":
-        return sendWarnningResponse(res, "论文不存在，请先将论文保存到数据库");
       case "uploaded_paper_not_found":
         return sendWarnningResponse(res, "用户上传的论文不存在");
       case "conversation_not_found":
@@ -132,7 +128,7 @@ const handlePost = async (
       case "invalid_item_type":
         return sendWarnningResponse(
           res,
-          "无效的内容类型，请使用 paper、uploaded_paper 或 conversation"
+          "无效的内容类型，请使用 uploaded_paper 或 conversation"
         );
       case "item_already_in_folder":
         return sendWarnningResponse(res, "该内容已在文件夹中");
@@ -150,7 +146,7 @@ const handlePost = async (
     item_id: item.item_id,
     folder_id: item.folder_id,
     item_type: type,
-    content_id: item.paper_id || item.uploaded_paper_id || item.conversation_id,
+    content_id: item.uploaded_paper_id || item.conversation_id,
     added_at: item.added_at,
   });
 };
@@ -159,7 +155,6 @@ const handlePost = async (
  * GET - 获取文件夹内所有内容
  *
  * 返回统一的 items 列表，通过 item_type 区分类型:
- * - paper: 第三方数据源论文
  * - uploaded_paper: 用户上传论文
  * - conversation: 对话
  */

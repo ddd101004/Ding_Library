@@ -826,8 +826,6 @@ export default function ChatConversation({
       inputOnChange={setInputText}
       onKeyDown={handleKeyDown}
       onSend={handleSendMessage}
-      uploadedFiles={[]}
-      onRemoveFile={() => {}}
       isRecording={isRecording}
       toggleRecording={toggleRecording}
       isDeepThinkActive={isDeepThinkActive}
@@ -838,12 +836,8 @@ export default function ChatConversation({
       currentFunction={currentFunction}
       onCloseFunction={handleCloseFunction}
       isFromOtherPage={false}
-      onAddFile={() => {}}
-      totalFileCount={0}
       showRelatedPapers={showRelatedPapers}
       isFolderChat={false}
-      isFileParsing={false}
-      hideFileTags={true}
       style={{
         backgroundColor: '#d5f4cf',
         borderTop: '1px solid #d4ede4'

@@ -312,6 +312,17 @@ export default function FolderDetailPage({
     setShowEditModal(true);
   };
 
+  // 处理查看详情
+  const handleViewDetail = (item: any) => {
+    if (item.item_type === 'uploaded_paper') {
+      // 跳转到论文详情页
+      router.push(`/ai-reading/papers?id=${item.paper_id}`);
+    } else if (item.item_type === 'conversation') {
+      // 跳转到对话详情页
+      router.push(`/chat?id=${item.conversation_id}`);
+    }
+  };
+
   return (
     <div className="w-full h-full p-3 sm:p-4 md:p-6 pt-0 flex flex-col">
       {/* 固定的头部区域 - 包含分割线以上的所有内容 */}
@@ -344,15 +355,20 @@ export default function FolderDetailPage({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <img
-                      src="/slibar/slibar-gohome.png"
-                      alt="回到主页"
-                      className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] md:w-[20px] md:h-[20px] cursor-pointer"
+                    <div
                       onClick={onBack}
-                    />
+                      className="flex items-center gap-2 cursor-pointer hover:bg-[#F0F0F0] px-3 py-2 rounded-lg transition-colors"
+                    >
+                      <img
+                        src="/slibar/slibar-gohome.png"
+                        alt="回到主页"
+                        className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] md:w-[20px] md:h-[20px]"
+                      />
+                      <span className="text-sm text-gray-700 hidden sm:inline">返回知识库</span>
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>回知识库首页</p>
+                    <p>返回知识库</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -461,6 +477,9 @@ export default function FolderDetailPage({
             <div className="w-24 sm:w-32 md:w-40 text-gray-700 flex-shrink-0 text-left font-medium text-xs sm:text-sm md:text-base mr-[50px]">
               上传日期
             </div>
+            <div className="w-24 sm:w-32 md:w-40 text-gray-700 flex-shrink-0 text-center font-medium text-xs sm:text-sm md:text-base mr-[50px]">
+              操作
+            </div>
           </div>
 
           {/* 表头分隔线 */}
@@ -546,8 +565,24 @@ export default function FolderDetailPage({
                   </div>
 
                   {/* 上传日期列 */}
-                  <div className="w-24 sm:w-32 md:w-40 text-gray-700 flex-shrink-0 text-left text-xs sm:text-sm md:text-base mr-[50px]">
+                  <div className="w-24 sm:w-32 md:w-40 text-gray-700 flex-shrink-0 text-left text-xs sm:text-sm md:text-base">
                     {formatDate(item.added_at)}
+                  </div>
+
+                  {/* 操作列 */}
+                  <div className="w-24 sm:w-32 md:w-40 text-gray-700 flex-shrink-0 flex items-center justify-center mr-[50px]">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleViewDetail(item);
+                      }}
+                      disabled={isDeleting || isMoving || isImporting}
+                      className={cn(
+                        "px-3 py-1 rounded border border-[#0D9488] text-[#0D9488] text-xs sm:text-sm hover:bg-[#0D9488] hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                      )}
+                    >
+                      {item.item_type === 'conversation' ? '查看' : '查看详情'}
+                    </button>
                   </div>
                 </div>
 

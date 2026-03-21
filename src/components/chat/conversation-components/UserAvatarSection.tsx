@@ -2,14 +2,6 @@
 import React from "react";
 import AvatarHoverMenu from "../common/AvatarHoverMenu";
 
-interface UserAvatarSectionProps {
-  showUploadModal?: boolean;
-  isUploading?: boolean;
-}
-
-export default function UserAvatarSection({
-  showUploadModal = false,
-  isUploading = false,
-}: UserAvatarSectionProps) {
+export default function UserAvatarSection() {
   return <AvatarHoverMenu />;
 }

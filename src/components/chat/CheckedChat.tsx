@@ -307,11 +307,8 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
                     onToggleRecording={toggleRecording}
                     sendButtonHover={sendButtonHover}
                     onSendButtonHover={setSendButtonHover}
-                    onAddFile={() => {}}
                     onSend={handleSend}
                     isSending={isSending}
-                    totalFileCount={0}
-                    isFileParsing={false}
                   />
                 </div>
               </div>
