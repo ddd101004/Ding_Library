@@ -92,7 +92,7 @@ const handlePost = async (
       await updateMessage(newMessageId, {
         status: "stopped",
         content: state.partialContent,
-        reasoningContent: state.reasoningContent || undefined,
+        reasoning_content: state.reasoningContent || undefined,
       });
       logger.info("客户端断开连接，重新生成消息已保存", {
         messageId: newMessageId,

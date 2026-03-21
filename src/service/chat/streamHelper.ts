@@ -142,7 +142,7 @@ export async function finalizeStreamResponse(params: {
   await updateMessage(messageId, {
     content: state.partialContent,
     status: "completed",
-    reasoningContent: state.reasoningContent || undefined,
+    reasoning_content: state.reasoningContent || undefined,
     input_tokens: tokenStats?.input_tokens,
     output_tokens: tokenStats?.output_tokens,
     total_tokens: tokenStats?.total_tokens,
@@ -181,7 +181,7 @@ export async function handleStreamError(params: {
         content: state.partialContent,
         status: "error",
         error_message: errorMessage,
-        reasoningContent: state.reasoningContent || undefined,
+        reasoning_content: state.reasoningContent || undefined,
       });
     }
 

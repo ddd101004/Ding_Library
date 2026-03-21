@@ -97,7 +97,7 @@ export const updateMessage = async (
     output_tokens?: number;
     total_tokens?: number;
     error_message?: string;
-    reasoningContent?: string | null;
+    reasoning_content?: string | null;
     reasoningTokens?: number | null;
     messageType?: string;
     contextText?: string | null;

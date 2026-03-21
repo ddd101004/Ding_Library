@@ -82,7 +82,7 @@ export function useMessageVersions(
           allVersions: Array<{
             message_id: string;
             content: string;
-            reasoningContent: string | null;
+            reasoning_content: string | null;
             create_time: string;
             parent_message_id: string | null;
             status: string;
@@ -144,7 +144,7 @@ export function useMessageVersions(
                 return {
                   ...msg,
                   content: latestVersion.content,
-                  thinking: latestVersion.reasoningContent || "",
+                  thinking: latestVersion.reasoning_content || "",
                   totalVersions: versionInfo.totalVersions,
                   currentVersion: versionInfo.totalVersions,
                   isLiked: versionStatus?.isLiked || false,
@@ -333,7 +333,7 @@ export function useMessageVersions(
           return {
             ...msg,
             content: targetVersionData.content,
-            thinking: targetVersionData.reasoningContent || "",
+            thinking: targetVersionData.reasoning_content || "",
             currentVersion: targetVersion,
             isLiked: latestIsLiked,
             isDisliked: latestIsDisliked,

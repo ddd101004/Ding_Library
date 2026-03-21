@@ -63,7 +63,7 @@ const handlePost = async (
         await updateMessage(messageId, {
           status: "stopped",
           content: state.partialContent,
-          reasoningContent: state.reasoningContent || undefined,
+          reasoning_content: state.reasoningContent || undefined,
         });
         logger.info("客户端断开连接，消息已保存", {
           messageId,
@@ -149,7 +149,7 @@ const handlePost = async (
         };
 
         if (state.reasoningContent) {
-          messageUpdateData.reasoningContent = state.reasoningContent;
+          messageUpdateData.reasoning_content = state.reasoningContent;
         }
 
         // messageType、contextText、contextRange 已移除，不再保存
