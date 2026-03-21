@@ -17,6 +17,12 @@ interface KnowledgeBasePageProps {
 
 const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = false }) => {
   const router = useRouter();
+
+  // 调试日志
+  useEffect(() => {
+    console.log('KnowledgeBasePage isSidebarOpen:', isSidebarOpen);
+  }, [isSidebarOpen]);
+
   const [folders, setFolders] = useState<Folder[]>([]);
   const [expanded, setExpanded] = useState(false);
   const [selectedFolder, setSelectedFolder] = useState<Folder | null>(null);
@@ -30,10 +36,10 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
   const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
   const [activePopupId, setActivePopupId] = useState<string | null>(null);
   const popupRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const dropdownCloseTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // 为两个滚动容器分别使用 Hook
-  const { containerRef: scrollContainerRef1 } = useAutoHideScrollbar();
-  const { containerRef: scrollContainerRef2 } = useAutoHideScrollbar();
+  // 为内容区域滚动容器使用 Hook
+  const { containerRef: scrollContainerRef } = useAutoHideScrollbar();
 
   // 获取文件夹列表
   const fetchFolders = async () => {
@@ -251,6 +257,42 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
     };
   }, [activePopupId]);
 
+  // 点击其他地方时关闭"创建的知识库"下拉菜单
+  useEffect(() => {
+    const handleClickOutsideDropdown = (e: MouseEvent) => {
+      const target = e.target as Node;
+      const dropdownContainer = document.querySelector('[data-dropdown="knowledge-base-list"]');
+      if (expanded && dropdownContainer && !dropdownContainer.contains(target)) {
+        setExpanded(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutsideDropdown);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutsideDropdown);
+    };
+  }, [expanded]);
+
+  // 处理鼠标离开下拉菜单的延迟关闭
+  const handleMouseLeaveDropdown = () => {
+    // 清除之前的定时器
+    if (dropdownCloseTimerRef.current) {
+      clearTimeout(dropdownCloseTimerRef.current);
+    }
+    // 设置新的定时器
+    dropdownCloseTimerRef.current = setTimeout(() => {
+      setExpanded(false);
+    }, 150);
+  };
+
+  const handleMouseEnterDropdown = () => {
+    // 清除定时器，防止关闭
+    if (dropdownCloseTimerRef.current) {
+      clearTimeout(dropdownCloseTimerRef.current);
+      dropdownCloseTimerRef.current = null;
+    }
+  };
+
   // 修复的ref回调函数 - 返回void
   const setPopupRef = (folderId: string) => (el: HTMLDivElement | null) => {
     popupRefs.current[folderId] = el;
@@ -260,6 +302,147 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
     <>
       {/* 头像组件 - 固定在右上角 */}
       <AvatarHoverMenu />
+
+      {/* 顶部固定导航栏 */}
+      <div
+        className={`fixed top-0 z-40 bg-gradient-to-r from-[#F0FDFA] to-[#ECFDF5] transition-all duration-300 ${
+          isSidebarOpen ? "left-[193px] sm:left-[209px] md:left-[225px]" : "left-[85px] sm:left-[80px]"
+        }`}
+        style={{ right: '80px' }}
+      >
+        <div className="h-[84px] flex items-center px-6 gap-6">
+          {/* 知识库标题 */}
+          <div className="flex items-center flex-shrink-0">
+            <img
+              src="/slibar/folder1.png"
+              alt="知识库图标"
+              className="w-[28px] h-[28px] mr-3"
+            />
+            <h1 className="text-[24px] font-medium text-[#333333] leading-[30px]">
+              知识库
+            </h1>
+          </div>
+
+          {/* 分隔线 */}
+          <div className="w-px h-8 bg-gray-300 flex-shrink-0" />
+
+          {/* 我的知识库 */}
+          <div
+            className="flex items-center cursor-pointer hover:bg-[rgba(59,128,255,0.07)] transition-colors rounded-lg px-3 py-2 flex-shrink-0"
+            onClick={handleBackToList}
+          >
+            <img
+              src="/slibar/slibar-knowledge-base@2x.png"
+              alt="我的知识库"
+              className="w-[20px] h-[20px] mr-2"
+            />
+            <span className="text-[16px] font-medium text-[#333333] leading-[24px]">
+              我的知识库
+            </span>
+          </div>
+
+          {/* 创建的知识库 - 下拉菜单 */}
+          <div
+            className="relative flex-shrink-0"
+            data-dropdown="knowledge-base-list"
+            onMouseLeave={handleMouseLeaveDropdown}
+            onMouseEnter={handleMouseEnterDropdown}
+          >
+            <div
+              className="flex items-center gap-2 cursor-pointer hover:bg-[rgba(59,128,255,0.07)] transition-colors rounded-lg px-3 py-2"
+              onClick={toggleExpand}
+            >
+              <img
+                src={expanded ? "/slibar/fileopen.svg" : "/slibar/filelist.svg"}
+                alt={expanded ? "收起" : "展开"}
+                className="w-[15px] h-[15px]"
+              />
+              <span className="text-[16px] font-medium text-[#333333] leading-[24px]">
+                创建的知识库
+              </span>
+              <span className="text-xs text-gray-900 bg-gray-200 px-2 py-0.5 rounded-full">
+                {folders.length}
+              </span>
+            </div>
+
+            {/* 下拉列表 */}
+            {expanded && (
+              <div
+                className="absolute top-full left-0 mt-2 w-[280px] bg-white rounded-lg shadow-lg border border-gray-200 max-h-[400px] overflow-y-auto z-50"
+                onMouseEnter={handleMouseEnterDropdown}
+              >
+                {isLoading ? (
+                  <div className="text-center py-6 text-gray-500">
+                    <div className="flex items-center justify-center">
+                      <div className="w-4 h-4 border-3 border-blue-500 border-t-transparent rounded-full animate-spin mr-2"></div>
+                      <span className="text-sm">加载中...</span>
+                    </div>
+                  </div>
+                ) : folders.length === 0 ? (
+                  <div className="text-center py-6 text-gray-500 text-sm">
+                    暂无知识库
+                  </div>
+                ) : (
+                  <div className="py-2">
+                    {folders.map((folder) => (
+                      <div
+                        key={folder.folder_id}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleFolderClick(folder);
+                        }}
+                        className={`flex items-center px-4 py-2 cursor-pointer transition-colors ${
+                          selectedFolder?.folder_id === folder.folder_id
+                            ? "bg-[rgba(13,148,136,0.1)]"
+                            : "hover:bg-gray-50"
+                        }`}
+                      >
+                        <img
+                          src={
+                            selectedFolder?.folder_id === folder.folder_id
+                              ? "/slibar/folderpng1.png"
+                              : "/slibar/slibar-createbase@2x.png"
+                          }
+                          alt="文件夹"
+                          className="w-[17px] h-[21px] mr-3 flex-shrink-0"
+                        />
+                        <span
+                          className={`${
+                            selectedFolder?.folder_id === folder.folder_id
+                              ? "text-[#0D9488] font-medium"
+                              : "text-gray-700"
+                          } text-[14px] whitespace-nowrap overflow-hidden text-ellipsis flex-1`}
+                          title={folder.folder_name}
+                        >
+                          {folder.folder_name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* 新建知识库按钮 */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={openCreateModal}
+              className="flex items-center h-[36px] px-4 bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-[18px] text-white text-[16px] font-normal hover:opacity-90 transition-opacity"
+            >
+              <img
+                src="/slibar/plus.svg"
+                alt="添加"
+                className="w-[20px] h-[20px] mr-2"
+              />
+              新建知识库
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* 占位元素，防止内容被固定导航栏遮挡 */}
+      <div className="h-[84px]" />
 
       <div className="flex h-full w-full">
       {/* 知识库弹窗（创建/编辑） */}
@@ -282,145 +465,9 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
         onConfirm={executeDeleteFolder}
       />
 
-      {/* 左侧知识库面板 - 响应式布局 */}
-      <div
-        ref={scrollContainerRef1}
-        className="w-[280px] lg:w-[320px] h-full bg-[#F7F8FA] rounded-[10px] border-r border-gray-200 overflow-y-auto flex-shrink-0 auto-hide-scrollbar
-                      md:w-[280px] sm:w-[240px] xs:w-[200px]"
-      >
-        {/* 内容容器 - 距离顶部40px */}
-        <div className="pt-[50px] px-4 sm:px-6">
-        {/* 知识库标题 */}
-        <div className="flex items-center mb-6">
-          <img
-            src="/slibar/folder1.png"
-            alt="知识库图标"
-            className="w-[24px] h-[24px] sm:w-[28px] sm:h-[28px] lg:w-[31px] lg:h-[30px] mr-3 sm:mr-6"
-          />
-          <h1 className="text-[20px] sm:text-[24px] lg:text-[30px] font-medium text-[#333333] leading-[30px] sm:leading-[35px] lg:leading-[40px]">
-            知识库
-          </h1>
-        </div>
-
-        {/* 新建知识库按钮 */}
-        <div className="mb-6 sm:mb-8">
-          <button
-            onClick={openCreateModal}
-            className="flex items-center justify-center w-full sm:w-[240px] h-[32px] sm:h-[36px] bg-gradient-to-r from-[#14B8A6] to-[#0D9488] rounded-[16px] sm:rounded-[18px] text-white text-[14px] sm:text-[16px] font-normal"
-          >
-            <img
-              src="/slibar/plus.svg"
-              alt="添加"
-              className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] mr-2 rounded-[1px]"
-            />
-            <span className="hidden xs:inline">新建知识库</span>
-            <span className="xs:hidden">新建</span>
-          </button>
-        </div>
-
-        {/* 我的知识库区域 */}
-        <div>
-          <div
-            className="flex items-center mb-3 cursor-pointer hover:bg-[rgba(59,128,255,0.07)] transition-colors rounded-lg p-2"
-            onClick={handleBackToList}
-          >
-            <img
-              src="/slibar/slibar-knowledge-base@2x.png"
-              alt="我的知识库"
-              className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] mr-2"
-            />
-            <span className="text-[14px] sm:text-[16px] font-medium text-[#333333] leading-[30px] sm:leading-[40px]">
-              我的知识库
-            </span>
-          </div>
-
-          {/* 创建的知识库 - 可展开/收起 */}
-          <div className="ml-3 sm:ml-6">
-            <div
-              className="flex items-center justify-between mb-2 cursor-pointer"
-              onClick={toggleExpand}
-            >
-              <div className="flex items-center">
-                <img
-                  src={
-                    expanded ? "/slibar/fileopen.svg" : "/slibar/filelist.svg"
-                  }
-                  alt={expanded ? "收起" : "展开"}
-                  className="w-[12px] h-[12px] sm:w-[15px] sm:h-[15px] mr-2"
-                />
-                <span className="text-[12px] sm:text-[14px] xs:text-[16px] font-medium text-[#333333] leading-[30px] sm:leading-[40px] w-[120px] sm:w-[160px] lg:w-[180px] truncate">
-                  创建的知识库
-                </span>
-              </div>
-              <span className="text-[10px] sm:text-xs text-gray-900">
-                {folders.length}
-              </span>
-            </div>
-
-            {expanded && (
-              <div className="space-y-1 mt-2">
-                {isLoading ? (
-                  <div className="text-center py-4 text-gray-500">
-                    加载中...
-                  </div>
-                ) : folders.length === 0 ? (
-                  <div className="text-center py-4 text-gray-500">
-                    暂无知识库
-                  </div>
-                ) : (
-                  folders.map((folder) => (
-                    <div
-                      key={folder.folder_id}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleFolderClick(folder);
-                      }}
-                      className={`relative flex items-center cursor-pointer transition-colors rounded-[10px] ${
-                        selectedFolder?.folder_id === folder.folder_id
-                          ? "bg-[rgba(59,128,255,0.07)]"
-                          : "hover:bg-[rgba(59,128,255,0.07)]"
-                      }`}
-                      style={{
-                        height: "32px",
-                        marginLeft: "-20px",
-                        marginRight: "4px",
-                        paddingLeft: "40px",
-                        paddingRight: "20px",
-                      }}
-                    >
-                      <img
-                        src={
-                          selectedFolder?.folder_id === folder.folder_id
-                            ? "/slibar/folderpng1.png"
-                            : "/slibar/slibar-createbase@2x.png"
-                        }
-                        alt="文件夹"
-                        className="w-[14px] h-[18px] sm:w-[17px] sm:h-[21px] mr-2"
-                      />
-                      <span
-                        className={`${
-                          selectedFolder?.folder_id === folder.folder_id
-                            ? "text-[#0D9488] font-medium"
-                            : "text-gray-700"
-                        } text-[12px] sm:text-[14px] xs:text-[16px] leading-[32px] sm:leading-[40px] whitespace-nowrap overflow-hidden text-ellipsis`}
-                        style={{ maxWidth: "60px" }}
-                        title={folder.folder_name}
-                      >
-                        {folder.folder_name}
-                      </span>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-        </div>
-      </div>
-
       {/* 右侧内容区域 - 响应式布局 */}
       <div
-        ref={scrollContainerRef2}
+        ref={scrollContainerRef}
         className="flex-1 bg-white overflow-y-auto min-w-0 auto-hide-scrollbar"
       >
         {showDetailPage && selectedFolder ? (
@@ -454,37 +501,29 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
                 </h1>
 
                 {/* 描述文字 */}
-                <div className="space-y-[8px] sm:space-y-[10px] mb-6 sm:mb-8 md:mb-10">
+                <div className="mb-6 sm:mb-8 md:mb-10">
                   <p className="text-[16px] sm:text-[18px] md:text-[20px] font-normal text-gray-700">
                     查看和管理您所有的知识库
-                  </p>
-                  <p className="text-[16px] sm:text-[18px] md:text-[20px] font-normal text-gray-700">
-                    点击左侧"新建知识库"创建新的知识库，或点击文件夹查看详细内容
                   </p>
                 </div>
               </div>
 
-              {/* 知识库列表标题 */}
-              <h2 className="text-[16px] sm:text-[18px] md:text-[20px] font-medium text-gray-900 mb-4 sm:mb-5 md:mb-6">
-                所有知识库
-              </h2>
-
               {/* 根据视图模式显示不同内容 */}
               {viewMode === "list" ? (
                 // 列表视图模式 - 表格
-                <div className="w-full">
+                <div className="w-full" style={{ marginTop: '-30px' }}>
                   {/* 表头 */}
                   <div className="flex mb-4 w-full">
-                    <div className="flex-1 text-[12px] sm:text-[14px] md:text-[16px] font-medium text-gray-700 min-w-80 ">
+                    <div className="flex-1 text-[14px] sm:text-[16px] md:text-[18px] font-medium text-gray-700 min-w-80 ">
                       知识库名称
                     </div>
-                    <div className="w-20 sm:w-24 md:w-28 text-[12px] sm:text-[14px] md:text-[16px] font-medium text-gray-700 flex-shrink-0 hidden sm:block mr-[200px]">
+                    <div className="w-20 sm:w-24 md:w-28 text-[14px] sm:text-[16px] md:text-[18px] font-medium text-gray-700 flex-shrink-0 hidden sm:block mr-[200px]">
                       内容
                     </div>
-                    <div className="w-24 sm:w-28 md:w-32 text-[12px] sm:text-[14px] md:text-[16px] font-medium text-gray-700 flex-shrink-0 hidden md:block mr-[150px]">
+                    <div className="w-24 sm:w-28 md:w-32 text-[14px] sm:text-[16px] md:text-[18px] font-medium text-gray-700 flex-shrink-0 hidden md:block mr-[150px]">
                       创建日期
                     </div>
-                    <div className="w-20 sm:w-24 md:w-28 text-[12px] sm:text-[14px] md:text-[16px] font-medium text-gray-700 flex-shrink-0">
+                    <div className="w-20 sm:w-24 md:w-28 text-[14px] sm:text-[16px] md:text-[18px] font-medium text-gray-700 flex-shrink-0">
                       操作
                     </div>
                   </div>

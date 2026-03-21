@@ -372,7 +372,6 @@ export default function FolderDetailPage({
                         alt="回到主页"
                         className="w-[16px] h-[16px] sm:w-[18px] sm:h-[18px] md:w-[20px] md:h-[20px]"
                       />
-                      <span className="text-sm text-gray-700 hidden sm:inline">返回知识库</span>
                     </div>
                   </TooltipTrigger>
                   <TooltipContent>
