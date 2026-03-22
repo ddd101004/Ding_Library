@@ -18,11 +18,6 @@ model User {
   phone_number       String?   @unique
   hashed_password    String
   phone_verified     Boolean   @default(false)
-  company_name       String?
-  country            String?
-  province           String?
-  city               String?
-  isp                String?
   verification_code  String?   @db.VarChar(255)
   session_id         String?
   disabled_status    Int?      @default(0)
@@ -372,15 +367,9 @@ model SearchHistory {
 
 /// 用户上传论文表 - 存储用户上传的论文文件和解析后的内容
 model UserUploadedPaper {
-  id              String  @id @default(uuid())
-  userId          String  @map("user_id")
-  title           String  @db.VarChar(500)
-  authors         String? @db.Text
-  abstract        String? @db.Text
-  keywords        String? @db.Text
-  publicationYear Int?    @map("publication_year")
-  source          String? @db.VarChar(100)
-  doi             String? @db.VarChar(200)
+  id String @id @default(uuid())
+  userId String @map("user_id")
+  title String @db.VarChar(500)
 
   // 文件信息
   filePath String @map("file_path") @db.VarChar(500)
@@ -396,10 +385,6 @@ model UserUploadedPaper {
   wordCount     Int?      @map("word_count")
   parseError    String?   @map("parse_error") @db.Text
   parsedAt      DateTime? @map("parsed_at")
-
-  // 统计信息
-  readCount         Int       @default(0) @map("read_count")
-  conversationCount Int       @default(0) @map("conversation_count")
 
   // 时间戳
   createTime DateTime  @default(now()) @map("create_time")

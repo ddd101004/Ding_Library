@@ -8,10 +8,6 @@ export interface FolderPaperItem {
   paper_id: string | null;
   uploaded_paper_id: string;
   title: string;
-  authors: Prisma.JsonValue | string | null;
-  publication_name: string | null;
-  year: number | null;
-  abstract: string | null;
   has_fulltext: boolean;
   file_type?: string | null;
   parse_status?: string | null;
@@ -63,11 +59,6 @@ export const getFolderContents = async (params: {
           select: {
             id: true,
             title: true,
-            authors: true,
-            source: true,
-            publicationYear: true,
-            abstract: true,
-            doi: true,
             fileType: true,
             parseStatus: true,
           },
@@ -93,10 +84,6 @@ export const getFolderContents = async (params: {
           paper_id: item.paper_id,
           uploaded_paper_id: item.uploadedPaper.id,
           title: item.uploadedPaper.title,
-          authors: item.uploadedPaper.authors,
-          publication_name: item.uploadedPaper.source,
-          year: item.uploadedPaper.publicationYear,
-          abstract: item.uploadedPaper.abstract,
           has_fulltext: true,
           file_type: item.uploadedPaper.fileType,
           parse_status: item.uploadedPaper.parseStatus,

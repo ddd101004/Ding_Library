@@ -51,7 +51,6 @@ export const findUserByUserId = async (user_id: string) => {
         user_id: true,
         phone_number: true,
         username: true,
-        company_name: true,
       },
     });
     return user;
@@ -73,7 +72,6 @@ export const getUserProfile = async (user_id: string) => {
         phone_number: true,
         username: true,
         nickname: true,
-        company_name: true,
         create_time: true,
       },
     });

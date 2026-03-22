@@ -27,7 +27,6 @@ const handleGet = async (
     user_id: user.user_id,
     nickname: user.nickname || user.username,
     phone_number: user.phone_number || null,
-    company_name: user.company_name,
     create_time: user.create_time,
   });
 };
