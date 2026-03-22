@@ -2,7 +2,6 @@ import logger from "@/helper/logger";
 import { getConversationById } from "@/db/chatConversation";
 // import { findUploadedPaperById } from "@/db/ai-reading/uploadedPaper";
 import { getAIChatApi } from "@/lib/ai/client";
-import { pushBill } from "@/utils/pushBill";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 
 // 导入 LLM 基础模块
@@ -272,12 +271,7 @@ export async function callChatLLMStream(
     });
 
     // 6. 使用通用流式处理函数处理响应
-    await processLLMStream(stream, onToken, {
-      user_id: conversation.user_id,
-      model,
-      bill_type: "chat_message",
-      input_content: userInput,
-    });
+    await processLLMStream(stream, onToken);
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logger.error(`调用聊天LLM流式API失败: ${errorMessage}`, { error });
@@ -324,17 +318,14 @@ export async function callAI(params: {
       stream: false,
     });
 
-    // 2. 记录用量到 bill 表
-    await pushBill(response, user_id, type, input_content);
-
-    // 3. 提取结果和 token 统计
+    // 2. 提取结果和 token 统计
     const content = response.choices[0]?.message?.content || "";
     const input_tokens = response.usage?.prompt_tokens || 0;
     const output_tokens = response.usage?.completion_tokens || 0;
     const total_tokens = response.usage?.total_tokens || 0;
     const actual_model = response.model || model;
 
-    // 4. 返回结果
+    // 3. 返回结果
     return {
       content,
       input_tokens,

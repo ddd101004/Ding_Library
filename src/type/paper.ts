@@ -53,12 +53,6 @@ export interface EBSCOPaperFields {
  * Local（本地数据库）特定字段
  */
 export interface LocalPaperFields extends EBSCOPaperFields {
-  /** PDF 是否已下载 */
-  pdf_downloaded?: boolean;
-  /** 查看次数 */
-  view_count?: number;
-  /** 下载次数 */
-  download_count?: number;
 }
 
 /**

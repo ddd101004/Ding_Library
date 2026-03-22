@@ -24,7 +24,6 @@ model User {
   city               String?
   isp                String?
   verification_code  String?   @db.VarChar(255)
-  avatar             String?   @db.VarChar(500)
   session_id         String?
   disabled_status    Int?      @default(0)
   disabled_time      DateTime?
@@ -38,7 +37,6 @@ model User {
   update_time        DateTime  @updatedAt
   operate_time       DateTime?
 
-  email    String? @unique @db.VarChar(255)
   nickname String? @db.VarChar(100)
 
   // 关联 - 智能对话系统
@@ -48,47 +46,11 @@ model User {
 
   // 关联 - 学术搜索系统
   searchHistory SearchHistory[]
-  browseHistory BrowseHistory[]
 
   // 关联 - AI伴读系统
   uploadedPapers UserUploadedPaper[]
 
   @@map("users")
-}
-
-model Bill {
-  id                String    @id @default(uuid())
-  user_id           String
-  input_content     String    @db.Text // 支持长文本输入
-  output_content    String    @db.Text // 支持长文本输出
-  reasoning_content String?   @db.Text // 思考过程内容
-  input_tokens      Int
-  output_tokens     Int
-  reasoning_tokens  Int?      @default(0) // 思考过程消耗的 tokens
-  total_tokens      Int
-  model             String
-  type              String
-  deleted_status    Int?      @default(0)
-  deleted_time      DateTime?
-  create_time       DateTime? @default(now())
-  update_time       DateTime? @updatedAt
-
-  @@map("bills")
-}
-
-model commonConfig {
-  id              Int       @id @default(autoincrement())
-  label           String
-  key             String
-  value           String
-  type            String
-  source          String?   @default("ai-medical")
-  disabled_status Int?      @default(0)
-  disabled_time   DateTime?
-  create_time     DateTime  @default(now())
-  update_time     DateTime? @updatedAt
-
-  @@map("common_config")
 }
 
 // ==================== 学术资源统一数据模型 ====================
@@ -151,22 +113,11 @@ model Paper {
   has_fulltext          Boolean @default(false) // 是否有全文
   fulltext_availability Int? // 全文可用性 (0/1)
   fulltext_link         String? @db.Text // 全文链接
-  pdf_link              String? @db.Text // PDF链接
-
-  // PDF下载状态
-  pdf_downloaded    Boolean   @default(false) // PDF是否已下载
-  pdf_file_path     String?   @db.Text // PDF文件存储路径
-  pdf_file_size     BigInt? // PDF文件大小(字节)
-  pdf_download_time DateTime? // PDF下载时间
 
   // 额外元数据
   record_info String? @db.Text // 完整记录信息 (JSON)
   bib_entity  String? @db.Text // 书目实体信息 (JSON)
   items       String? @db.Text // 条目数据 (JSON)
-
-  // 统计信息
-  view_count     Int @default(0) // 查看次数
-  download_count Int @default(0) // 下载次数
 
   // 系统字段
   sync_status    Int       @default(1) // 同步状态: 1-成功, 0-失败
@@ -182,7 +133,6 @@ model Paper {
 
   // 关联 - 用户行为
   searchHistory SearchHistory[]
-  browseHistory BrowseHistory[]
 
   @@unique([source, source_id]) // 联合唯一索引：数据源 + 来源ID
   @@index([source])
@@ -191,7 +141,6 @@ model Paper {
   @@index([publication_date])
   @@index([publication_year])
   @@index([has_fulltext])
-  @@index([pdf_downloaded])
   @@index([sync_time])
   @@index([language])
   @@index([n_citation])
@@ -376,7 +325,6 @@ model MessageFeedback {
   message_id       String  @db.VarChar(36)
   user_id          String  @db.VarChar(36)
   feedback_type    String  @db.VarChar(20) // "like" | "dislike" | "copy" | "regenerate"
-  feedback_content String? @db.Text // 详细反馈内容（可选）
 
   create_time DateTime @default(now())
   update_time DateTime @updatedAt
@@ -418,27 +366,6 @@ model SearchHistory {
   @@index([user_id, search_type, create_time])
   @@index([user_id, deleted_status])
   @@map("search_history")
-}
-
-/// 浏览历史表 - 记录用户的浏览行为
-model BrowseHistory {
-  id          String @id @default(uuid())
-  user_id     String
-  browse_type String @db.VarChar(20) // paper
-
-  // 关联的资源（使用数据库 UUID）
-  paper_id   String?
-
-  create_time DateTime @default(now())
-  update_time DateTime @updatedAt
-
-  user    User     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
-  paper   Paper?   @relation(fields: [paper_id], references: [id], onDelete: SetNull)
-
-  @@index([user_id])
-  @@index([create_time])
-  @@index([user_id, browse_type, create_time])
-  @@index([user_id, browse_type, paper_id])
 }
 
 // ==================== AI伴读功能相关模型 ====================

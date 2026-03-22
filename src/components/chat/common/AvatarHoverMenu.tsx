@@ -247,7 +247,7 @@ export default function AvatarHoverMenu({
               </button>
 
               <button
-                className="w-[128px] h-[40px] bg-[#0D9488] text-white rounded-[20px] border-0 text-[16px] hover:scale-[1.01] transition-transform ml-[20px]"
+                className="logout-confirm-btn w-[128px] h-[40px] bg-[#0D9488] text-white rounded-[20px] border-0 text-[16px] ml-[20px] hover:scale-[1.01] transition-transform"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleLogout();

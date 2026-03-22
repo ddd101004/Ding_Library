@@ -8,7 +8,6 @@ export const createFeedback = async (data: {
   message_id: string;
   user_id: string;
   feedback_type: string;
-  feedback_content?: string;
 }) => {
   try {
     const feedback = await prisma.messageFeedback.create({
@@ -16,7 +15,6 @@ export const createFeedback = async (data: {
         message_id: data.message_id,
         user_id: data.user_id,
         feedback_type: data.feedback_type,
-        feedback_content: data.feedback_content,
       },
     });
     return feedback;
@@ -49,7 +47,6 @@ export const getFeedbackByUserAndMessage = async (userId: string, messageId: str
  */
 export const updateFeedback = async (feedbackId: string, updates: {
   feedback_type?: string;
-  feedback_content?: string;
   update_time?: Date;
 }) => {
   try {

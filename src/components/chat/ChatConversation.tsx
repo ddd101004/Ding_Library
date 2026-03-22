@@ -572,10 +572,12 @@ export default function ChatConversation({
 
   // 监听语音转文字
   useEffect(() => {
-    if (transcribedText) {
-      setInputText((prev) => prev + transcribedText);
+    // 只在录音期间才同步 transcribedText 到 inputText
+    // 避免在录音结束后重复更新
+    if (isRecording && transcribedText) {
+      setInputText(transcribedText);
     }
-  }, [transcribedText, setInputText]);
+  }, [transcribedText, isRecording, setInputText]);
 
   // ============ UI交互处理 ============
   const handleSendMessage = () => {
@@ -737,8 +739,8 @@ export default function ChatConversation({
           border: 1px solid #d4ede4 !important;
         }
         
-        /* 按钮hover状态（排除论文搜索、DeepThink和引用确认按钮） */
-        button:hover:not(:disabled):not(.paper-search-btn):not(.deep-think-btn):not(.citation-confirm-btn),
+        /* 按钮hover状态（排除论文搜索、DeepThink、引用确认按钮和退出登录确认按钮） */
+        button:hover:not(:disabled):not(.paper-search-btn):not(.deep-think-btn):not(.citation-confirm-btn):not(.logout-confirm-btn),
         .btn-hover-effect:hover {
           background-color: #e8f8f0 !important;
           border-color: #d4ede4 !important;
@@ -763,8 +765,38 @@ export default function ChatConversation({
 
       <UserAvatarSection />
 
+      {/* 返回按钮 - 从知识库来时显示 */}
+      {from === 'knowledgebase' && (
+        <button
+          onClick={() => {
+            const folderId = router.query.folderId as string;
+            router.push(`/knowledge-base?folder=${folderId}`);
+          }}
+          className={`fixed top-5 z-50 flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-[#d4ede4] shadow-sm hover:bg-[#f0faf6] hover:border-[#0D9488] transition-all duration-200 ${
+            isSidebarOpen
+              ? 'left-[244px]'  // 侧边栏展开时：224px + 20px间距
+              : 'left-[99px]'    // 侧边栏收起时：79px + 20px间距
+          }`}
+        >
+          <svg
+            className="w-5 h-5 text-[#0D9488]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
+          </svg>
+          <span className="text-sm text-[#2d3748]">返回知识库</span>
+        </button>
+      )}
+
       {/* 主容器添加浅绿背景和边框样式 */}
-      <div style={{ 
+      <div style={{
         backgroundColor: '#f0faf6',
         minHeight: '100vh',
         border: '1px solid #d4ede4',

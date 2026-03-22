@@ -40,7 +40,6 @@ export const STRING_LIMITS = {
 
   // 反馈相关 (参考: MessageFeedback 表)
   feedback_type: { min: 1, max: 20 }, // 反馈类型 (db: VarChar(20))
-  feedback_content: { min: 0, max: 5000 }, // 反馈内容 (db: Text)
 
   // 标注相关 (参考: PaperAnnotation 表)
   annotation_content: { min: 1, max: 50000 }, // 标注内容 (db: Text)

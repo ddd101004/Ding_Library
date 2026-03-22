@@ -93,8 +93,8 @@ export function useAudioRecorder(): AudioRecorderResult {
             // 最终结果，添加到本次累积文本中
             finalTranscriptRef.current += transcript;
           } else {
-            // 临时结果，实时显示
-            interimTranscript = transcript;
+            // 临时结果，累积所有临时结果
+            interimTranscript += transcript;
           }
         }
 

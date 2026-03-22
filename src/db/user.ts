@@ -73,8 +73,6 @@ export const getUserProfile = async (user_id: string) => {
         phone_number: true,
         username: true,
         nickname: true,
-        email: true,
-        avatar: true,
         company_name: true,
         create_time: true,
       },
@@ -93,8 +91,6 @@ export const updateUserProfile = async (
   user_id: string,
   data: {
     nickname?: string;
-    email?: string;
-    avatar?: string;
   }
 ) => {
   try {
@@ -106,8 +102,6 @@ export const updateUserProfile = async (
         phone_number: true,
         username: true,
         nickname: true,
-        email: true,
-        avatar: true,
       },
     });
     return user;
@@ -116,26 +110,6 @@ export const updateUserProfile = async (
     return null;
   }
 };
-
-/**
- * 检查邮箱是否已被使用
- */
-export const isEmailTaken = async (email: string, excludeUserId?: string) => {
-  try {
-    const user = await prisma.user.findFirst({
-      where: {
-        email,
-        deleted_status: 0,
-        ...(excludeUserId ? { NOT: { user_id: excludeUserId } } : {}),
-      },
-    });
-    return !!user;
-  } catch (error: any) {
-    logger.error(`检查邮箱失败: ${error?.message}`, { error });
-    return false;
-  }
-};
-
 
 /**
  * 软删除用户账户
@@ -148,8 +122,6 @@ export const softDeleteUser = async (user_id: string) => {
         deleted_status: 1,
         deleted_time: new Date(),
         // 清除敏感信息
-        email: null,
-        avatar: null,
         session_id: null,
       },
     });

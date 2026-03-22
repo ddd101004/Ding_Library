@@ -70,7 +70,6 @@ const MessageFeedback: React.FC<MessageFeedbackProps> = ({
       const response = await apiPost("/api/chat/feedback", {
         message_id: actualMessageId,
         feedback_type: feedbackType,
-        feedback_content: "",
       });
 
       if (response.code === 200) {
@@ -118,7 +117,6 @@ const MessageFeedback: React.FC<MessageFeedbackProps> = ({
       const response = await apiPost("/api/chat/feedback", {
         message_id: actualMessageId,
         feedback_type: feedbackType,
-        feedback_content: "",
       });
 
       if (response.code === 200) {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { Folder as FolderIcon, Database, ChevronDown, ChevronRight, FolderOpen, Plus, Edit, Trash2, MoreVertical } from "lucide-react";
+import { Folder as FolderIcon, ChevronDown, ChevronRight, FolderOpen, Plus, Edit, Trash2, MoreVertical } from "lucide-react";
 import { apiGet, apiDel, apiRequest, BusinessError } from "@/api/request";
 import { toast } from "sonner";
 import KnowledgeBaseModal from "./KnowledgeBaseModal";
@@ -320,22 +320,6 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
             <h1 className="text-[24px] font-medium text-[#333333] leading-[30px]">
               知识库
             </h1>
-          </div>
-
-          {/* 分隔线 */}
-          <div className="w-px h-8 bg-gray-300 flex-shrink-0" />
-
-          {/* 我的知识库 */}
-          <div
-            className="flex items-center cursor-pointer hover:bg-[rgba(59,128,255,0.07)] transition-colors rounded-lg px-3 py-2 flex-shrink-0"
-            onClick={handleBackToList}
-          >
-            <Database
-              className="w-[20px] h-[20px] mr-2"
-            />
-            <span className="text-[16px] font-medium text-[#333333] leading-[24px]">
-              我的知识库
-            </span>
           </div>
 
           {/* 创建的知识库 - 下拉菜单 */}

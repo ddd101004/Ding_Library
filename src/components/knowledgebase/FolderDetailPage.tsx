@@ -609,7 +609,12 @@ export default function FolderDetailPage({
 
         {/* 底部操作按钮 */}
         {showBulkActions && (
-          <div className="fixed bottom-2 left-0 right-0 z-100 flex justify-center px-4 transition-all duration-300 ease-in-out">
+          <div
+            className={cn(
+              "fixed bottom-2 right-0 z-100 flex justify-center px-4 transition-all duration-300 ease-in-out",
+              isSidebarOpen ? "left-[228px]" : "left-[83px]"
+            )}
+          >
             {/* 按钮容器 */}
             <div
               className={cn(

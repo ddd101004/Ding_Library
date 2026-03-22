@@ -7,10 +7,7 @@ import {
   sendMethodNotAllowedResponse,
 } from "@/helper/responseHelper";
 import logger from "@/helper/logger";
-import {
-  findPaperById,
-  incrementViewCount,
-} from "@/db/paper";
+import { findPaperById } from "@/db/paper";
 import { validateString } from "@/utils/validateString";
 
 /**
@@ -65,9 +62,6 @@ const handleGet = async (
     paperId: paper.id,
   });
 
-  // 增加查看次数
-  await incrementViewCount(paper.id);
-
   // 根据语言决定标题和摘要的优先级
   // 中文论文优先显示中文，英文论文优先显示英文
   const isChinese = paper.language === 'zh';
@@ -113,12 +107,6 @@ const handleGet = async (
     hasFulltext: paper.has_fulltext,
     fulltextAvailability: paper.fulltext_availability,
     fulltextLink: paper.fulltext_link,
-    pdfLink: paper.pdf_link,
-    pdfDownloaded: paper.pdf_downloaded,
-    pdfFilePath: paper.pdf_file_path,
-    pdfFileSize: paper.pdf_file_size?.toString(),
-    viewCount: paper.view_count,
-    downloadCount: paper.download_count,
     syncTime: paper.sync_time,
     source: paper.source || "wanfang",
   };

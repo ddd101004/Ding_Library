@@ -100,10 +100,12 @@ export default function CheckedChat({ selectedFunction }: CheckedChatProps) {
 
   // Update input text when voice transcription is complete
   useEffect(() => {
-    if (transcribedText) {
-      setInputText((prev) => prev + transcribedText);
+    // 只在录音期间才同步 transcribedText 到 inputText
+    // 避免在录音结束后重复更新
+    if (isRecording && transcribedText) {
+      setInputText(transcribedText);
     }
-  }, [transcribedText]);
+  }, [transcribedText, isRecording]);
 
   // 当选择主题时更新输入框
   useEffect(() => {

@@ -77,7 +77,6 @@ export interface SearchPapersParams {
   authors?: string; // 作者名
   publicationName?: string; // 出版物名称
   hasFulltext?: boolean; // 是否有全文
-  pdfDownloaded?: boolean; // PDF是否已下载
   startDate?: Date; // 开始日期
   endDate?: Date; // 结束日期
   page?: number; // 页码
@@ -93,7 +92,6 @@ export async function searchPapers(params: SearchPapersParams) {
       authors,
       publicationName,
       hasFulltext,
-      pdfDownloaded,
       startDate,
       endDate,
       page = 1,
@@ -136,11 +134,6 @@ export async function searchPapers(params: SearchPapersParams) {
     // 全文过滤
     if (hasFulltext !== undefined) {
       (where.AND as any[]).push({ has_fulltext: hasFulltext });
-    }
-
-    // PDF下载状态过滤
-    if (pdfDownloaded !== undefined) {
-      (where.AND as any[]).push({ pdf_downloaded: pdfDownloaded });
     }
 
     // 日期范围过滤
@@ -393,72 +386,6 @@ export async function findPapersByIds(ids: string[]): Promise<Paper[]> {
       count: ids.length,
     });
     return [];
-  }
-}
-
-/**
- * 标记PDF已下载
- */
-export async function markPdfDownloaded(
-  id: string,
-  pdfFilePath: string,
-  pdfFileSize: bigint
-) {
-  try {
-    const paper = await prisma.paper.update({
-      where: { id },
-      data: {
-        pdf_downloaded: true,
-        pdf_file_path: pdfFilePath,
-        pdf_file_size: pdfFileSize,
-        pdf_download_time: new Date(),
-      },
-    });
-    logger.info("标记PDF已下载", { id, pdfFilePath });
-    return paper;
-  } catch (error: any) {
-    logger.error("标记PDF已下载失败", { error: error.message, id });
-    return null;
-  }
-}
-
-/**
- * 增加查看次数
- */
-export async function incrementViewCount(id: string) {
-  try {
-    const paper = await prisma.paper.update({
-      where: { id },
-      data: {
-        view_count: {
-          increment: 1,
-        },
-      },
-    });
-    return paper;
-  } catch (error: any) {
-    logger.error("增加查看次数失败", { error: error.message, id });
-    return null;
-  }
-}
-
-/**
- * 增加下载次数
- */
-export async function incrementDownloadCount(id: string) {
-  try {
-    const paper = await prisma.paper.update({
-      where: { id },
-      data: {
-        download_count: {
-          increment: 1,
-        },
-      },
-    });
-    return paper;
-  } catch (error: any) {
-    logger.error("增加下载次数失败", { error: error.message, id });
-    return null;
   }
 }
 

@@ -21,7 +21,7 @@ const handlePost = async (
   res: NextApiResponse,
   userId: string
 ) => {
-  const { message_id, feedback_type, feedback_content } = req.body;
+  const { message_id, feedback_type } = req.body;
 
   // 参数校验
   const messageIdResult = validateId(message_id, "消息 ID");
@@ -32,16 +32,6 @@ const handlePost = async (
   const typeResult = validateString(feedback_type, "反馈类型", { max: 20 });
   if (!typeResult.valid) {
     return sendWarnningResponse(res, typeResult.error || "反馈类型校验失败");
-  }
-
-  if (feedback_content) {
-    const contentResult = validateString(feedback_content, "反馈内容", {
-      limitKey: "feedback_content",
-      required: false,
-    });
-    if (!contentResult.valid) {
-      return sendWarnningResponse(res, contentResult.error || "反馈内容校验失败");
-    }
   }
 
   // 验证 feedback_type：只支持点赞/点踩及其取消操作
@@ -98,7 +88,6 @@ const handlePost = async (
       // 更新现有反馈
       result = await updateFeedback(existingFeedback.feedback_id, {
         feedback_type,
-        feedback_content,
         update_time: new Date(),
       });
     } else {
@@ -107,7 +96,6 @@ const handlePost = async (
         message_id,
         user_id: userId,
         feedback_type,
-        feedback_content,
       });
     }
     actionMessage = feedback_type === "like" ? "点赞成功" : "点踩成功";
