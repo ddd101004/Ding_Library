@@ -77,14 +77,9 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
     }
   }, [preloadData]);
 
-  // 获取深度学习关键词（简化版，直接生成13个随机关键词）
+  // 获取深度学习关键词
   const fetchDeepLearningKeywords = useCallback(async (forceRefresh = false) => {
-    // 非强制刷新时，立即设置默认关键词以提升用户体验
-    if (!forceRefresh) {
-      setTopics(deepLearningDefaults);
-    }
-
-    const timestamp = Date.now(); // 使用时间戳避免缓存
+    const timestamp = Date.now();
 
     // 从主题池中随机选择一个主题
     const randomTopic = deepLearningTopics[Math.floor(Math.random() * deepLearningTopics.length)];
@@ -92,7 +87,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
     const keywords = await preloadData(
       "/api/ai/keywords",
       {
-        keyword: randomTopic, // 使用随机选择的主题
+        keyword: randomTopic,
         count: 13,
         _t: forceRefresh ? timestamp : undefined
       },
