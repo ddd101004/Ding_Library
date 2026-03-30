@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from "react";
 import CitationModal from "./CitationModal";
 import AuthorAvatar, { AuthorInfo } from "./AuthorAvatar";
 import { AlignLeft, ChevronLeft, Quote, Tag, Globe } from "lucide-react";
+import { extractEnglishTitle } from "@/utils/titleExtractor";
 
 interface PaperDetailProps {
   paper: {
@@ -36,7 +37,6 @@ interface PaperDetailProps {
 export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
   // 外文发现判断：使用 API 返回的 isForeignDiscovery 字段，或检查 source 字段
   const isForeignDiscovery = paper.isForeignDiscovery || paper.source === "wanfang_en";
-  const [translateMode, setTranslateMode] = useState<"zh" | "en">(isForeignDiscovery ? "en" : "zh");
   const [showNavMenu, setShowNavMenu] = useState(false);
   const [selectedOption, setSelectedOption] = useState<"detail" | "abstract">(
     "detail"
@@ -193,9 +193,10 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
   const chineseAbstract = paper.abstract_zh || "";
   const englishAbstract = paper.abstract || "";
 
-  // 获取论文的标题部分 - 直接使用 title_zh
-  const chineseTitle = paper.title_zh || "";
-  const englishTitle = ""; // 不再需要显示英文标题
+  // 获取论文的标题部分 - 根据是否为外文发现决定显示哪个标题
+  const displayTitle = isForeignDiscovery
+    ? extractEnglishTitle(paper.title || "")
+    : (paper.title_zh || paper.title || "");
 
   // 组件卸载时清理定时器
   useEffect(() => {
@@ -276,18 +277,11 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
         <div className="relative">
           {/* 论文标题区域 */}
           <div className="mt-[clamp(15px,3vw,22px)] px-4 sm:px-6">
-            {/* 中文标题 */}
-            {chineseTitle ? (
+            {/* 论文标题 - 根据是否为外文发现显示对应标题 */}
+            {displayTitle && (
               <div className="text-[clamp(16px,2.5vw,18px)] font-medium text-[#333333]">
-                {chineseTitle}
+                {displayTitle}
               </div>
-            ) : (
-              // 回退：如果没有中文标题，显示英文标题
-              englishTitle && (
-                <div className="text-[clamp(16px,2.5vw,18px)] font-medium text-[#333333]">
-                  {englishTitle}
-                </div>
-              )
             )}
 
             <div className="flex items-center justify-between mt-[clamp(25px,4vw,41px)]">
@@ -428,59 +422,21 @@ export default function PaperDetail({ paper, onBack }: PaperDetailProps) {
               <div className="text-[clamp(16px,2.5vw,18px)] font-medium text-[#333333]">
                 摘要
               </div>
-
-              {/* 翻译选项框 - 外文发现不显示 */}
-              {!isForeignDiscovery && (
-                <div className="w-[clamp(150px,22vw,180px)] h-10 bg-[#F7F8FA] rounded-2xl border border-[#C8C9CC] flex items-center relative z-10 p-0 box-border">
-                  {/* 中文选项 */}
-                  <button
-                    className={`h-9 w-1/2 flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
-                      translateMode === "zh"
-                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-[2px]"
-                        : "bg-transparent shadow-none ml-[2px] mr-0"
-                    }`}
-                    onClick={() => setTranslateMode("zh")}
-                  >
-                    <span className={`font-medium text-[clamp(12px,1.5vw,16px)] select-none ${
-                      translateMode === "zh" ? "text-[#0D9488]" : "text-[#999999]"
-                    }`}>
-                      中文
-                    </span>
-                  </button>
-
-                  {/* 英文选项 */}
-                  <button
-                    className={`h-9 w-1/2 flex flex-0-auto items-center justify-center rounded-2xl border-none transition-all duration-200 cursor-pointer p-0 ${
-                      translateMode === "en"
-                        ? "bg-white shadow-[0px_0px_10px_0px_rgba(89,106,178,0.1)] ml-0 mr-[2px]"
-                        : "bg-transparent shadow-none ml-[2px] mr-0"
-                    }`}
-                    onClick={() => setTranslateMode("en")}
-                  >
-                    <span className={`font-medium text-[clamp(12px,1.5vw,16px)] select-none ${
-                      translateMode === "en" ? "text-[#0D9488]" : "text-[#999999]"
-                    }`}>
-                      英文
-                    </span>
-                  </button>
-                </div>
-              )}
             </div>
 
-            {/* 摘要内容 */}
+            {/* 摘要内容 - 根据是否为外文发现显示对应摘要 */}
             <div className="mt-5 text-[clamp(12px,1.5vw,16px)] text-[#666666] leading-[1.6] w-full">
-              {/* 根据语言模式显示对应的摘要 */}
-              {translateMode === "zh" ? (
-                chineseAbstract ? (
-                  <div>{chineseAbstract}</div>
-                ) : (
-                  <div>暂无中文摘要</div>
-                )
-              ) : (
+              {isForeignDiscovery ? (
                 englishAbstract ? (
                   <div>{englishAbstract}</div>
                 ) : (
-                  <div>暂无英文摘要</div>
+                  <div>暂无摘要</div>
+                )
+              ) : (
+                chineseAbstract ? (
+                  <div>{chineseAbstract}</div>
+                ) : (
+                  <div>暂无摘要</div>
                 )
               )}
             </div>

@@ -1,9 +1,10 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { Quote, Languages } from "lucide-react";
+import { Quote } from "lucide-react";
 import { SearchResult } from "../../../types/types";
 import AuthorDisplay from "./AuthorDisplay";
 import CitationModal from "./CitationModal";
+import { extractEnglishTitle } from "@/utils/titleExtractor";
 
 interface PapersTabProps {
   searchResults: {
@@ -176,50 +177,11 @@ export default function ForeignDiscoveryTab({
                   className="w-[15px] h-[14px] sm:w-[17px] sm:h-[16px]"
                 />
               </div>
-              {/* 标题显示 - 英文标题在主行，中文标题在次行且字体缩小2px */}
+              {/* 标题显示 - 只显示英文标题 */}
               <div className="mb-2">
                 <h4 className="font-medium text-[18px] sm:text-[20px] text-[#333333] leading-tight">
-                  {(() => {
-                    const title = paper.title_zh || paper.title;
-                    if (title && title.includes('/')) {
-                      const parts = title.split('/');
-                      // 找到第一个非空的部分作为中文标题，最后一个非空的部分作为英文标题
-                      const chineseTitle = parts.find(part => part && /[\u4e00-\u9fa5]/.test(part.trim()))?.trim();
-                      const englishTitle = [...parts].reverse().find(part => part && !/[\u4e00-\u9fa5]/.test(part.trim()))?.trim();
-
-                      if (chineseTitle && englishTitle) {
-                        return englishTitle;
-                      } else if (englishTitle) {
-                        return englishTitle;
-                      } else {
-                        return title;
-                      }
-                    }
-                    return title;
-                  })()}
+                  {extractEnglishTitle(paper.title_zh || paper.title || "")}
                 </h4>
-                <h5 className="font-normal text-[16px] sm:text-[18px] text-[#0D9488] leading-tight mt-1 flex items-center">
-                  {(() => {
-                    const title = paper.title_zh || paper.title;
-                    if (title && title.includes('/')) {
-                      const parts = title.split('/');
-                      // 找到第一个非空的部分作为中文标题
-                      const chineseTitle = parts.find(part => part && /[\u4e00-\u9fa5]/.test(part.trim()))?.trim();
-
-                      if (chineseTitle) {
-                        return (
-                          <>
-                            <Languages
-                              className="w-[15px] h-[15px] sm:w-[17px] sm:h-[17px] mr-1 flex-shrink-0"
-                            />
-                            {chineseTitle}
-                          </>
-                        );
-                      }
-                    }
-                    return null;
-                  })()}
-                </h5>
               </div>
               {/* 显示前两个作者，包含首字母头像 */}
               <AuthorDisplay

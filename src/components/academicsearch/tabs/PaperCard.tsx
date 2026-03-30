@@ -1,8 +1,9 @@
 "use client";
 import React from "react";
-import { Quote, Languages } from "lucide-react";
+import { Quote } from "lucide-react";
 import { SearchResult } from "../../../types/types";
 import AuthorDisplay from "./AuthorDisplay";
+import { extractEnglishTitle } from "@/utils/titleExtractor";
 
 interface PaperCardProps {
   paper: SearchResult;
@@ -39,28 +40,10 @@ export default function PaperCard({
   // 根据显示模式渲染标题
   const renderTitle = () => {
     if (displayMode === "foreign") {
-      // 外文发现模式：优先显示英文标题 + 中文标题
-      const englishTitle = (paper as any).title_en || paper.title;
-      const chineseTitle = paper.title_zh || paper.title;
+      // 外文发现模式：从混合标题中提取英文部分
+      const rawTitle = (paper as any).title_en || paper.title || "";
+      const englishTitle = extractEnglishTitle(rawTitle);
 
-      // 如果英文标题和中文标题不同，则分两行显示
-      if (englishTitle && chineseTitle && englishTitle !== chineseTitle) {
-        return (
-          <div className="mb-3">
-            <h4 className="text-lg font-semibold text-[16px] sm:text-[18px] font-[600] leading-[1.4] max-h-[50px] overflow-hidden text-ellipsis line-clamp-2">
-              {englishTitle}
-            </h4>
-            <h5 className="font-normal text-[14px] sm:text-[16px] text-[#0D9488] leading-[1.4] max-h-[50px] overflow-hidden text-ellipsis line-clamp-2 mt-1 flex items-center">
-              <Languages
-                className="w-[15px] h-[15px] sm:w-[17px] sm:h-[17px] mr-1 flex-shrink-0"
-              />
-              {chineseTitle}
-            </h5>
-          </div>
-        );
-      }
-
-      // 只有一个标题或标题相同时
       return (
         <h4 className="text-lg font-semibold mb-3 text-[16px] sm:text-[18px] font-[600] mb-[12px] leading-[1.4] max-h-[50px] overflow-hidden text-ellipsis line-clamp-2">
           {englishTitle}

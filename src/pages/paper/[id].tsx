@@ -8,7 +8,7 @@ import { apiGet } from "@/api/request";
 
 export default function PaperDetailPage() {
   const router = useRouter();
-  const { id, source } = router.query;
+  const { id, source, tab } = router.query;
   const [paperData, setPaperData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -58,6 +58,9 @@ export default function PaperDetailPage() {
         if (response.code === 200 && response.data) {
           const paper = response.data;
 
+          // 判断是否为外文发现：根据 tab 参数或 source 字段
+          const isForeignDiscovery = tab === "外文发现" || paper.source === "wanfang_en";
+
           // 转换数据格式以匹配组件期望的格式
           const transformedData = {
             id: paper.id || id,
@@ -78,6 +81,7 @@ export default function PaperDetailPage() {
             publicationType: paper.publicationType,
             hasFulltext: paper.hasFulltext || !!paper.parsed_content,
             pdfLink: paper.pdfLink || paper.file_path,
+            isForeignDiscovery: isForeignDiscovery,
           };
 
           console.log("论文数据转换成功:", transformedData);
