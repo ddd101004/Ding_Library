@@ -51,7 +51,7 @@ export async function uploadFileToLocal(
     onProgress?.(40);
 
    const response = await apiPost<CreateAiReadingPaperResponse>(
-    "/api/ai-reading/papers",
+    "/api/uploaded-papers",
     formData
   );
 
