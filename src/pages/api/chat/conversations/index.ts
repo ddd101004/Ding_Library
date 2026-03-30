@@ -67,7 +67,6 @@ const handlePost = async (
     title: conversation.title,
     model: conversation.model,
     is_deep_think: conversation.is_deep_think,
-    is_pinned: conversation.is_pinned,
     context_window: conversation.context_window,
     max_tokens: conversation.max_tokens,
     message_count: conversation.message_count,

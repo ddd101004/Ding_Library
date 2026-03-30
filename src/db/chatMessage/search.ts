@@ -36,6 +36,8 @@ export const searchMessages = async (params: {
         SELECT COUNT(DISTINCT msg.message_id) as total
         FROM chat_messages msg
         INNER JOIN chat_conversations conv ON msg.conversation_id = conv.conversation_id
+        LEFT JOIN message_citations mc ON msg.message_id = mc.message_id AND mc.citation_type = 'auto_related'
+        LEFT JOIN papers paper ON mc.paper_id = paper.id
         WHERE conv.user_id = ${user_id}
         AND conv.deleted_at IS NULL
         AND (
@@ -69,6 +71,8 @@ export const searchMessages = async (params: {
           MATCH(msg.content) AGAINST(${keyword} IN NATURAL LANGUAGE MODE) as relevance_score
         FROM chat_messages msg
         INNER JOIN chat_conversations conv ON msg.conversation_id = conv.conversation_id
+        LEFT JOIN message_citations mc ON msg.message_id = mc.message_id AND mc.citation_type = 'auto_related'
+        LEFT JOIN papers paper ON mc.paper_id = paper.id
         WHERE conv.user_id = ${user_id}
         AND conv.deleted_at IS NULL
         AND (
@@ -164,6 +168,8 @@ export const searchMessages = async (params: {
         SELECT COUNT(DISTINCT msg.message_id) as total
         FROM chat_messages msg
         INNER JOIN chat_conversations conv ON msg.conversation_id = conv.conversation_id
+        LEFT JOIN message_citations mc ON msg.message_id = mc.message_id AND mc.citation_type = 'auto_related'
+        LEFT JOIN papers paper ON mc.paper_id = paper.id
         WHERE conv.user_id = ${user_id}
         AND conv.deleted_at IS NULL
         AND (
@@ -196,6 +202,8 @@ export const searchMessages = async (params: {
           END as match_priority
         FROM chat_messages msg
         INNER JOIN chat_conversations conv ON msg.conversation_id = conv.conversation_id
+        LEFT JOIN message_citations mc ON msg.message_id = mc.message_id AND mc.citation_type = 'auto_related'
+        LEFT JOIN papers paper ON mc.paper_id = paper.id
         WHERE conv.user_id = ${user_id}
         AND conv.deleted_at IS NULL
         AND (

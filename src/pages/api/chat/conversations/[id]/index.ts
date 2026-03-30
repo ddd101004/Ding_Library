@@ -56,7 +56,6 @@ const handleGet = async (
     title: conversation.title,
     model: conversation.model,
     is_deep_think: conversation.is_deep_think,
-    is_pinned: conversation.is_pinned,
     context_window: conversation.context_window,
     max_tokens: conversation.max_tokens,
     message_count: conversation.message_count,
@@ -76,8 +75,7 @@ const handlePatch = async (
   userId: string,
   conversation_id: string
 ) => {
-  const { title, is_pinned, is_deep_think, context_window, max_tokens } =
-    req.body;
+  const { title, is_deep_think, context_window, max_tokens } = req.body;
 
   // 参数校验
   if (title !== undefined) {
@@ -90,7 +88,6 @@ const handlePatch = async (
   const updateData: Record<string, unknown> = {};
 
   if (title !== undefined) updateData.title = title;
-  if (is_pinned !== undefined) updateData.is_pinned = is_pinned;
   if (is_deep_think !== undefined) updateData.is_deep_think = is_deep_think;
   if (context_window !== undefined) updateData.context_window = context_window;
   if (max_tokens !== undefined) updateData.max_tokens = max_tokens;
@@ -104,7 +101,6 @@ const handlePatch = async (
   sendSuccessResponse(res, "更新成功", {
     conversation_id: conversation.conversation_id,
     title: conversation.title,
-    is_pinned: conversation.is_pinned,
     update_time: conversation.update_time,
   });
 };

@@ -211,7 +211,6 @@ export function useConversationData(params: UseConversationDataParams) {
           title: string;
           model: string;
           is_deep_think: boolean;
-          is_pinned: boolean;
           context_window: number;
           max_tokens: number;
           message_count: number;

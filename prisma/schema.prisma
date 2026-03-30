@@ -151,7 +151,6 @@ model ChatConversation {
   title           String  @db.VarChar(255)
   model           String  @default("deepseek-v3") @db.VarChar(50)
   is_deep_think   Boolean @default(false)
-  is_pinned       Boolean @default(false)
 
   // 上下文管理
   context_window Int @default(10) // 上下文窗口大小（消息条数）
@@ -175,7 +174,6 @@ model ChatConversation {
   folderItems FolderItem[]      // 对话所在的文件夹
 
   @@index([user_id, last_message_at])
-  @@index([user_id, is_pinned])
   @@map("chat_conversations")
 }
 

@@ -86,10 +86,10 @@ export const getConversationsByUserId = async (params: {
     // 获取总数
     const total = await prisma.chatConversation.count({ where });
 
-    // 获取列表（置顶的在前，然后按最后消息时间倒序）
+    // 获取列表（按最后消息时间倒序）
     const conversations = await prisma.chatConversation.findMany({
       where,
-      orderBy: [{ is_pinned: "desc" }, { last_message_at: "desc" }],
+      orderBy: { last_message_at: "desc" },
       skip: (page - 1) * limit,
       take: limit,
       include: {
@@ -200,7 +200,6 @@ export const getConversationsByUserId = async (params: {
         title: conv.title,
         model: conv.model,
         is_deep_think: conv.is_deep_think,
-        is_pinned: conv.is_pinned,
         message_count: conv.message_count,
         last_message_at: conv.last_message_at,
         create_time: conv.create_time,
