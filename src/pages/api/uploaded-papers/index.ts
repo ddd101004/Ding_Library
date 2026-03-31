@@ -17,6 +17,7 @@ import {
 } from "@/helper/responseHelper";
 import prisma from "@/utils/prismaProxy";
 import { validateString, validateId } from "@/utils/validateString";
+import { triggerFileParsing } from "@/service/parser/fileParser";
 
 // 禁用 Next.js 的默认 body parser，以便处理文件上传
 export const config = {
@@ -92,13 +93,22 @@ const handlePost = async (
       },
     });
 
+    // 异步触发文件解析（不阻塞响应）
+    setImmediate(async () => {
+      try {
+        await triggerFileParsing(paper.id);
+      } catch (error) {
+        console.error("文件解析触发失败:", error);
+      }
+    });
+
     return sendSuccessResponse(res, "上传成功", {
       id: paper.id,
       title: paper.title,
       file_name: paper.fileName,
       file_size: Number(paper.fileSize),
       file_type: paper.fileType,
-      parse_status: paper.parseStatus,
+      parse_status: "parsing", // 返回解析中状态
       cos_key: paper.id, // 兼容旧字段
     });
   } catch (error: any) {
