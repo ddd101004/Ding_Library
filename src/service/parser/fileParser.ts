@@ -10,7 +10,7 @@ import logger from '@/helper/logger';
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
-const UPLOAD_DIR = join(process.cwd(), 'uploads');
+const UPLOAD_DIR = join(process.cwd(), 'public', 'uploads');
 
 /**
  * 解析文件内容
