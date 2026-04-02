@@ -93,7 +93,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
-  sendSuccessResponse(res, "密码重置成功");
+  sendSuccessResponse(res, "密码重置成功，请重新登录");
 };
 
 /**

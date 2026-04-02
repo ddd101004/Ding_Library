@@ -61,6 +61,20 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
       sendWarnningResponse(res, "手机号未注册");
       return;
     }
+
+    // 检查账户是否被锁定
+    if (
+      existingUser.code_locked_until &&
+      new Date(existingUser.code_locked_until) > new Date()
+    ) {
+      const remainingMinutes = Math.ceil(
+        (new Date(existingUser.code_locked_until).getTime() - Date.now()) / 60000
+      );
+      return sendWarnningResponse(
+        res,
+        `账户已锁定，请${remainingMinutes}分钟后再试`
+      );
+    }
   }
 
   // 检查发送频率（1分钟内最多发送5次）

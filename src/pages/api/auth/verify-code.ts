@@ -91,8 +91,8 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
       return sendWarnningResponse(res, `验证码错误，还剩${remainingAttempts}次尝试机会`);
     }
 
-    // 验证码正确，清空验证码和计数器
-    await clearVerificationCode(user.user_id);
+    // 验证码正确，不清空验证码，保留给后续流程使用（如重置密码）
+    // 验证码将在后续操作（reset-pwd 等）完成后清空
 
     logger.info('验证码验证成功', { userId: user.user_id });
     monitor.success({ userId: user.user_id });

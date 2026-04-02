@@ -2,6 +2,7 @@ import { useRouter } from "next/router";
 import { useUser } from "@/components/contexts/UserContext";
 import { apiPost, saveToken } from "@/api/request";
 import { api } from "@/constants/api";
+import { toast } from "sonner";
 
 interface LoginCredentials {
   phone_number: string;
@@ -124,7 +125,7 @@ export function useAuth() {
       verification_code,
       password: btoa(password),
     });
-    // 后端不返回数据，所以这里不返回值
+    toast.success("密码重置成功，请重新登录");
   };
 
   return {
