@@ -148,7 +148,7 @@ export default function ChatHome() {
   const handleSend = async () => {
     // 检查输入文本是否为空
     if (!inputText.trim()) {
-      toast.warning("输入框不能为空，请输入消息内容");
+      toast.warning("请输入消息内容");
       return;
     }
 

@@ -302,7 +302,7 @@ export default function ChatConversation({
     const currentIsFromHistory = checkFromHistory();
 
     if (!isInitial && content === "") {
-      toast.warning("输入框不能为空，请输入消息内容");
+      toast.warning("请输入消息内容");
       return;
     }
 
