@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useUser } from "@/components/contexts/UserContext";
 import { apiPost, saveToken } from "@/api/request";
-import { api } from "@/constants/api";
 import { toast } from "sonner";
 
 interface LoginCredentials {
@@ -35,7 +34,7 @@ export function useAuth() {
     };
 
     // 错误会自动 toast + reject，这里只处理成功的情况
-    const response = await apiPost(api.auth.login, encodedCredentials);
+    const response = await apiPost("/api/auth/login", encodedCredentials);
 
     const { token, user_id, username, phone_number } = response.data;
     saveToken(token);
@@ -62,7 +61,7 @@ export function useAuth() {
       ...data,
       password: btoa(data.password), // base64 编码
     };
-    const response = await apiPost(api.auth.register, encodedData);
+    const response = await apiPost("/api/auth/register", encodedData);
 
     // 注册成功后自动登录
     const { token, user_id, username, phone_number } = response.data;
@@ -81,7 +80,7 @@ export function useAuth() {
    * 发送验证码
    */
   const sendVerificationCode = async (phone_number: string, type: CodeType) => {
-    await apiPost(api.auth.sendCode, {
+    await apiPost("/api/auth/send-code", {
       phone_number,
       type,
     });
@@ -91,7 +90,7 @@ export function useAuth() {
    * 检查手机号是否已注册
    */
   const checkPhone = async (phone_number: string) => {
-    const response = await apiPost(api.auth.checkPhone, {
+    const response = await apiPost("/api/auth/check-phone", {
       phone_number,
     });
 
@@ -105,7 +104,7 @@ export function useAuth() {
     phone_number: string,
     verification_code: string
   ) => {
-    const response = await apiPost(api.auth.verifyCode, {
+    const response = await apiPost("/api/auth/verify-code", {
       phone_number,
       verification_code,
     });
@@ -120,7 +119,7 @@ export function useAuth() {
     verification_code: string,
     password: string
   ) => {
-    await apiPost(api.auth.resetPassword, {
+    await apiPost("/api/auth/reset-pwd", {
       phone_number,
       verification_code,
       password: btoa(password),
