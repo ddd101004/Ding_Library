@@ -48,7 +48,7 @@ export function useAuth() {
 
     // 处理重定向
     const redirectPath = router.query.redirect as string;
-    router.push(redirectPath || "/chat");
+    await router.push(redirectPath || "/chat");
 
     return response.data;
   };
