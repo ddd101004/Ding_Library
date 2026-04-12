@@ -18,7 +18,8 @@
       "Bash(cat:*)",
       "Bash(git mv:*)",
       "Bash(powershell:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx prisma:*)"
     ],
     "deny": [],
     "ask": []

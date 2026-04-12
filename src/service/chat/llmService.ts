@@ -164,7 +164,7 @@ export async function callChatLLM(
 
     messages.push({ role: "user", content: userInput });
 
-    // 5. 调用通用 AI 函数（自动处理 pushBill）
+    // 5. 调用通用 AI 函数
     const result = await callAI({
       user_id: conversation.user_id,
       messages,

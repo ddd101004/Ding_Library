@@ -376,6 +376,14 @@ model UserUploadedPaper {
   fileType String @map("file_type") @db.VarChar(50)
   mimeType String @map("mime_type") @db.VarChar(100)
 
+  // 学术信息
+  authors          String?   @db.Text // 作者信息
+  abstract         String?   @db.Text // 摘要
+  keywords         String?   @db.Text // 关键词
+  publicationYear  Int?      @map("publication_year") // 出版年份
+  source           String?   @db.VarChar(100) // 来源
+  doi              String?   @db.VarChar(255) // DOI
+
   // 解析状态
   parseStatus   String    @default("pending") @map("parse_status") @db.VarChar(20)
   parsedContent String?   @map("parsed_content") @db.LongText

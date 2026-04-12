@@ -189,31 +189,6 @@ export async function searchPapers(params: SearchPapersParams) {
 }
 
 /**
- * 获取未下载PDF的论文列表
- */
-export async function findPapersWithoutPdf(limit: number = 100) {
-  try {
-    const papers = await prisma.paper.findMany({
-      where: {
-        has_fulltext: true,
-        pdf_downloaded: false,
-        deleted_status: 0,
-      },
-      take: limit,
-      orderBy: {
-        sync_time: "desc",
-      },
-    });
-
-    logger.info("查询未下载PDF的论文", { count: papers.length, limit });
-    return papers;
-  } catch (error: any) {
-    logger.error("查询未下载PDF的论文失败", { error: error.message, limit });
-    return [];
-  }
-}
-
-/**
  * 获取最近同步的论文
  */
 export async function findRecentPapers(days: number = 7, limit: number = 100) {
@@ -442,10 +417,6 @@ export async function getPapersStatistics() {
       where: { has_fulltext: true, deleted_status: 0 },
     });
 
-    const pdfDownloaded = await prisma.paper.count({
-      where: { pdf_downloaded: true, deleted_status: 0 },
-    });
-
     // 今日同步数量
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -456,20 +427,10 @@ export async function getPapersStatistics() {
       },
     });
 
-    // 今日下载数量
-    const todayDownloaded = await prisma.paper.count({
-      where: {
-        pdf_download_time: { gte: todayStart },
-        deleted_status: 0,
-      },
-    });
-
     return {
       total,
       hasFulltext,
-      pdfDownloaded,
       todaySynced,
-      todayDownloaded,
     };
   } catch (error: any) {
     logger.error("获取论文统计信息失败", { error: error.message });

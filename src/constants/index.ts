@@ -22,9 +22,6 @@ export const CONVERSATION_MAX_TOKENS = 64000;
 // 文件上传大小限制
 export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB in bytes
 
-// COS 签名 URL 默认过期时间（7天，单位：秒）
-export const COS_URL_EXPIRES = 7 * 24 * 60 * 60;
-
 // PDF.js CMap 文件 URL（用于支持 CJK 字符正确显示）
 export const PDFJS_CMAP_URL = "https://public.century-cloud.com/cmaps/";
 
