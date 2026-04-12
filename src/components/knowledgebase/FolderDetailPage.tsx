@@ -317,7 +317,7 @@ export default function FolderDetailPage({
     if (item.item_type === 'uploaded_paper') {
       // 跳转到文件详情页，使用 uploaded_paper_id
       const paperId = item.uploaded_paper_id || item.paper_id;
-      router.push(`/knowledgebase/file/${paperId}`);
+      router.push(`/knowledgebase/${paperId}`);
     } else if (item.item_type === 'conversation') {
       // 跳转到对话详情页，携带来源信息用于显示返回按钮
       router.push({

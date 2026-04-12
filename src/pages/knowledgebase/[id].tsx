@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
-import WithSidebarLayout from "../../../components/layout/WithSidebarLayout";
+import WithSidebarLayout from "../../components/layout/WithSidebarLayout";
 import { apiGet } from "@/api/request";
-import SearchModal from "../../../components/chat/common/SearchModal";
+import SearchModal from "../../components/chat/common/SearchModal";
 
 export default function FileDetailPage() {
   const router = useRouter();
