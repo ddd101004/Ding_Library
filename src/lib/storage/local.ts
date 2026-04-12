@@ -14,7 +14,7 @@ import logger from "@/helper/logger";
 
 // 上传目录配置
 const UPLOAD_CONFIG = {
-  BASE_DIR: path.join(process.cwd(), "uploads"),
+  BASE_DIR: path.join(process.cwd(), "public", "uploads"),
   PAPERS_DIR: "papers",
   COVERS_DIR: "covers",
   AVATARS_DIR: "avatars",
@@ -169,7 +169,7 @@ export async function saveFile(
     ensureDir(dirPath);
 
     // 写入文件
-    fs.writeFileSync(fullPath, fileBuffer);
+    fs.writeFileSync(fullPath, fileBuffer as unknown as Uint8Array);
 
     logger.info("文件保存成功", {
       type,
