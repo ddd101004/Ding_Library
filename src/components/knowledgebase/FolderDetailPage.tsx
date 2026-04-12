@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Plus, Edit } from "lucide-react";
 import { useRouter } from "next/router";
 import { apiGet, apiDel, apiPost } from "@/api/request";
 import { toast } from "sonner";
@@ -345,12 +346,15 @@ export default function FolderDetailPage({
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <img
-                      src="/slibar/slibar-edit@2x.png"
-                      alt="编辑"
-                      className="w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] md:w-[25px] md:h-[25px] ml-2 sm:ml-4 cursor-pointer flex-shrink-0"
+                    <div
+                      className="flex items-center justify-center w-[20px] h-[20px] sm:w-[22px] sm:h-[22px] md:w-[25px] md:h-[25px] ml-2 sm:ml-4 cursor-pointer flex-shrink-0"
                       onClick={openEditModal}
-                    />
+                    >
+                      <Edit
+                        className="w-full h-full text-[#666666] hover:text-[#0D9488] transition-colors"
+                        strokeWidth={2}
+                      />
+                    </div>
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>编辑知识库</p>
@@ -420,11 +424,7 @@ export default function FolderDetailPage({
                 setShowImportModal(true);
               }}
             >
-              <img
-                src="/chat-page/chat-page-add-file@2x.png"
-                alt="导入文件"
-                className="w-full h-full"
-              />
+              <Plus className="w-full h-full text-[#0D9488]" strokeWidth={2} />
             </div>
 
             {/* ImportModal 渲染在相对容器内 */}

@@ -474,7 +474,6 @@ const KnowledgeBasePage: React.FC<KnowledgeBasePageProps> = ({ isSidebarOpen = f
               <Toolbar
                 viewMode={viewMode}
                 onViewModeChange={setViewMode}
-                onCreateClick={openCreateModal}
               />
 
               {/* 欢迎标题 */}

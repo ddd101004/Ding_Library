@@ -41,8 +41,6 @@ export const iconMap = {
   'slibar-createbase': FolderPlus,
   'slibar-shinycreatebase': FolderPlus,
   'slibar-openslibar': FolderOpen,
-  'slibar-edit': Edit,
-  'slibar-editedit': Edit,
   'slibar-history': History,
   'slibar-shinyhistory': History,
 

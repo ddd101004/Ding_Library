@@ -9,7 +9,7 @@ const AvatarContext = createContext<AvatarContextType | undefined>(undefined);
 
 export function AvatarProvider({ children }: { children: React.ReactNode }) {
   // 使用默认头像，不支持自定义头像
-  const avatarUrl = "/touxiang.jpg";
+  const avatarUrl = "/chat-page/avatar.png";
 
   return (
     <AvatarContext.Provider value={{ avatarUrl }}>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Search, Database, Folder, History, ChevronLeft, ChevronRight, Star } from "lucide-react";
+import { Search, Database, Folder, History, ChevronLeft, ChevronRight, Star, PlusCircle } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -69,11 +69,11 @@ const Sidebar: React.FC<SidebarProps> = ({
       >
         {isSidebarOpen ? (
           <div className="flex items-center">
-            <img src="/slibar/slibar-editedit@2x.png" alt="新对话" className="w-[26px] h-[26px] mr-[17px]" />
+            <PlusCircle className="w-[26px] h-[26px] mr-[17px] text-white" strokeWidth={2} />
             <span className="text-white text-[16px]">新对话</span>
           </div>
         ) : (
-          <img src="/slibar/edit1.png" alt="新建对话" className="w-[30px] h-[26px] " />
+          <PlusCircle className="w-[30px] h-[26px] text-[#374151]" strokeWidth={2} />
         )}
       </div>
 

@@ -43,7 +43,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
   timestamp,
   files,
   username = "用户",
-  avatarUrl = role === "user" ? "/touxiang.jpg" : "/logo/ai_logo.png",
+  avatarUrl = role === "user" ? "/chat-page/avatar.png" : "/logo/ai_logo.png",
   isStreaming = false,
   onCopy,
   onRegenerate,
