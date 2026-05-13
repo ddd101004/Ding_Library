@@ -45,9 +45,11 @@ export function useAuth() {
       localStorage.setItem("isSidebarOpen", JSON.stringify(false));
     }
 
-    // 处理重定向
+    // 处理重定向 - 使用 window.location.href 强制完整页面跳转
+    // 避免客户端路由与 AuthChecker 状态不同步的问题
     const redirectPath = router.query.redirect as string;
-    await router.push(redirectPath || "/chat");
+    const targetUrl = redirectPath || "/chat";
+    window.location.href = targetUrl;
 
     return response.data;
   };

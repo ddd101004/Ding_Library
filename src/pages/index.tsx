@@ -1,14 +1,24 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import { useUser } from "@/components/contexts/UserContext";
 
 export default function Home() {
   const router = useRouter();
+  const { isAuthenticated, isLoading } = useUser();
 
   useEffect(() => {
-    // 直接跳转到登录页
-    router.push("/login");
-  }, [router]);
+    // 等待用户状态加载完成
+    if (isLoading) return;
+
+    if (isAuthenticated) {
+      // 已登录用户跳转到聊天页
+      router.push("/chat");
+    } else {
+      // 未登录用户跳转到登录页
+      router.push("/login");
+    }
+  }, [router, isAuthenticated, isLoading]);
 
   return (
     <>
