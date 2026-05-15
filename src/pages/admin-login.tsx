@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Head from "next/head";
 import { Shield } from "lucide-react";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -11,7 +11,23 @@ import { ADMIN_ROLE } from "@/constants";
 export default function AdminLoginPage() {
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // 读取记住的账号密码
+  useEffect(() => {
+    const saved = localStorage.getItem("admin_remember");
+    if (saved) {
+      try {
+        const { phone: savedPhone, password: savedPwd } = JSON.parse(saved);
+        setPhone(savedPhone || "");
+        setPassword(savedPwd ? atob(savedPwd) : "");
+        setRemember(true);
+      } catch {
+        localStorage.removeItem("admin_remember");
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +44,16 @@ export default function AdminLoginPage() {
       });
 
       if (response.data?.token) {
+        // 记住密码逻辑
+        if (remember) {
+          localStorage.setItem("admin_remember", JSON.stringify({
+            phone,
+            password: btoa(password),
+          }));
+        } else {
+          localStorage.removeItem("admin_remember");
+        }
+
         saveToken(response.data.token);
         localStorage.setItem("id", response.data.user_id);
         localStorage.setItem("username", response.data.username);
@@ -78,6 +104,16 @@ export default function AdminLoginPage() {
                 placeholder="请输入密码"
               />
             </div>
+
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+                className="w-4 h-4 rounded border-gray-300 text-[#0D9488] focus:ring-[#0D9488]"
+              />
+              <span className="text-sm text-gray-500">记住密码</span>
+            </label>
 
             <button
               type="submit"
