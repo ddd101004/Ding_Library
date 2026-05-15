@@ -21,7 +21,7 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
 
     const checkAuth = async () => {
       // 排除不需要认证的页面
-      const publicPaths = ['/login', '/forgot-password', '/register', '/admin'];
+      const publicPaths = ['/login', '/forgot-password', '/register', '/admin', '/admin-login'];
       if (publicPaths.includes(router.pathname)) {
         setAuthChecked(true);
         return;

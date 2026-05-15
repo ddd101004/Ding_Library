@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import { useFormValidation } from '@/hooks/use-form-validation';
 import { useCountdown } from '@/hooks/use-countdown';
 import { useAuth } from '@/hooks/use-auth';
 import { AuthInput, AuthButton } from '@/components/auth';
 import { PasswordInput } from '@/components/ui/password-input';
 import { toast } from 'sonner';
+import { Shield } from 'lucide-react';
 import type { LoginCredentials } from '@/types/auth';
 
 interface LoginFormProps {
@@ -18,6 +20,7 @@ export function LoginForm({
   onSwitchToRegister,
   onForgotPassword,
 }: LoginFormProps) {
+  const router = useRouter(); // 👈 修复：缺少 router 定义
   const [loginType, setLoginType] = useState<'password' | 'code'>('password');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
@@ -46,19 +49,16 @@ export function LoginForm({
   const handleSendCode = async () => {
     setError('');
 
-    // 首先检查手机号长度
     if (!phone) {
       toast.error('请输入手机号');
       return;
     }
 
-    // 检查手机号长度是否为11位
     if (phone.length !== 11) {
       toast.error('请输入11位手机号');
       return;
     }
 
-    // 验证手机号格式
     const phoneError = validatePhone(phone);
     if (phoneError) {
       toast.error(phoneError);
@@ -66,15 +66,11 @@ export function LoginForm({
     }
 
     try {
-      // 检查手机号是否已注册（失败会自动 toast + throw）
       await checkPhone(phone);
-
-      // 发送验证码（失败会自动 toast + throw）
       await sendVerificationCode(phone, 'login');
       toast.success('验证码已发送');
       startCountdown();
     } catch (err) {
-      // 错误已自动 toast，这里只需静默处理
     }
   };
 
@@ -85,21 +81,18 @@ export function LoginForm({
     e.preventDefault();
     setError('');
 
-    // 首先检查手机号长度
     if (!phone) {
       toast.error('请输入手机号');
       setLoading(false);
       return;
     }
 
-    // 检查手机号长度是否为11位
     if (phone.length !== 11) {
       toast.error('请输入11位手机号');
       setLoading(false);
       return;
     }
 
-    // 验证手机号格式
     const phoneError = validatePhone(phone);
     if (phoneError) {
       toast.error(phoneError);
@@ -107,7 +100,6 @@ export function LoginForm({
       return;
     }
 
-    // 验证码登录时检查验证码长度
     if (loginType === 'code' && verificationCode.length !== 6) {
       toast.error('请输入6位验证码');
       setLoading(false);
@@ -127,7 +119,6 @@ export function LoginForm({
         credentials.verification_code = verificationCode;
       }
 
-      // 登录成功会自动跳转，失败会自动 toast + throw
       await login(credentials);
 
       if (loginType === 'password' && rememberPassword) {
@@ -138,9 +129,7 @@ export function LoginForm({
         localStorage.removeItem('rememberedPassword');
       }
 
-      // login 函数已经处理了跳转，不需要再调用 onSuccess
     } catch (err) {
-      // 错误已自动 toast，这里只需静默处理
     } finally {
       setLoading(false);
     }
@@ -214,7 +203,6 @@ export function LoginForm({
           </div>
         )}
 
-  
         {/* 登录按钮 */}
         <div className="pt-2 sm:pt-4 flex justify-center">
           <AuthButton
@@ -229,7 +217,8 @@ export function LoginForm({
             即刻探索
           </AuthButton>
         </div>
- {/* 底部链接 */}
+
+        {/* 底部链接 */}
         <div className="flex justify-between pt-2 px-2">
           <button
             type="button"
@@ -250,6 +239,17 @@ export function LoginForm({
         </div>
       </form>
 
+      {/* 管理员登录入口 */}
+      <div className="flex justify-center pt-4">
+        <button
+          type="button"
+          onClick={() => router.push('/admin-login')}
+          className="flex items-center gap-1.5 text-gray-400 hover:text-[#0D9488] transition-colors font-['Source_Han_Sans_CN'] text-[13px]"
+        >
+          <Shield className="w-3.5 h-3.5" />
+          管理员登录
+        </button>
+      </div>
     </div>
   );
 }

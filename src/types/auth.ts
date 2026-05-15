@@ -27,6 +27,7 @@ export interface UserInfo {
   username: string;
   phone: string;
   token: string;
+  role: string;
 }
 
 // 验证码类型

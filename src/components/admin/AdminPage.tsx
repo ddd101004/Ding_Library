@@ -173,6 +173,7 @@ export function AdminPage() {
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleSearch(); }}
               placeholder="搜索手机号或用户名..."
               className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:border-[#0D9488]"
             />
@@ -184,7 +185,7 @@ export function AdminPage() {
               搜索
             </button>
             <button
-              onClick={() => { setSearch(""); setPage(1); }}
+              onClick={() => { setSearch(""); setPage(1); setTimeout(fetchUsers, 0); }}
               className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-600 rounded-lg text-sm hover:bg-gray-50 transition-colors"
             >
               <RefreshCw className="w-4 h-4" />
