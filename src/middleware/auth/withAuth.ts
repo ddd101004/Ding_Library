@@ -75,7 +75,7 @@ export const withAuth = (
           if (userInfo.disabled_status) {
             sendUnauthorizedResponse(
               res,
-              "该用户因违规使用，已被封禁，如有疑问请联系客服处理"
+              "该账号已被禁用"
             );
             return;
           }

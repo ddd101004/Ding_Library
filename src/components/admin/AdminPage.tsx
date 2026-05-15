@@ -38,6 +38,7 @@ export function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [resetModalOpen, setResetModalOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserItem | null>(null);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
 
   // 检查管理员权限
   useEffect(() => {
@@ -113,6 +114,15 @@ export function AdminPage() {
 
   const totalPages = Math.ceil(total / size);
 
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("id");
+    localStorage.removeItem("username");
+    localStorage.removeItem("phone");
+    router.replace("/login");
+  };
+
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "-";
     return new Date(dateStr).toLocaleString("zh-CN", {
@@ -138,14 +148,7 @@ export function AdminPage() {
             <h1 className="text-xl font-semibold text-gray-800">管理后台</h1>
           </div>
           <button
-            onClick={() => {
-              localStorage.removeItem("token");
-              localStorage.removeItem("role");
-              localStorage.removeItem("id");
-              localStorage.removeItem("username");
-              localStorage.removeItem("phone");
-              router.replace("/login");
-            }}
+            onClick={() => setLogoutDialogOpen(true)}
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-[#0D9488] transition-colors"
           >
             <LogOut className="w-4 h-4" />
@@ -336,6 +339,30 @@ export function AdminPage() {
         onConfirm={handleConfirmReset}
         onCancel={() => { setResetModalOpen(false); setSelectedUser(null); }}
       />
+
+      {/* 退出登录确认弹窗 */}
+      {logoutDialogOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div className="bg-white rounded-xl shadow-xl p-6 w-full max-w-sm mx-4">
+            <h3 className="text-lg font-medium text-gray-800 mb-2">确认退出</h3>
+            <p className="text-sm text-gray-500 mb-6">确定要退出登录吗？</p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setLogoutDialogOpen(false)}
+                className="px-4 py-2 text-sm text-gray-600 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                取消
+              </button>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-2 text-sm text-white bg-[#0D9488] rounded-lg hover:bg-[#0D9488]/90 transition-colors"
+              >
+                确认退出
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

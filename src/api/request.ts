@@ -171,19 +171,24 @@ axiosInstance.interceptors.response.use(
       // 判断是否需要认证
       const authRequired = isAuthRequired(requestConfig || {});
 
-      // 处理 401 未授权错误（token过期）
+      // 处理 401 未授权错误（token过期或账号禁用）
       if (status === 401) {
         // 清除本地存储的 token（无论是否需要认证）
         clearToken();
-        
+
         // 判断是否静默处理认证错误
         const silentAuthError = requestConfig?.silentAuthError || false;
-        
+
+        // 获取后端返回的具体消息
+        const serverMessage = data?.message || "";
+        const isDisabled = serverMessage.includes("禁用");
+        const displayMessage = isDisabled ? serverMessage : "登录已过期，请重新登录";
+
         if (authRequired) {
           // 对于需要认证的请求
           if (!silentAuthError) {
             // 显示友好提示
-            toast.error("登录已过期，请重新登录");
+            toast.error(displayMessage);
 
             if (typeof window !== "undefined") {
               // 检查当前是否已经在登录页面，避免无限重定向
@@ -201,10 +206,10 @@ axiosInstance.interceptors.response.use(
               }
             }
           }
-          
+
           // 返回认证错误对象
           return Promise.reject({
-            message: "登录已过期，请重新登录",
+            message: displayMessage,
             isWarning: false,
             code: 401,
             isAuthError: true, // 标记为认证错误
@@ -214,7 +219,7 @@ axiosInstance.interceptors.response.use(
           // 对于不需要认证的请求（如页面加载时的搜索请求）
           // 只清除 token，不跳转登录，不显示错误提示
           console.warn('非认证请求返回401，清除token但不跳转');
-          
+
           // 静默处理，不显示错误提示
           return Promise.reject({
             message: "认证已过期，请登录后重试",
