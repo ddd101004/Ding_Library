@@ -28,6 +28,7 @@ const handleGet = async (
     nickname: user.nickname || user.username,
     phone_number: user.phone_number || null,
     create_time: user.create_time,
+    role: user.role || "user",
   });
 };
 

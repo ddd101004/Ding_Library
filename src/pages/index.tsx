@@ -5,20 +5,21 @@ import { useUser } from "@/components/contexts/UserContext";
 
 export default function Home() {
   const router = useRouter();
-  const { isAuthenticated, isLoading } = useUser();
+  const { userInfo, isAuthenticated, isLoading } = useUser();
 
   useEffect(() => {
     // 等待用户状态加载完成
     if (isLoading) return;
 
     if (isAuthenticated) {
-      // 已登录用户跳转到聊天页
-      router.push("/chat");
+      // 管理员跳转到管理后台，普通用户跳转到聊天页
+      const targetPath = userInfo?.role === "admin" ? "/admin" : "/chat";
+      router.push(targetPath);
     } else {
       // 未登录用户跳转到登录页
       router.push("/login");
     }
-  }, [router, isAuthenticated, isLoading]);
+  }, [router, isAuthenticated, isLoading, userInfo]);
 
   return (
     <>

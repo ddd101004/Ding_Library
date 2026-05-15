@@ -28,3 +28,10 @@ export const PDFJS_CMAP_URL = "https://public.century-cloud.com/cmaps/";
 // PDF.js 标准字体 URL（用于支持 PDF 标准 14 字体的正确显示和文本选择）
 export const PDFJS_STANDARD_FONT_DATA_URL =
   "https://public.century-cloud.com/standard_fonts/";
+
+// 用户角色
+export const ADMIN_ROLE = "admin";
+export const USER_ROLE = "user";
+
+// 管理员重置默认密码
+export const DEFAULT_RESET_PASSWORD = process.env.DEFAULT_RESET_PASSWORD || "Aa123456";

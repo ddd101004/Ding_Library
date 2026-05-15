@@ -36,9 +36,9 @@ export function useAuth() {
     // 错误会自动 toast + reject，这里只处理成功的情况
     const response = await apiPost("/api/auth/login", encodedCredentials);
 
-    const { token, user_id, username, phone_number } = response.data;
+    const { token, user_id, username, phone_number, role } = response.data;
     saveToken(token);
-    updateUserInfo({ id: user_id, username, phone: phone_number, token });
+    updateUserInfo({ id: user_id, username, phone: phone_number, role: role || "user", token });
 
     // 登录成功后，重置侧边栏为收起状态
     if (typeof window !== "undefined") {
@@ -48,7 +48,9 @@ export function useAuth() {
     // 处理重定向 - 使用 window.location.href 强制完整页面跳转
     // 避免客户端路由与 AuthChecker 状态不同步的问题
     const redirectPath = router.query.redirect as string;
-    const targetUrl = redirectPath || "/chat";
+    // 管理员跳转到管理后台，普通用户跳转到聊天页
+    const defaultPath = role === "admin" ? "/admin" : "/chat";
+    const targetUrl = redirectPath || defaultPath;
     window.location.href = targetUrl;
 
     return response.data;

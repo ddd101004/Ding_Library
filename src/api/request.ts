@@ -60,6 +60,7 @@ export function saveToken(token: string): void {
 export function clearToken(): void {
   if (typeof window !== "undefined") {
     localStorage.removeItem("token");
+    localStorage.removeItem("role");
   }
 }
 

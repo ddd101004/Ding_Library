@@ -17,6 +17,7 @@ interface UserInfo {
   username: string;
   phone: string;
   token: string;
+  role: string;
 }
 
 interface UserContextType {
@@ -44,6 +45,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
         const id = localStorage.getItem("id");
         const username = localStorage.getItem("username");
         const phone = localStorage.getItem("phone");
+        const role = localStorage.getItem("role") || "user";
         const token = getTokenFromStorage();
 
         if (id && username && phone && token) {
@@ -51,6 +53,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
             id,
             username,
             phone,
+            role,
             token,
           });
         } else {
@@ -78,6 +81,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       if (newUserInfo.id) {
         localStorage.setItem("id", newUserInfo.id);
       }
+      if (newUserInfo.role) {
+        localStorage.setItem("role", newUserInfo.role);
+      }
 
       setUserInfo((prev) =>
         prev ? { ...prev, ...newUserInfo } : (newUserInfo as UserInfo)
@@ -90,6 +96,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({
       localStorage.removeItem("id");
       localStorage.removeItem("username");
       localStorage.removeItem("phone");
+      localStorage.removeItem("role");
       clearTokenFromStorage();
       setUserInfo(null);
     }

@@ -54,6 +54,7 @@ instance.interceptors.response.use(
         localStorage.removeItem('id');
         localStorage.removeItem('username');
         localStorage.removeItem('phone');
+        localStorage.removeItem('role');
         
         // 避免重复重定向
         if (!window.location.pathname.includes('/login')) {

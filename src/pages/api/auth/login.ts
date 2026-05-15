@@ -163,6 +163,7 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     phone_number: user.phone_number,
     user_id: user.user_id,
     username: user.username,
+    role: user.role || "user",
   });
 };
 

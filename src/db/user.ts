@@ -72,6 +72,7 @@ export const getUserProfile = async (user_id: string) => {
         phone_number: true,
         username: true,
         nickname: true,
+        role: true,
         create_time: true,
       },
     });
@@ -401,5 +402,96 @@ export const clearVerificationCode = async (user_id: string) => {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logger.error(`清空验证码失败: ${errorMessage}`, { error });
     return;
+  }
+};
+
+// ==================== 管理员相关操作 ====================
+
+/**
+ * 获取所有用户列表（含上传文件数量）
+ */
+export const getAllUsersWithFileCount = async (
+  page: number = 1,
+  size: number = 20,
+  search?: string
+) => {
+  try {
+    const where: any = { deleted_status: 0 };
+
+    if (search) {
+      where.OR = [
+        { phone_number: { contains: search } },
+        { username: { contains: search } },
+      ];
+    }
+
+    const [total, users] = await Promise.all([
+      prisma.user.count({ where }),
+      prisma.user.findMany({
+        where,
+        orderBy: { create_time: "desc" },
+        skip: (page - 1) * size,
+        take: size,
+        select: {
+          user_id: true,
+          username: true,
+          phone_number: true,
+          nickname: true,
+          role: true,
+          disabled_status: true,
+          create_time: true,
+          operate_time: true,
+        },
+      }),
+    ]);
+
+    // 查询每个用户的上传文件数量
+    const fileCounts = await prisma.userUploadedPaper.groupBy({
+      by: ["userId"],
+      where: { deletedAt: null },
+      _count: { id: true },
+    });
+
+    // 构建文件数量映射
+    const fileCountMap = new Map<string, number>();
+    fileCounts.forEach((item) => {
+      fileCountMap.set(item.userId, item._count.id);
+    });
+
+    // 合并数据
+    const usersWithFileCount = users.map((user) => ({
+      ...user,
+      file_count: fileCountMap.get(user.user_id) || 0,
+    }));
+
+    return { total, page, size, users: usersWithFileCount };
+  } catch (error: any) {
+    logger.error(`获取用户列表失败: ${error?.message}`, { error });
+    return null;
+  }
+};
+
+/**
+ * 管理员重置用户密码
+ */
+export const resetUserPasswordByAdmin = async (
+  user_id: string,
+  hashedPassword: string
+) => {
+  try {
+    const user = await prisma.user.update({
+      where: { user_id },
+      data: { hashed_password: hashedPassword },
+      select: {
+        user_id: true,
+        username: true,
+        phone_number: true,
+      },
+    });
+    logger.info(`管理员重置用户密码: ${user_id}`);
+    return user;
+  } catch (error: any) {
+    logger.error(`管理员重置密码失败: ${error?.message}`, { error });
+    return null;
   }
 };
