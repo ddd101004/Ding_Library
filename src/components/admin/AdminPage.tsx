@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Search, RefreshCw, KeyRound, ArrowLeft, Users, FileText, Shield } from "lucide-react";
+import { Search, RefreshCw, KeyRound, LogOut, Users, FileText, Shield, Ban, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { apiGetAuth, apiPost } from "@/api/request";
 import { ADMIN_ROLE } from "@/constants";
@@ -43,7 +43,7 @@ export function AdminPage() {
   useEffect(() => {
     const role = localStorage.getItem("role") || "user";
     if (role !== ADMIN_ROLE) {
-      router.replace("/chat");
+      router.replace("/admin-login");
     }
   }, [router]);
 
@@ -65,7 +65,7 @@ export function AdminPage() {
     } catch (error: any) {
       if (error.code === 403) {
         toast.error("无管理员权限");
-        router.replace("/chat");
+        router.replace("/admin-login");
       } else {
         toast.error("获取用户列表失败");
       }
@@ -81,6 +81,17 @@ export function AdminPage() {
   const handleSearch = () => {
     setPage(1);
     fetchUsers();
+  };
+
+  const handleToggleStatus = async (user: UserItem) => {
+    const action = user.disabled_status ? "启用" : "禁用";
+    try {
+      const response = await apiPost(`/api/admin/users/${user.user_id}/toggle-status`);
+      toast.success(`已${action}用户 ${user.username}`);
+      fetchUsers();
+    } catch (error: any) {
+      toast.error(`${action}用户失败`);
+    }
   };
 
   const handleResetPassword = (user: UserItem) => {
@@ -127,11 +138,18 @@ export function AdminPage() {
             <h1 className="text-xl font-semibold text-gray-800">管理后台</h1>
           </div>
           <button
-            onClick={() => router.push("/chat")}
+            onClick={() => {
+              localStorage.removeItem("token");
+              localStorage.removeItem("role");
+              localStorage.removeItem("id");
+              localStorage.removeItem("username");
+              localStorage.removeItem("phone");
+              router.replace("/login");
+            }}
             className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 hover:text-[#0D9488] transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
-            返回用户端
+            <LogOut className="w-4 h-4" />
+            退出登录
           </button>
         </div>
       </div>
@@ -250,15 +268,32 @@ export function AdminPage() {
                       <td className="px-4 py-3 text-sm text-gray-600">{user.file_count}</td>
                       <td className="px-4 py-3 text-sm text-gray-600">{formatDate(user.create_time)}</td>
                       <td className="px-4 py-3">
-                        {user.role !== "admin" && (
-                          <button
-                            onClick={() => handleResetPassword(user)}
-                            className="flex items-center gap-1 px-3 py-1.5 text-xs text-[#0D9488] border border-[#0D9488]/30 rounded-lg hover:bg-[#0D9488]/10 transition-colors"
-                          >
-                            <KeyRound className="w-3 h-3" />
-                            重置密码
-                          </button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {user.role !== "admin" && (
+                            <>
+                              <button
+                                onClick={() => handleResetPassword(user)}
+                                className="flex items-center gap-1 px-3 py-1.5 text-xs text-[#0D9488] border border-[#0D9488]/30 rounded-lg hover:bg-[#0D9488]/10 transition-colors"
+                              >
+                                <KeyRound className="w-3 h-3" />
+                                重置密码
+                              </button>
+                              <button
+                                onClick={() => handleToggleStatus(user)}
+                                className={`flex items-center gap-1 px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                                  user.disabled_status
+                                    ? "text-green-600 border border-green-300 hover:bg-green-50"
+                                    : "text-red-500 border border-red-300 hover:bg-red-50"
+                                }`}
+                              >
+                                {user.disabled_status
+                                  ? <><CheckCircle className="w-3 h-3" />启用</>
+                                  : <><Ban className="w-3 h-3" />禁用</>
+                                }
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))

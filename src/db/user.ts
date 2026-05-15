@@ -495,3 +495,32 @@ export const resetUserPasswordByAdmin = async (
     return null;
   }
 };
+
+/**
+ * 管理员切换用户禁用/启用状态
+ */
+export const toggleUserStatus = async (user_id: string) => {
+  try {
+    const user = await prisma.user.findFirst({
+      where: { user_id, deleted_status: 0 },
+      select: { disabled_status: true },
+    });
+    if (!user) return null;
+
+    const newStatus = user.disabled_status ? 0 : 1;
+    const updated = await prisma.user.update({
+      where: { user_id },
+      data: { disabled_status: newStatus },
+      select: {
+        user_id: true,
+        username: true,
+        disabled_status: true,
+      },
+    });
+    logger.info(`管理员${newStatus ? "禁用" : "启用"}用户: ${user_id}`);
+    return updated;
+  } catch (error: any) {
+    logger.error(`切换用户状态失败: ${error?.message}`, { error });
+    return null;
+  }
+};

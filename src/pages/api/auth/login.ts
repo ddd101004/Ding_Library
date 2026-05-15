@@ -23,6 +23,8 @@ import logger from "@/helper/logger";
 import { NextApiRequest, NextApiResponse } from "next";
 import { validateStrings, validatePhone } from "@/utils/validateString";
 
+import { ADMIN_ROLE } from "@/constants";
+
 // 验证码最大尝试次数
 const MAX_ATTEMPTS = 5;
 // 锁定时间（毫秒）：15分钟
@@ -66,6 +68,12 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
 
   if (!user) {
     sendWarnningResponse(res, `该用户未注册，请先注册`);
+    return;
+  }
+
+  // 管理员账号不允许通过普通登录入口登录
+  if (user.role === ADMIN_ROLE) {
+    sendWarnningResponse(res, "管理员请使用管理员登录入口");
     return;
   }
 

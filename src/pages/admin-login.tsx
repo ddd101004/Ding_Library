@@ -1,17 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/router";
 import Head from "next/head";
-import { Shield, ArrowLeft } from "lucide-react";
-import { useAuth } from "@/hooks/use-auth";
+import { Shield } from "lucide-react";
 import { PasswordInput } from "@/components/ui/password-input";
 import { toast } from "sonner";
+import { apiPost, saveToken } from "@/api/request";
 import { ADMIN_ROLE } from "@/constants";
 
 export default function AdminLoginPage() {
-  const router = useRouter();
-  const { login } = useAuth();
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -25,12 +22,19 @@ export default function AdminLoginPage() {
 
     setLoading(true);
     try {
-      const result = await login({ phone_number: phone, password });
-      if (result?.role !== ADMIN_ROLE) {
-        toast.error("该账号不是管理员");
-        return;
+      const response = await apiPost("/api/admin/login", {
+        phone_number: phone,
+        password: btoa(password),
+      });
+
+      if (response.data?.token) {
+        saveToken(response.data.token);
+        localStorage.setItem("id", response.data.user_id);
+        localStorage.setItem("username", response.data.username);
+        localStorage.setItem("phone", response.data.phone_number);
+        localStorage.setItem("role", response.data.role);
+        window.location.href = "/admin";
       }
-      // login内部已根据role跳转，管理员会跳到/admin
     } catch (error: any) {
       toast.error(error?.message || "登录失败");
     } finally {
@@ -45,18 +49,7 @@ export default function AdminLoginPage() {
       </Head>
 
       <div className="w-full max-w-md">
-        {/* 返回按钮 */}
-        <button
-          onClick={() => router.push("/login")}
-          className="flex items-center gap-1.5 text-gray-400 hover:text-[#0D9488] transition-colors mb-6 text-sm"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          返回用户登录
-        </button>
-
-        {/* 登录卡片 */}
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-          {/* 标题 */}
           <div className="flex flex-col items-center mb-8">
             <div className="w-14 h-14 rounded-full bg-[#0D9488]/10 flex items-center justify-center mb-4">
               <Shield className="w-7 h-7 text-[#0D9488]" />
@@ -65,7 +58,6 @@ export default function AdminLoginPage() {
             <p className="text-sm text-gray-400 mt-1">仅限系统管理员使用</p>
           </div>
 
-          {/* 表单 */}
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1.5">手机号</label>
