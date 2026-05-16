@@ -62,7 +62,7 @@ export default function AdminLoginPage() {
         window.location.href = "/admin";
       }
     } catch (error: any) {
-      toast.error(error?.message || "登录失败");
+      // 拦截器已统一处理toast提示，此处不再重复
     } finally {
       setLoading(false);
     }
