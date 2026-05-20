@@ -261,7 +261,7 @@ model MessageCitation {
 }
 
 
-/// 论文文件夹表 - 存储用户创建的论文收藏文件夹
+// 论文文件夹表 - 存储用户创建的论文收藏文件夹
 model PaperFolder {
   folder_id   String  @id @default(uuid()) @db.VarChar(36)
   user_id     String  @db.VarChar(36)
@@ -281,13 +281,11 @@ model PaperFolder {
 }
 
 /// 文件夹内容关联表 - 存储文件夹与各类内容的多对多关系
-/// 支持三种内容类型: Paper(第三方数据源论文)、UserUploadedPaper(用户上传论文)、ChatConversation(对话)
-/// paper_id、uploaded_paper_id、conversation_id 三选一
+
 model FolderItem {
   item_id   String  @id @default(uuid()) @db.VarChar(36)
   folder_id String  @db.VarChar(36)
 
-  // 三种内容类型 - 三选一
   paper_id          String? @db.VarChar(36) // 第三方数据源论文ID (Paper表)
   uploaded_paper_id String? @db.VarChar(36) // 用户上传论文ID (UserUploadedPaper表)
   conversation_id   String? @db.VarChar(36) // 对话ID (ChatConversation表)
@@ -315,7 +313,7 @@ model FolderItem {
   @@map("folder_items")
 }
 
-/// 消息反馈表 - 存储用户对消息的反馈
+// 消息反馈表 - 存储用户对消息的反馈
 model MessageFeedback {
   feedback_id      String  @id @default(uuid()) @db.VarChar(36)
   message_id       String  @db.VarChar(36)
@@ -334,11 +332,8 @@ model MessageFeedback {
   @@map("message_feedbacks")
 }
 
-// ==================== 学术资源统一数据模型（续）====================
 
-
-
-/// 搜索历史表 - 记录用户的搜索行为
+// 搜索历史表 - 记录用户的搜索行为
 model SearchHistory {
   id           String @id @default(uuid())
   user_id      String
@@ -364,7 +359,6 @@ model SearchHistory {
   @@map("search_history")
 }
 
-// ==================== AI伴读功能相关模型 ====================
 
 /// 用户上传论文表 - 存储用户上传的论文文件和解析后的内容
 model UserUploadedPaper {
