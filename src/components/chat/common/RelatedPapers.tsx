@@ -99,24 +99,24 @@ export default function RelatedPapers({
                         </span>
 
                         <div className="flex-1 min-w-0">
-                          <h4 className="mb-4 truncate font-semibold text-[clamp(14px,2.5vw,18px)] text-text-primary leading-[1.4]">
+                          <h4 className="mb-4 truncate font-semibold text-[clamp(14px,2.5vw,18px)] text-text-primary leading-[1.4]" title={paper.title}>
                             {paper.title}
                           </h4>
 
                           {/* 作者和发表时间在同一行 */}
                           {(paper.authors && paper.authors.length > 0) && (
-                            <div className="authors-container text-[clamp(11px,1.8vw,14px)] -ml-11">
+                            <div className="authors-container text-[clamp(11px,1.8vw,14px)] -ml-11" title={paper.authors.map(a => typeof a === "string" ? a : a.name).join("; ")}>
                               {/* 作者列表 */}
                               <div className="flex items-center">
-                                {paper.authors.slice(0, 2).map((author, authorIndex) => (
+                                {paper.authors.slice(0, 4).map((author, authorIndex) => (
                                   <React.Fragment key={authorIndex}>
                                     <span className="truncate">{typeof author === "string" ? author : author.name}</span>
-                                    {authorIndex === 0 && paper.authors.length > 1 && (
+                                    {authorIndex < Math.min(paper.authors.length, 4) - 1 && (
                                       <div className="author-divider" />
                                     )}
                                   </React.Fragment>
                                 ))}
-                                {paper.authors.length > 2 && (
+                                {paper.authors.length > 4 && (
                                   <span className="ml-0.5 flex-shrink-0">...</span>
                                 )}
                               </div>
