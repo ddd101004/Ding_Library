@@ -36,6 +36,7 @@ export const getMessagesByConversationId = async (params: {
                 id: true,
                 title: true,
                 authors: true,
+                abstract: true,
               },
             },
           },
