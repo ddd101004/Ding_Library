@@ -16,23 +16,14 @@ import { validateString, validateId } from "@/utils/validateString";
 import { Prisma } from "@prisma/client";
 
 /**
- * 生成封面图 URL（兼容本地和 COS）
+ * 生成封面图 URL（本地存储）
  */
 function getCoverImageUrl(coverImage: string | null): string | null {
   if (!coverImage) return null;
-
-  // 本地存储路径
   if (coverImage.startsWith('covers/') || coverImage.startsWith('avatars/')) {
     return `/api/uploads/${coverImage}`;
   }
-
-  // 完整 URL（COS 或其他）
-  if (coverImage.startsWith('http://') || coverImage.startsWith('https://')) {
-    return coverImage;
-  }
-
-  // 旧的 COS 路径格式
-  return `https://library-cos.centum-cloud.com/${coverImage}`;
+  return null;
 }
 
 const handleGet = async (

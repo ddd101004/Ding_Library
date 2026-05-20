@@ -10,25 +10,16 @@ import { createFolder, getFoldersByUserId } from "@/db/paperFolder";
 import { validateString } from "@/utils/validateString";
 
 /**
- * 生成封面图 URL
+ * 生成封面图 URL（本地存储）
  * @param coverImage 封面图路径
  * @returns 完整的访问 URL
  */
 function getCoverImageUrl(coverImage: string | null): string | null {
   if (!coverImage) return null;
-
-  // 本地存储路径
   if (coverImage.startsWith('covers/') || coverImage.startsWith('avatars/')) {
     return `/api/uploads/${coverImage}`;
   }
-
-  // 完整 URL（COS 或其他）
-  if (coverImage.startsWith('http://') || coverImage.startsWith('https://')) {
-    return coverImage;
-  }
-
-  // 旧的 COS 路径格式
-  return `https://library-cos.centum-cloud.com/${coverImage}`;
+  return null;
 }
 
 /**
