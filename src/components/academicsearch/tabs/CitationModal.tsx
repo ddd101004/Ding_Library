@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { X, Eye, EyeOff, Dot, ChevronDown } from "lucide-react";
+import { X, Eye, EyeOff, ChevronDown } from "lucide-react";
 import { apiGetAuth, apiDownloadFile } from "@/api/request";
 import { toast } from "sonner";
 
@@ -303,9 +303,13 @@ export default function CitationModal({
                   className="flex items-center"
                 >
                   {downloadFormat === format ? (
-                    <Dot
+                    <svg
                       className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)] text-[#0D9488]"
-                    />
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <circle cx="10" cy="10" r="5" />
+                    </svg>
                   ) : (
                     <div className="w-[clamp(16px,2vw,20px)] h-[clamp(16px,2vw,20px)] bg-white rounded-[10px] border border-[#C8C9CC]" />
                   )}
