@@ -37,8 +37,9 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
         // 验证token是否有效
         await axios.get('/api/auth/check', {
           timeout: 3000,
-          withCredentials: true
-        });
+          withCredentials: true,
+          silentAuthError: true
+        } as any);
         setAuthChecked(true);
       } catch (error: any) {
         console.error('认证检查失败:', error);
