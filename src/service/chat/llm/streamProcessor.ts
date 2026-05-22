@@ -11,12 +11,7 @@ import logger from "@/helper/logger";
  * 引用方：
  * - service/chat/llmService.ts — callChatLLMStream中处理流式响应
  */
- * 处理 OpenAI SDK 的流式响应，收集内容和统计信息
- *
- * @param stream - OpenAI stream 对象
- * @param onToken - token 回调函数
- * @returns 完整内容、思考过程和 token 统计
- */
+
 export async function processLLMStream(
   stream: AsyncIterable<any>,
   onToken: (data: { type: "reasoning" | "content"; text: string }) => void
