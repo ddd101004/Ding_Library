@@ -1,3 +1,17 @@
+/**
+ * 对话创建与跳转 Hook — 从聊天主页创建新对话并跳转到对话详情页
+ *
+ * 核心函数：
+ * - handleSendMessage(params) — 创建新对话API，保存文件到sessionStorage，跳转到对话详情页
+ *   params包含：inputText(输入文本)、uploadedFiles(上传文件)、isDeepThinkActive(深度思考)、
+ *   isPaperSearchActive(论文搜索)、currentFunction(功能类型)、formatFileContent(文件格式化)、saveFilesToSession(文件存储)
+ * - isSending — 是否正在发送（创建对话）
+ *
+ * 使用组件：
+ * - ChatHome — 聊天主页，发送消息时创建新对话并跳转
+ * - ChatConversation — 对话详情页，发送初始消息时创建对话
+ * - CheckedChat — 已选对话页，发送消息时创建对话
+ */
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { apiPost } from '@/api/request';

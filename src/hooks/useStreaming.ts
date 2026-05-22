@@ -1,3 +1,16 @@
+/**
+ * 流式响应处理 Hook — 解析SSE流式数据并实时更新消息状态
+ *
+ * 核心函数：
+ * - processStreamResponse(stream, aiMessageId, onLoadVersions?) — 处理ReadableStream流式响应
+ *   - 解析SSE事件类型：start(消息ID)/token(内容)/reasoning(思考过程)/done(完成)/related_papers(相关论文)/error(错误)
+ *   - 实时更新messages状态中的AI消息内容和思考过程
+ *   - 完成后触发版本加载回调
+ *   - 支持AbortController中止流式输出
+ *
+ * 使用组件：
+ * - useMessageActions — 消息操作Hook内部调用，处理发送消息和重新生成的流式响应
+ */
 import { Message, MessagePapers } from "@/components/chat/ChatSplitLayout";
 import { toast } from "sonner";
 

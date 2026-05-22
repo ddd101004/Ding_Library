@@ -1,3 +1,26 @@
+/**
+ * 聊天状态管理 Hook — 管理对话详情页的所有核心状态
+ *
+ * 核心状态：
+ * - messages/setMessages — 消息列表
+ * - inputText/setInputText — 输入框文本
+ * - isLoading — AI是否正在回复
+ * - isDeepThinkActive — 深度思考模式开关
+ * - isPaperSearchActive — 论文搜索模式开关
+ * - currentFunction — 当前功能类型（quickQA/deepStudy等）
+ * - showRelatedPapers/relatedPapersList — 相关论文面板状态
+ * - conversationDetail — 会话详情信息
+ *
+ * 核心函数：
+ * - toggleDeepThink() — 切换深度思考模式
+ * - togglePaperSearch() — 切换论文搜索模式
+ * - toggleThinkingCollapse(messageId) — 折叠/展开思考过程
+ * - checkFromHistory() — 检查是否从历史记录跳转进入
+ * - isAiResponding — 计算属性：isLoading || 有消息正在流式输出
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，作为所有聊天子Hook的状态中枢
+ */
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Message, MessagePapers } from "@/components/chat/ChatSplitLayout";

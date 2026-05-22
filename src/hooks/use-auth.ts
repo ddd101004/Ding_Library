@@ -1,3 +1,22 @@
+/**
+ * 认证 Hook — 处理登录、注册、验证码、重置密码等认证流程
+ *
+ * 核心函数：
+ * - login(credentials) — 密码/验证码登录，base64编码密码后调用API，保存token并跳转
+ * - register(data) — 注册并自动登录，base64编码密码后调用API
+ * - sendVerificationCode(phone, type) — 发送短信验证码（登录/注册/重置密码）
+ * - checkPhone(phone) — 检查手机号是否已注册
+ * - verifyCode(phone, code) — 验证验证码是否正确
+ * - resetPassword(phone, code, password) — 重置密码，base64编码新密码后调用API
+ *
+ * 使用组件：
+ * - LoginForm — 登录表单（login + sendVerificationCode + checkPhone + verifyCode + useCountdown）
+ * - RegisterStep1 — 注册第一步手机号验证（checkPhone + useFormValidation）
+ * - RegisterStep2 — 注册第二步填写信息（register + useCountdown）
+ * - ForgotPasswordStep1 — 忘记密码第一步（checkPhone + useFormValidation）
+ * - ForgotPasswordStep2 — 忘记密码第二步验证码（sendVerificationCode + verifyCode + useCountdown）
+ * - ForgotPasswordStep3 — 忘记密码第三步重置密码（resetPassword + useFormValidation）
+ */
 import { useRouter } from "next/router";
 import { useUser } from "@/components/contexts/UserContext";
 import { apiPost, saveToken } from "@/api/request";

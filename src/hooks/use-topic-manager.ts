@@ -1,3 +1,23 @@
+/**
+ * 话题推荐管理 Hook — 管理聊天主页的快问快答问题和深度学习关键词推荐
+ *
+ * 核心函数：
+ * - handleTopicButtonClick(type) — 点击话题按钮时加载对应类型的数据
+ * - handleTopicClick(topic) — 选择某个话题，填入输入框
+ * - handleRefreshClick() — 换一批，强制刷新话题数据（跳过缓存）
+ * - topics — 当前话题列表（问题或关键词）
+ * - selectedTopic — 当前选中的话题
+ * - isLoading — 是否正在加载
+ *
+ * 数据来源：
+ * - quickQA模式：调用 /api/ai/questions 获取5个推荐问题
+ * - deepStudy模式：调用 /api/ai/keywords 获取13个关键词（随机主题池）
+ * - 优先读sessionStorage缓存，API失败使用默认数据兜底
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，管理话题推荐区域
+ * - CheckedChat — 已选对话页，管理话题推荐区域
+ */
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { usePreload } from './use-preload';
 

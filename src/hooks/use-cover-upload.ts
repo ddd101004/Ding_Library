@@ -1,3 +1,17 @@
+/**
+ * 封面上传 Hook — 处理知识库文件夹封面上传与预览
+ *
+ * 核心函数：
+ * - handleCoverUpload(file) — 上传封面图片（jpg/jpeg/png，≤2MB），调用 /api/upload/cover
+ * - setCoverImageUrl(url) — 设置已有封面URL（编辑时显示现有封面）
+ * - resetCover() — 重置封面状态
+ * - isUploading — 是否正在上传
+ * - coverImage — 本地预览图（DataURL）
+ * - cosKey — 服务器返回的文件路径
+ *
+ * 使用组件：
+ * - KnowledgeBaseModal — 知识库创建/编辑弹窗，上传文件夹封面图
+ */
  import { useState, useCallback } from 'react';
   import { toast } from 'sonner';
   import { apiPost } from '@/api/request';

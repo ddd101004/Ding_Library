@@ -1,3 +1,21 @@
+/**
+ * 消息版本管理 Hook — 处理AI回复的重新生成版本切换与反馈
+ *
+ * 核心函数：
+ * - loadBatchMessageVersions(conversationId, parentMessageIds, ...) — 批量加载版本信息（页面刷新时）
+ * - loadMessageVersions(messageId, ...) — 加载单个消息版本信息（重新生成后）
+ * - handlePreviousVersion(messageId, ...) — 切换到上一个版本
+ * - handleNextVersion(messageId, ...) — 切换到下一个版本
+ * - switchToVersion(messageId, targetVersion, ...) — 切换到指定版本号
+ * - handleFeedbackSuccess(messageId, feedbackType, ...) — 处理点赞/点踩反馈后的状态更新
+ *
+ * 核心状态：
+ * - messageVersions — 所有消息的版本信息映射
+ * - currentVersionMessageIds — 当前显示版本的消息ID映射
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，管理消息版本切换和反馈操作
+ */
 import { useState } from "react";
 import { apiPost, apiGet } from "@/api/request";
 import { Message } from "@/components/chat/ChatSplitLayout";

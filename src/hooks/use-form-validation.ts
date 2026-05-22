@@ -1,3 +1,18 @@
+/**
+ * 表单校验 Hook — 提供认证表单各字段的校验规则
+ *
+ * 核心函数：
+ * - validatePhone(phone) — 校验手机号（1开头11位数字），返回错误信息或undefined
+ * - validatePassword(password) — 校验密码（≥6位，含字母和数字），返回错误信息或undefined
+ * - validateVerificationCode(code) — 校验验证码（6位数字），返回错误信息或undefined
+ * - validateUsername(username) — 校验用户名（2-20字符），返回错误信息或undefined
+ *
+ * 使用组件：
+ * - LoginForm — 登录表单（validatePhone）
+ * - RegisterStep1 — 注册第一步手机号验证（validatePhone）
+ * - ForgotPasswordStep1 — 忘记密码第一步（validatePhone）
+ * - ForgotPasswordStep3 — 忘记密码第三步重置密码（validatePassword）
+ */
 export function useFormValidation() {
   /**
    * 验证手机号

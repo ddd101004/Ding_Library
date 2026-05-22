@@ -1,3 +1,19 @@
+/**
+ * 数据预加载 Hook — 提前加载AI问题和关键词，减少用户等待时间
+ *
+ * 核心函数：
+ * - preloadData(endpoint, params, config) — 预加载单个数据，优先读缓存，缓存过期则调API
+ * - preloadMultiple(configs) — 并行预加载多个数据源
+ * - isLoading — 是否正在加载
+ *
+ * 缓存策略：
+ * - 使用 CacheManager（内存缓存），默认缓存1小时
+ * - API失败时使用 defaultData 兜底
+ *
+ * 使用组件：
+ * - ChatHome — 聊天主页，预加载快问快答问题和深度学习关键词
+ * - useTopicManager — 话题管理Hook内部调用 preloadData 获取话题数据
+ */
 import { useState, useCallback } from 'react';
 import { apiPost } from '@/api/request';
 import { CacheManager } from '@/utils/cacheUtils';

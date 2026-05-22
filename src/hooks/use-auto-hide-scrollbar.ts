@@ -1,3 +1,23 @@
+/**
+ * 自动隐藏滚动条 Hook — 滚动容器在静止时隐藏滚动条，滚动/鼠标靠近时显示
+ *
+ * 核心返回值：
+ * - containerRef — 需绑定到滚动容器div的ref
+ * - className — CSS类名"auto-hide-scrollbar"，需配合全局样式使用
+ *
+ * 行为逻辑：
+ * - 初始不显示滚动条
+ * - 用户滚动时添加 is-scrolling 类显示滚动条
+ * - 停止滚动后 delay毫秒（默认1000ms）移除类隐藏滚动条
+ * - 鼠标靠近滚动条 proximity像素（默认10px）内添加 is-near-scrollbar 类
+ *
+ * 使用组件：
+ * - ChatSplitLayout — 对话分栏布局（3个滚动容器）
+ * - HistoryPage — 对话历史页面
+ * - KnowledgeBasePage — 知识库主页
+ * - FolderDetailPage — 知识库文件夹详情页
+ * - MainContent — 主内容区布局
+ */
 import { useEffect, useRef } from "react";
 
 interface UseAutoHideScrollbarOptions {

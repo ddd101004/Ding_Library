@@ -1,3 +1,16 @@
+/**
+ * 消息操作 Hook — 处理对话中的用户交互操作
+ *
+ * 核心函数：
+ * - copyMessageContent(messageId) — 复制消息内容到剪贴板
+ * - stopStreaming() — 中止当前流式输出（用户点击停止按钮）
+ * - regenerateResponse(messageId) — 重新生成AI回复，创建新AbortController发起流式请求
+ * - handleFeedbackSuccess(messageId, feedbackType) — 点赞/点踩后更新消息和版本状态
+ * - processStreamResponse — 内部调用useStreaming处理流式响应
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，所有消息交互操作的入口
+ */
 import { useCallback } from "react";
 import { Message, MessagePapers } from "@/components/chat/ChatSplitLayout";
 import { toast } from "sonner";

@@ -1,3 +1,15 @@
+/**
+ * 消息格式化 Hook — 格式化聊天消息的时间戳和文件内容
+ *
+ * 核心函数：
+ * - getCurrentTime() — 获取当前时间（zh-CN格式，时:分）
+ * - formatFileContent(files) — 将文件列表格式化为文本摘要（文件名+内容）
+ * - formatMessage(message) — 格式化单条消息，补充formattedTime/formattedFiles/fullContent
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，格式化消息显示时间和文件附件
+ * - useConversationData — 加载历史消息时获取时间格式化函数
+ */
 import { useMemo } from 'react';
 
 interface FileData {

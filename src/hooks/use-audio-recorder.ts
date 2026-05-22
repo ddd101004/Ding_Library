@@ -1,3 +1,22 @@
+/**
+ * 语音录制 Hook — 基于浏览器Web Speech API实现实时语音识别转文字
+ *
+ * 核心函数/状态：
+ * - toggleRecording() — 切换录音状态（开始/停止）
+ * - isRecording — 是否正在录音
+ * - transcribedText — 识别出的文字（累积文本+本次结果+临时结果）
+ * - setTranscribedText(text) — 手动设置识别文本（支持累积模式）
+ *
+ * 技术细节：
+ * - 使用 webkitSpeechRecognition API，仅Chrome浏览器支持
+ * - continuous=true 持续识别，interimResults=true 显示临时结果
+ * - 支持累积文本：多次录音结果拼接，不覆盖之前的文字
+ *
+ * 使用组件：
+ * - ChatHome — 聊天主页输入框，点击麦克风按钮录音
+ * - ChatConversation — 对话详情页输入框，点击麦克风按钮录音
+ * - CheckedChat — 已选对话页输入框，点击麦克风按钮录音
+ */
 import { useState, useRef, useEffect } from 'react';
 
 interface AudioRecorderResult {

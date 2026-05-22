@@ -1,3 +1,15 @@
+/**
+ * 相关论文管理 Hook — 处理对话消息中论文引用的点击跳转与提取
+ *
+ * 核心函数：
+ * - handleReferenceClick(paperIndex, element) — 点击引用标记，展开论文面板并滚动定位到对应论文
+ * - containsReferences(content) — 检测消息内容是否包含引用标记（参考文献/citations等关键词）
+ * - extractPapersFromHistoryMessages(messagesData) — 从历史消息的citations字段提取论文列表
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，处理消息中引用标记的点击跳转
+ * - useConversationData — 加载历史消息时提取论文信息
+ */
 import { useCallback } from "react";
 import { MessagePapers } from "@/components/chat/ChatSplitLayout";
 import { toast } from "sonner";

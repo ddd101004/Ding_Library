@@ -1,3 +1,18 @@
+/**
+ * 会话数据加载 Hook — 处理对话详情和历史消息的加载逻辑
+ *
+ * 核心函数：
+ * - loadConversationDetail(conversationId) — 加载会话元信息（标题、模型、参数等）
+ * - loadConversationHistory(conversationId) — 加载历史消息列表，格式化后更新messages状态
+ *   - 自动加载多版本消息的版本信息
+ *   - 自动从citations中提取相关论文
+ *   - 从历史记录进入时额外调用相关论文API
+ * - formatMessageData(msg, index) — 将后端消息格式化为前端Message对象
+ * - formatMessageTime(timeString) — 将时间戳格式化为相对时间（刚刚/X分钟前/X小时前）
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，初始化时加载会话数据和发送初始消息
+ */
 import { useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { Message, MessagePapers } from "@/components/chat/ChatSplitLayout";

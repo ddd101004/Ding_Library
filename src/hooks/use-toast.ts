@@ -1,3 +1,14 @@
+/**
+ * Toast通知 Hook — shadcn/ui标准Toast组件的状态管理（基于react-hot-toast）
+ *
+ * 核心导出：
+ * - useToast() — 在组件中使用，返回 { toasts, toast, dismiss }
+ * - toast(props) — 全局函数，可在组件外调用，触发Toast通知
+ * - reducer — Toast状态reducer（ADD/UPDATE/DISMISS/REMOVE）
+ *
+ * 使用组件：
+ * - Toaster — Toast渲染容器组件，消费useToast的toasts状态
+ */
 "use client"
 
 // Inspired by react-hot-toast library

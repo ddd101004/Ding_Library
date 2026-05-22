@@ -1,3 +1,19 @@
+/**
+ * 聊天自动滚动 Hook — 控制对话消息列表的智能滚动行为
+ *
+ * 核心逻辑：
+ * - 流式输出时启动50ms间隔的实时监控，根据AI消息位置智能滚动
+ * - 长内容(>500字符)更积极滚动，短内容稍延迟
+ * - 流式输出结束后停止监控，新消息到达时平滑滚动到底部
+ * - 页面首次加载时立即滚动到底部（无动画）
+ *
+ * 核心函数：
+ * - scrollToBottom(immediate?) — 滚动到消息列表底部，immediate=true时无动画
+ * - 返回 messagesEndRef — 需绑定到消息列表底部哨兵元素
+ *
+ * 使用组件：
+ * - ChatConversation — 对话详情页，流式响应时自动跟随滚动，页面加载时定位到最新消息
+ */
 import { useEffect, useRef, useCallback, RefObject } from 'react';
 
 interface Message {
