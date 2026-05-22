@@ -2,7 +2,7 @@ import { useCallback } from "react";
 import { Message, MessagePapers } from "@/components/chat/ChatSplitLayout";
 import { toast } from "sonner";
 import { apiGet, apiPost } from "@/api/request";
-import { useStreaming } from "./useStreaming";
+import { useStreaming } from "@/hooks/useStreaming";
 
 interface UseMessageActionsParams {
   conversationId: string | string[] | undefined;
