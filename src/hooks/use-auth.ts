@@ -30,7 +30,9 @@ export function useAuth() {
     // 如果使用密码登录，需要 base64 编码
     const encodedCredentials = {
       ...credentials,
-      password: credentials.password ? btoa(credentials.password) : undefined,
+      password: credentials.password
+        ? Buffer.from(credentials.password).toString("base64")
+        : undefined,
     };
 
     // 错误会自动 toast + reject，这里只处理成功的情况
@@ -63,7 +65,7 @@ export function useAuth() {
     // 密码需要 base64 编码后再传给后端
     const encodedData = {
       ...data,
-      password: btoa(data.password), // base64 编码
+      password: Buffer.from(data.password).toString("base64"),
     };
     const response = await apiPost("/api/auth/register", encodedData);
 
@@ -126,7 +128,7 @@ export function useAuth() {
     await apiPost("/api/auth/reset-pwd", {
       phone_number,
       verification_code,
-      password: btoa(password),
+      password: Buffer.from(password).toString("base64"),
     });
     toast.success("密码重置成功，请重新登录");
   };
