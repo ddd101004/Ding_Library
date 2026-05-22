@@ -123,6 +123,15 @@ export default function AdminLoginPage() {
               {loading ? "登录中..." : "登录"}
             </button>
           </form>
+
+          <div className="mt-6 text-center">
+            <a
+              href="/login"
+              className="text-sm text-gray-400 hover:text-[#0D9488] transition-colors"
+            >
+              员工登录
+            </a>
+          </div>
         </div>
       </div>
     </div>
