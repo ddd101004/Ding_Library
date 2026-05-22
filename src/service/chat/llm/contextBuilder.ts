@@ -1,3 +1,14 @@
+/**
+ * LLM上下文构建 — 获取会话最近N条消息，从新到旧累加，不超过max_tokens限制
+ *
+ * 【后端】仅在llmService中使用
+ *
+ * 导出函数：
+ * - buildContext(conversation_id) — 根据会话配置的context_window和max_tokens，获取最近消息作为LLM上下文
+ *
+ * 引用方：
+ * - service/chat/llmService.ts — callChatLLM/callChatLLMStream中构建上下文
+ */
 import logger from "@/helper/logger";
 import { getConversationById } from "@/db/chatConversation";
 import { getRecentMessages } from "@/db/chatMessage";

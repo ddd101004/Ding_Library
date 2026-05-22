@@ -1,5 +1,19 @@
 /**
- * 自动相关论文检索服务
+ * 自动相关论文检索服务 — LLM提取关键词→万方搜索→入库→创建引用关联
+ *
+ * 【后端】仅在messageService中使用
+ *
+ * 导出函数/类型：
+ * - KeywordExtractionResult — 关键词提取结果类型（keywords, searchQuery, confidence, shouldSearch）
+ * - AutoRelatedPapersResult — 自动检索结果类型（success, keywords, papers, totalFound）
+ * - RelatedPaper — 相关论文信息类型（id, source, title, authors, abstract, doi等）
+ * - extractKeywordsFromQuestion(userQuestion) — 使用LLM从用户问题提取学术关键词
+ * - autoSearchRelatedPapers(params) — 完整流程：提取关键词→万方搜索（带重试）→入库→创建MessageCitation关联
+ * - getConversationRelatedPapers(conversationId) — 获取对话的所有相关论文（去重）
+ *
+ * 引用方：
+ * - service/chat/messageService.ts — executeAutoSearch、formatRelatedPapers
+ */
  *
  * 用于在AI对话中自动检索相关论文：
  * 1. 使用 LLM 从用户问题中提取中文关键词

@@ -1,5 +1,17 @@
 /**
- * 根据内容生成会话标题
+ * 会话工具函数 — 生成会话标题、格式化含文件内容的消息
+ *
+ * 【后端+前端】conversationUtils同时被后端service和前端组件引用
+ *
+ * 导出函数：
+ * - generateConversationTitle(content, maxLength) — 从消息内容生成会话标题（截取纯文本，去除文件标记）
+ * - formatHistoricalMessageContent(content) — 格式化历史消息中的文件内容显示
+ * - formatMessageForDisplay(content) — 格式化消息内容用于前端显示（处理含文件内容的消息）
+ *
+ * 引用方：
+ * - service/chat/messageService.ts — generateConversationTitle
+ * - components/chat/common/MessageBubble.tsx — formatMessageForDisplay
+ */
  * @param content - 消息内容
  * @param maxLength - 最大长度（默认30）
  * @returns 生成的标题

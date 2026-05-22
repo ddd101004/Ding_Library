@@ -1,3 +1,15 @@
+/**
+ * Token精确计算 — 使用tiktoken库计算文本token数，支持模型选择和缓存
+ *
+ * 【后端】仅在LLM基础模块中使用
+ *
+ * 导出函数：
+ * - estimateTokens(text, model?) — 精确计算文本token数（tiktoken），降级方案为中文×2+英文×1.3粗略估算
+ * - cleanupEncoder() — 释放tiktoken编码器资源，避免内存泄漏
+ *
+ * 引用方：
+ * - service/chat/llm/contextBuilder.ts — buildContext中计算每条消息的token数
+ */
 import logger from "@/helper/logger";
 import { Tiktoken, encoding_for_model, get_encoding } from "tiktoken";
 

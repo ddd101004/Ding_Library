@@ -1,4 +1,22 @@
-import { NextApiResponse } from "next";
+/**
+ * SSE流式响应辅助 — 设置SSE头、token回调、发送事件/错误、完成流式响应并写入DB
+ *
+ * 【后端】仅在聊天消息API路由中使用
+ *
+ * 导出函数/类型：
+ * - StreamState, TokenStats, ConversationInfo, RAGSearchResultItem, HistoryMessage, TokenCallback — 类型定义
+ * - setupSSEHeaders(res) — 设置SSE响应头
+ * - createTokenCallback(res, state, isClientDisconnected) — 创建token回调函数，实时发送SSE事件
+ * - callLLMByConversationType(params) — 按会话类型调用LLM（深度思考/普通）
+ * - sendSSEEvent(res, type, data) — 发送SSE事件
+ * - sendSSEError(res, message) — 发送SSE错误事件
+ * - finalizeStreamResponse(params) — 完成流式响应：更新消息和会话到DB，发送done事件
+ * - handleStreamError(params) — 处理流式错误：记录日志、更新消息状态、发送error事件
+ *
+ * 引用方：
+ * - pages/api/chat/messages/stream.ts — 流式发送消息API
+ * - pages/api/chat/messages/[id]/regenerate.ts — 重新生成消息API
+ */
 import { updateMessage } from "@/db/chatMessage";
 import { updateConversation } from "@/db/chatConversation";
 import { callChatLLMStream } from "./llmService";

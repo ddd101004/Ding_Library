@@ -1,7 +1,16 @@
 import logger from "@/helper/logger";
 
 /**
- * 通用流式处理函数
+ * LLM流式响应处理 — 遍历OpenAI stream chunks，收集content/reasoning/usage统计
+ *
+ * 【后端】仅在llmService中使用
+ *
+ * 导出函数：
+ * - processLLMStream(stream, onToken) — 处理流式响应，实时回调token，返回完整内容+思考过程+token统计
+ *
+ * 引用方：
+ * - service/chat/llmService.ts — callChatLLMStream中处理流式响应
+ */
  * 处理 OpenAI SDK 的流式响应，收集内容和统计信息
  *
  * @param stream - OpenAI stream 对象

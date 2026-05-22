@@ -1,6 +1,13 @@
 /**
- * 发送短信验证码（开发模式：仅打印到控制台）
- * 生产环境可切换回腾讯云短信服务
+ * 短信验证码发送服务 — 当前为开发模式（仅打印到控制台），生产环境可切换回腾讯云短信
+ *
+ * 【后端】仅在验证码发送API中使用
+ *
+ * 导出函数：
+ * - sendSms(phoneNumber, code, templateId?) — 发送短信验证码（开发模式仅打印，生产环境调用腾讯云短信API）
+ *
+ * 引用方：
+ * - pages/api/auth/send-code.ts — 发送验证码API
  */
 const sendSms = async (
   phoneNumber: string | string[],

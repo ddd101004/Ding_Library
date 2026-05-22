@@ -1,5 +1,28 @@
 /**
- * 消息服务公共模块
+ * 消息服务公共模块 — 验证会话权限、创建用户消息、更新会话设置、执行自动论文检索、格式化论文数据
+ *
+ * 【后端】仅在聊天消息API路由中使用
+ *
+ * 导出函数/类型：
+ * - MessageRequestParams — 消息请求参数类型
+ * - ConversationValidationResult/ConversationValidationError — 会话验证结果类型
+ * - UserMessagePrepareResult/UserMessagePrepareError — 用户消息准备结果类型
+ * - PaperSearchResult — 论文检索结果类型
+ * - FormattedRelatedPaper/FormattedPapersResponse — 格式化论文数据类型
+ * - AttachmentContent — 附件内容类型（AI伴读已移除，相关函数返回空数组）
+ * - validateConversation(params, userId) — 验证请求参数和会话权限
+ * - validateAndGetConversation(params, userId, res) — 验证并发送错误响应
+ * - prepareUserMessage(params) — 创建用户消息+关联引用论文
+ * - updateConversationSettings(conversationId, params, messageCount) — 更新会话设置（深度思考、论文检索、标题）
+ * - executeAutoSearch(params) — 执行自动论文检索
+ * - formatRelatedPapers(searchResult, userId?) — 格式化论文数据返回前端
+ * - finalizeConversationMessageCount(conversationId, messageCount) — 更新会话最终消息数
+ * - getAttachmentContents(attachmentIds) — 获取附件内容（已移除，返回空数组）
+ * - getConversationAttachmentContents(conversationId) — 获取会话附件内容（已移除，返回空数组）
+ *
+ * 引用方：
+ * - pages/api/chat/messages/stream.ts — 流式发送消息API
+ */
  * 抽取流式和非流式消息接口的公共逻辑
  */
 

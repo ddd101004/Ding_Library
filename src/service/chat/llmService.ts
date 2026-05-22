@@ -1,4 +1,19 @@
-import logger from "@/helper/logger";
+/**
+ * LLM调用核心服务 — 非流式/流式聊天、通用AI调用、论文引用提示词构建
+ *
+ * 【后端】仅在API路由中使用
+ *
+ * 导出函数/类型：
+ * - callChatLLM(conversation_id, userInput, relatedPapers?, is_deep_think?) — 非流式聊天LLM调用
+ * - callChatLLMStream(conversation_id, userInput, onToken, relatedPapers?, attachmentContents?, is_deep_think?) — 流式聊天LLM调用
+ * - callAI(params) — 通用AI调用（非对话场景，如关键词提取、问题生成）
+ * - OperationType — 操作类型枚举（analyze/translate/summarize/explain）
+ *
+ * 引用方：
+ * - pages/api/ai/questions.ts — callAI（生成AI预加载问题）
+ * - pages/api/ai/keywords.ts — callAI（生成AI关键词）
+ * - service/chat/streamHelper.ts — callChatLLMStream（流式聊天）
+ */
 import { getConversationById } from "@/db/chatConversation";
 // import { findUploadedPaperById } from "@/db/ai-reading/uploadedPaper";
 import { getAIChatApi } from "@/lib/ai/client";
