@@ -1,3 +1,27 @@
+/**
+ * 认证工具函数 — 密码哈希、验证码哈希、JWT生成与验证
+ *
+ * 【后端】所有函数仅在API路由和service层使用
+ *
+ * 导出函数：
+ * - hashPassword(password) — bcrypt哈希密码（salt轮次10）
+ * - verifyPassword(password, hashed) — bcrypt验证密码
+ * - hashVerificationCode(code) — bcrypt哈希验证码（salt轮次8，性能优先）
+ * - verifyVerificationCode(code, hashed) — bcrypt验证验证码
+ * - generateJWT(userId) — 生成JWT令牌（过期时间取自constants）
+ * - verifyJWT(token) — 验证JWT令牌，返回payload
+ * - getToken() — 从localStorage获取token（仅浏览器环境）
+ *
+ * 引用方：
+ * - db/user.ts — hashVerificationCode
+ * - middleware/auth/withAuth.ts — verifyJWT
+ * - pages/api/admin/login.ts — generateJWT, verifyPassword
+ * - pages/api/auth/login.ts — generateJWT, verifyPassword, hashVerificationCode, verifyVerificationCode
+ * - pages/api/auth/register.ts — generateJWT, hashPassword
+ * - pages/api/auth/reset-pwd.ts — hashPassword, verifyVerificationCode
+ * - pages/api/auth/verify-code.ts — verifyVerificationCode
+ * - service/checkCodeValid.ts — verifyVerificationCode
+ */
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import { TOKEN_EXPIRE_IN } from "@/constants";

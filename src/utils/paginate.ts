@@ -1,3 +1,16 @@
+/**
+ * 分页计算工具 — 计算Prisma查询的skip/take值
+ *
+ * 【后端】仅在db层使用
+ *
+ * 导出函数：
+ * - paginate(page, pageSize) — 计算skip和take，pageSize上限100，page下限1
+ *   返回 { skip, take }
+ *
+ * 引用方：
+ * - db/paper.ts — 论文查询分页
+ * - db/user.ts — 用户列表分页
+ */
 export const paginate = (page: number | string, pageSize: number | string) => {
   page = +page;
   pageSize = +pageSize;

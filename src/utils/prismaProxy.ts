@@ -1,3 +1,19 @@
+/**
+ * Prisma客户端代理 — 单例模式+Proxy包装，统一数据库连接管理和错误拦截
+ *
+ * 【后端】所有db层文件的数据库连接入口
+ *
+ * 核心机制：
+ * - 全局单例模式（开发环境防热重载多连接，生产防Serverless连接泄漏）
+ * - Proxy包装所有Prisma方法调用，自动捕获Promise异常
+ * - 查询事件监听：慢查询>1s告警，开发环境>100ms记录
+ * - 错误/警告事件监听：自动记录到winston日志
+ *
+ * 引用方（18个文件）：
+ * - db/ 下所有文件 — 作为Prisma客户端实例使用
+ * - pages/api/uploaded-papers/ — 直接使用prisma
+ * - service/parser/fileParser.ts — 文件解析时使用prisma
+ */
 import logger from "@/helper/logger";
 import { PrismaClient } from "@prisma/client";
 

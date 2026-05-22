@@ -1,3 +1,16 @@
+/**
+ * 万方搜索日志工具 — 记录万方API的请求/响应/错误到独立日志文件
+ *
+ * 【后端】仅在万方相关service使用
+ *
+ * 导出函数：
+ * - saveWanfangSearchLog(endpoint, request, response, error) — 覆盖写入日志文件
+ *   日志包含：时间戳、接口URL、请求头(AppKey)、请求体、响应体、错误信息
+ *   覆盖模式，只保留最近一次请求的日志
+ *
+ * 引用方：
+ * - service/wanfang/base.ts — 万方API基础封装，每次请求后记录日志
+ */
 import fs from "fs";
 import path from "path";
 import logger from "@/helper/logger";
