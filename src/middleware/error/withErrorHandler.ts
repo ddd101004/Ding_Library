@@ -1,10 +1,10 @@
-import { NextApiRequest, NextApiResponse } from "next";
-import { sendErrorResponse } from "@/helper/responseHelper";
-import logger from "@/helper/logger";
-
 /**
  * API 错误处理配置
  */
+
+import { NextApiRequest, NextApiResponse } from "next";
+import { sendErrorResponse } from "@/helper/responseHelper";
+import logger from "@/helper/logger";
 interface ErrorHandlerOptions {
   /** 错误日志前缀，用于识别是哪个接口出错 */
   logPrefix?: string;

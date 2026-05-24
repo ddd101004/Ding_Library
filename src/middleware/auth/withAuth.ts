@@ -1,12 +1,3 @@
-import { UNAUTHORIZED_TIPS } from "@/constants";
-import { findUserByUserIdInner, updateOperateTime } from "@/db/user";
-import { NextApiRequest, NextApiResponse } from "next";
-import { verifyJWT } from "@/utils/auth";
-import logRequest from "@/middleware/monitoring/logRequest";
-import {
-  sendUnauthorizedResponse,
-  sendErrorResponse,
-} from "@/helper/responseHelper";
 
 /**
  * 认证中间件（高阶函数模式）
@@ -20,6 +11,14 @@ import {
  *   // userId 已经过验证且用户未被禁用
  * });
  */
+import { findUserByUserIdInner, updateOperateTime } from "@/db/user";
+import { NextApiRequest, NextApiResponse } from "next";
+import { verifyJWT } from "@/utils/auth";
+import logRequest from "@/middleware/monitoring/logRequest";
+import {
+  sendUnauthorizedResponse,
+  sendErrorResponse,
+} from "@/helper/responseHelper";
 export const withAuth = (
   handler: (
     req: NextApiRequest,

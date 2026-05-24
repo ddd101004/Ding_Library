@@ -1,3 +1,7 @@
+
+/**
+ * 监控配置选项
+ */
 import { NextApiRequest, NextApiResponse } from "next";
 import {
   ExternalApiMonitor,
@@ -6,10 +10,6 @@ import {
   recordBusinessMetric,
 } from "./apiMonitor";
 import logger from "@/helper/logger";
-
-/**
- * 监控配置选项
- */
 export interface MonitoringOptions {
   /**
    * 监控类型

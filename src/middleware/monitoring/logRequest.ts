@@ -1,9 +1,9 @@
-import logger from "@/helper/logger";
-import { NextApiRequest, NextApiResponse } from "next";
-
 /**
  * 请求日志配置
  */
+
+import logger from "@/helper/logger";
+import { NextApiRequest, NextApiResponse } from "next";
 interface LogRequestOptions {
   slowThreshold?: number; // 慢请求阈值（毫秒），默认 2000
   skipHealthCheck?: boolean; // 跳过健康检查接口，默认 true

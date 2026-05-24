@@ -1,19 +1,5 @@
 import logger from "@/helper/logger";
 
-/**
- * 第三方 API 调用监控（通用版）
- * 适用于所有外部 API 调用：Wanfang, EBSCO, OpenAI, 微信, 腾讯云, 等等
- *
- * @example
- * // Wanfang API
- * const monitor = new ExternalApiMonitor('wanfang', 'searchPapers', { keyword: 'AI' });
- *
- * // OpenAI API
- * const monitor = new ExternalApiMonitor('openai', 'chat-completion', { model: 'deepseek-v3' });
- *
- * // 微信 API
- * const monitor = new ExternalApiMonitor('wechat', 'send-message', { userId: '123' });
- */
 export class ExternalApiMonitor {
   private apiName: string;
   private apiProvider: string;

@@ -1,3 +1,25 @@
+/**
+ * API请求封装 — 基于Axios的统一HTTP客户端
+ *
+ * 【前端】网络请求模块
+ *
+ * 职责：
+ * - 封装Axios实例，统一请求/响应拦截
+ * - 自动注入Authorization头（localStorage token）
+ * - 业务错误统一处理（toast提示 + BusinessError抛出）
+ * - 401认证失败自动跳转登录页（支持静默模式）
+ * - 提供apiGet/apiPost/apiPut/apiDel/apiPatch等快捷方法
+ * - 支持文件上传（apiUploadFile）和文件下载（apiDownloadFile）
+ * - FormData自动跳过Content-Type、上传超时60s
+ *
+ * 导出：
+ * - apiGet / apiPost / apiPut / apiDel / apiPatch — 常规请求
+ * - apiGetSilent / apiGetAuth — 静默认证GET / 需认证GET
+ * - apiUploadFile / apiDownloadFile — 文件上传下载
+ * - getToken / saveToken / clearToken — Token管理
+ * - axiosInstance — 原始Axios实例
+ * - ApiResponse / BusinessError / RequestConfig — 类型定义
+ */
 import axios, {
   AxiosInstance,
   AxiosRequestConfig,

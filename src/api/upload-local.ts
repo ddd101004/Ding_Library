@@ -1,3 +1,17 @@
+/**
+ * 本地文件上传 — 用户上传论文文件到服务器
+ *
+ * 【前端】文件上传模块
+ *
+ * 职责：
+ * - 封装本地文件上传流程：构造FormData → 调用apiPost上传 → 回调通知
+ * - 支持上传进度回调（onProgress）和文件完成回调（onFileCompleted）
+ * - 上传失败时返回failed状态并通知UI更新
+ * - 导出CreateAiReadingPaperResponse类型（上传响应结构）
+ *
+ * 引用方：
+ * - 知识库文件上传组件
+ */
 import { apiPost } from "@/api/request";
 
 /**
