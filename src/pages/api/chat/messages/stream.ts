@@ -97,7 +97,7 @@ const handlePost = async (
       params,
       messageCount
     );
-
+//自动检索相关论文
     const { searchResult, relatedPapers } = await executeAutoSearch({
       conversationId: params.conversation_id,
       content: params.content,
@@ -151,17 +151,6 @@ const handlePost = async (
         if (state.reasoningContent) {
           messageUpdateData.reasoning_content = state.reasoningContent;
         }
-
-        // messageType、contextText、contextRange 已移除，不再保存
-        // if (isPaperReading) {
-        //   messageUpdateData.messageType = params.operation_type;
-        //   if (params.context_text) {
-        //     messageUpdateData.contextText = params.context_text;
-        //   }
-        //   if (params.context_range) {
-        //     messageUpdateData.contextRange = params.context_range;
-        //   }
-        // }
 
         await updateMessage(messageId, messageUpdateData);
 

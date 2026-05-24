@@ -16,10 +16,10 @@ import MessageListContainer from "./conversation-components/MessageListContainer
 import ChatInputArea from "./conversation-components/ChatInputArea";
 import MessageInput, { ChatInputRef } from "./common/MessageInput";
 import ChatSplitLayout, { Message, MessagePapers } from "./ChatSplitLayout";
-import { useChatState } from "@/hooks/chat/useChatState";
-import { useMessageActions } from "@/hooks/chat/useMessageActions";
-import { useRelatedPapers } from "@/hooks/chat/useRelatedPapers";
-import { useConversationData } from "@/hooks/chat/useConversationData";
+import { useChatState } from "@/hooks/useChatState";
+import { useMessageActions } from "@/hooks/useMessageActions";
+import { useRelatedPapers } from "@/hooks/useRelatedPapers";
+import { useConversationData } from "@/hooks/useConversationData";
 import { useMessageVersions } from "@/hooks/use-message-versions";
 
 interface ChatConversationProps {
