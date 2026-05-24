@@ -12,10 +12,6 @@
  * - service/chat/messageService.ts — generateConversationTitle
  * - components/chat/common/MessageBubble.tsx — formatMessageForDisplay
  */
- * @param content - 消息内容
- * @param maxLength - 最大长度（默认30）
- * @returns 生成的标题
- */
 export const generateConversationTitle = (
   content: string,
   maxLength: number = 30

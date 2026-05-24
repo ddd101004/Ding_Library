@@ -1,4 +1,9 @@
 import { useEffect } from "react";
+/**
+ * 首页 / — 重定向到聊天页
+ *
+ * 【前端】路由：/
+ */
 import { useRouter } from "next/router";
 import Head from "next/head";
 import { useUser } from "@/components/contexts/UserContext";

@@ -8,7 +8,7 @@
  * - setTranscribedText(text) — 手动设置识别文本（支持累积模式）
  *
  * 技术细节：
- * - 使用 webkitSpeechRecognition API，仅Chrome浏览器支持
+ * - 使用 webkitSpeechRecognition API
  * - continuous=true 持续识别，interimResults=true 显示临时结果
  * - 支持累积文本：多次录音结果拼接，不覆盖之前的文字
  *
@@ -79,7 +79,7 @@ export function useAudioRecorder(): AudioRecorderResult {
     try {
       // 检查浏览器是否支持语音识别
       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-        alert('浏览器不支持语音识别，请使用Chrome浏览器或联系管理员配置语音识别服务');
+        alert('浏览器不支持语音识别');
         return;
       }
 

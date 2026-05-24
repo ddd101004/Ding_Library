@@ -1,5 +1,22 @@
 "use client";
 
+/**
+ * ResetPasswordModal — 重置用户密码弹窗
+ *
+ * 【前端】管理员模块组件
+ *
+ * 职责：
+ * - 输入新密码（必填，≥6位）
+ * - 确认重置操作
+ * - 调用管理员API重置指定用户密码
+ *
+ * 引用的子组件/hooks/API：
+ * - apiPost("/api/admin/users/:id/reset-password") — 重置密码
+ * - toast (sonner) — 操作结果提示
+ *
+ * 引用方：
+ * - admin/AdminPage.tsx — 用户管理页重置密码操作
+ */
 import React from "react";
 import { X, KeyRound, AlertTriangle } from "lucide-react";
 import { DEFAULT_RESET_PASSWORD } from "@/constants";

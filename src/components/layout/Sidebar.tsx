@@ -1,3 +1,23 @@
+/**
+ * Sidebar — 侧边栏导航组件
+ *
+ * 【前端】布局模块组件
+ *
+ * 职责：
+ * - 顶部Logo展示（AI学术系统）
+ * - 新对话按钮
+ * - 导航菜单：学术搜索、知识库、历史记录（收起时仅显示图标）
+ * - 最近会话列表（展开时显示，最多5条，带Tooltip和连接线）
+ * - 底部展开/收起切换按钮
+ * - 收起状态下点击菜单项仅执行功能不展开侧边栏
+ *
+ * 引用的子组件/hooks/API：
+ * - Tooltip (ui/tooltip) — 最近会话文字过长时悬浮显示全名
+ * - lucide-react图标：Search, Database, History, ChevronLeft, ChevronRight, PlusCircle
+ *
+ * 引用方：
+ * - layout/WithSidebarLayout.tsx — 作为侧边栏区域
+ */
 import React from "react";
 import { Search, Database, Folder, History, ChevronLeft, ChevronRight, Star, PlusCircle } from "lucide-react";
 import {

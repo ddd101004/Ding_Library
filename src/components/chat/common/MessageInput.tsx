@@ -1,3 +1,24 @@
+/**
+ * 消息输入区 — 底部固定输入框+功能标签+工具栏的组合组件，用于对话页输入区域
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 组合ChatInput输入框、FunctionSelection功能标签、Toolbar工具栏
+ * - 功能标签显示：currentFunction存在时在输入框前显示可关闭标签+竖线分隔符
+ * - white卡片容器样式，圆角20px+阴影，高度160px
+ * - 论文搜索模式下(showRelatedPapers)宽度变为w-full，否则max-w-7xl
+ * - 通过forwardRef暴露ChatInputRef给父组件（focusToEnd/focus等方法）
+ *
+ * 引用的子组件：
+ * - common/ChatInput — 自适应高度textarea
+ * - common/FunctionSelection — 功能标签（快问快答/深度学习）
+ * - common/Toolbar — 底部工具栏
+ *
+ * 引用方：
+ * - chat/ChatConversation — 对话详情页底部输入区域
+ * - conversation-components/ChatInputArea — 对话输入区容器
+ */
 import React, { useState, forwardRef } from 'react';
 import ChatInput from './ChatInput';
 import type { ChatInputRef } from './ChatInput';

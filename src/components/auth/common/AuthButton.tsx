@@ -1,3 +1,21 @@
+/**
+ * 认证提交按钮 — 统一的渐变主题按钮，带加载状态禁用
+ *
+ * 【前端】认证模块通用组件
+ *
+ * 职责：
+ * - 渲染teal渐变色提交按钮（14B8A6 → 0D9488）
+ * - loading状态下显示"处理中..."并禁用交互
+ * - 支持所有原生button属性透传（className、disabled等）
+ *
+ * 引用方：
+ * - login/LoginForm — 登录表单"即刻探索"按钮
+ * - register/RegisterStep1 — 注册第一步"下一步"按钮
+ * - register/RegisterStep2 — 注册第二步"完成注册"按钮
+ * - forgot-password/ForgotPasswordStep1 — "获取验证码"按钮
+ * - forgot-password/ForgotPasswordStep2 — "下一步"按钮
+ * - forgot-password/ForgotPasswordStep3 — "完成"按钮
+ */
 import React from "react";
 import { cn } from "@/lib/utils";
 

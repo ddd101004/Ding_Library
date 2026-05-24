@@ -1,3 +1,18 @@
+/**
+ * 验证码输入组件 — 6位独立数字输入框，支持自动聚焦跳转和填写完毕自动提交
+ *
+ * 【前端】认证模块通用组件
+ *
+ * 职责：
+ * - 渲染6个独立数字输入框，输入后自动聚焦下一格，退格自动回退上一格
+ * - 6位填写完毕后触发onComplete回调
+ * - autoSubmit=true时，6位填写完毕自动调用onComplete（用于注册和忘记密码的验证码验证）
+ * - error状态下边框变红并显示错误提示文字
+ *
+ * 引用方：
+ * - register/RegisterStep2 — 注册验证码输入（autoSubmit=true）
+ * - forgot-password/ForgotPasswordStep2 — 重置密码验证码输入（autoSubmit=true）
+ */
 import React, { useEffect, useRef } from 'react';
 
 interface VerificationCodeInputProps {

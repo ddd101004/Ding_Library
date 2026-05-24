@@ -1,3 +1,34 @@
+/**
+ * WithSidebarLayout — 带侧边栏的页面布局框架
+ *
+ * 【前端】布局模块核心组件
+ *
+ * 职责：
+ * - 组合Sidebar + MainContent构成完整页面布局
+ * - 管理侧边栏展开/收起状态（localStorage持久化）
+ * - 响应式断点检测：小屏幕强制收起，≥1035px才允许展开
+ * - 获取并缓存最近会话列表（5分钟本地缓存）
+ * - 路由变化时自动设置侧边栏活跃图标（academic/knowledge/history）
+ * - 提供各类导航事件：学术搜索、新对话、菜单跳转、历史会话点击
+ * - 通过React.cloneElement向子组件注入isSidebarOpen/isSmallScreen属性
+ *
+ * 引用的子组件/hooks/API：
+ * - Sidebar — 侧边栏导航组件
+ * - MainContent — 主内容区容器
+ * - useSearch (SearchContext) — 打开学术搜索弹窗
+ * - useUser (UserContext) — 获取用户信息/清除登录态
+ * - apiGet("/api/chat/conversations") — 获取最近会话列表
+ *
+ * 引用方：
+ * - pages/chat.tsx — 聊天首页
+ * - pages/chatconversation.tsx — 对话详情页
+ * - pages/checkedchat.tsx — 勾选聊天页
+ * - pages/knowledge-base.tsx — 知识库主页
+ * - pages/knowledgebase/[id].tsx — 论文详情页
+ * - pages/history.tsx — 历史记录页
+ * - pages/paper/[id].tsx — 论文搜索详情页
+ * - pages/academic-search.tsx — 学术搜索页
+ */
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";

@@ -1,3 +1,17 @@
+/**
+ * 停止流式输出按钮 — 流式输出期间显示的停止按钮，点击终止SSE连接
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 流式输出中(isStreaming=true)显示停止按钮(图标+文字)
+ * - 点击调用onStop回调终止SSE连接和流式渲染
+ * - 使用图片icon(/chat-page/chat-page-stopchat@2x.png)作为按钮图标
+ * - 非流式状态或onStop未定义时不渲染(返回null)
+ *
+ * 引用方：
+ * - common/ChatMessage — AI消息流式输出中显示
+ */
 import React from "react";
 
 interface StopStreamingButtonProps {

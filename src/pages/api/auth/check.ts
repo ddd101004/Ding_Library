@@ -1,3 +1,11 @@
+/**
+ * GET /api/auth/check — 验证Token有效性
+ *
+ * 【后端API】认证模块
+ *
+ * 返回：{ authenticated, userId, role, timestamp }
+ * 权限：withAuth
+ */
 import { NextApiRequest, NextApiResponse } from 'next';
 import { withAuth } from '@/middleware/auth/withAuth';
 import { findUserByUserIdInner } from '@/db/user';

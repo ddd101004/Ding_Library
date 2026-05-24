@@ -1,3 +1,18 @@
+/**
+ * 功能标签组件 — 在输入框前显示当前对话功能标签（快问快答/深度学习），带关闭按钮
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 根据functionType渲染对应图标+标签文字的圆角标签
+ * - 支持两种功能类型：quickQA(快问快答/MessageSquare图标)、deepStudy(深度学习/GraduationCap图标)
+ * - 右侧圆形关闭按钮(粉色X图标)，点击后调用onClose关闭功能模式
+ * - 文件解析中(isFileParsing)时禁用关闭按钮
+ *
+ * 引用方：
+ * - chat/CheckedChat — 功能对话页输入框前的功能标签
+ * - common/MessageInput — 对话输入区输入框前的功能标签
+ */
 import React from 'react';
 import { useRouter } from 'next/router';
 import { MessageSquare, GraduationCap, X } from 'lucide-react';

@@ -1,3 +1,28 @@
+/**
+ * 登录表单 — 支持密码登录和验证码登录两种方式
+ *
+ * 【前端】认证模块表单组件
+ *
+ * 职责：
+ * - 密码登录：手机号+密码输入，支持"记住密码"（localStorage持久化）
+ * - 验证码登录：手机号+6位验证码输入，点击发送验证码按钮（60秒倒计时）
+ * - 登录方式切换（密码 ↔ 验证码）
+ * - 底部"忘记密码"链接和"管理员登录"入口
+ * - 调用useAuth hook的login/sendVerificationCode/checkPhone方法
+ *
+ * 引用的子组件：
+ * - common/AuthInput — 手机号和验证码输入框
+ * - common/AuthButton — "即刻探索"提交按钮
+ * - ui/password-input — 密码输入框（带显示/隐藏切换）
+ *
+ * 引用的hooks：
+ * - hooks/use-form-validation — 手机号格式校验
+ * - hooks/use-countdown — 验证码发送倒计时
+ * - hooks/use-auth — 登录、发送验证码、检查手机号
+ *
+ * 引用方：
+ * - login/LoginPage — 登录模式下渲染的表单
+ */
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useFormValidation } from '@/hooks/use-form-validation';

@@ -1,3 +1,24 @@
+/**
+ * 学术搜索主页面组件 — 搜索框、标签栏切换、搜索请求调度、结果缓存
+ *
+ * 【前端】学术搜索模块入口组件
+ *
+ * 职责：
+ * - 渲染搜索框和标签栏（综合/中文发现/外文发现）
+ * - 根据当前标签发起不同API请求（综合搜索/中文论文/外文论文）
+ * - 管理搜索状态（loading、结果、缓存、防重复）
+ * - 路由参数同步（URL的q/tab参数与组件状态双向绑定）
+ * - 搜索结果缓存到sessionStorage（每个tab保留最近一次）
+ *
+ * 引用的子组件：
+ * - tabs/ComprehensiveSearchTab — 综合搜索结果展示
+ * - tabs/ChineseDiscoveryTab — 中文发现结果展示
+ * - tabs/ForeignDiscoveryTab — 外文发现结果展示
+ * - chat/common/AvatarHoverMenu — 右上角头像菜单
+ *
+ * 引用方：
+ * - pages/academic-search.tsx
+ */
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";

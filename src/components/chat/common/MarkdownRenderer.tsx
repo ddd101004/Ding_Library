@@ -1,3 +1,19 @@
+/**
+ * Markdown渲染器 — 将AI回复的Markdown文本渲染为HTML，识别引用标记并高亮
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 使用react-markdown + remark-gfm渲染Markdown文本（支持表格、列表等GFM扩展语法）
+ * - 动态导入ReactMarkdown避免SSR问题(dynamic + ssr:false)
+ * - 识别文本中的论文引用标记[1]、[2]等，渲染为teal色可点击链接
+ * - 点击引用标记触发onReferenceClick回调，跳转到右侧RelatedPapers面板对应论文
+ * - 所有Markdown元素（标题、段落、列表、表格、强调等）均通过processText处理引用标记
+ * - 自定义prose-sm紧凑间距样式，消除默认大段空白
+ *
+ * 引用方：
+ * - common/MessageBubble — AI消息和用户消息的Markdown内容渲染
+ */
 import React from "react";
 import dynamic from "next/dynamic";
 import remarkGfm from "remark-gfm";

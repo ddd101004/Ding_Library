@@ -1,4 +1,25 @@
 "use client";
+/**
+ * 相关论文面板 — 文献检索模式下右侧展示的论文搜索结果列表
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 文献检索模式开启后在右侧面板展示AI推荐的相关论文
+ * - 每篇论文卡片显示：标题、作者(AuthorDisplay)、摘要截断、引用按钮
+ * - 点击论文卡片跳转论文详情页(/paper/:id)
+ * - 点击引用按钮打开CitationModal选择引用格式并复制/下载
+ * - 面板顶部显示"相关文献"标题+论文数量
+ * - 空结果时显示"暂无相关论文"提示
+ * - 面板宽度固定320px，使用useAutoHideScrollbar隐藏滚动条
+ *
+ * 引用的子组件：
+ * - tabs/AuthorDisplay — 论文作者/期刊/摘要展示
+ * - tabs/CitationModal — 引用格式化弹窗
+ *
+ * 引用方：
+ * - chat/ChatSplitLayout — 文献检索模式下的右侧面板
+ */
 import React, { useState } from "react";
 import CitationModal from "@/components/academicsearch/tabs/CitationModal";
 

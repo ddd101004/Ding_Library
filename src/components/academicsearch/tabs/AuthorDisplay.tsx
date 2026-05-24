@@ -1,3 +1,20 @@
+/**
+ * 作者信息展示组件 — 在论文卡片中渲染作者列表、出版信息和摘要
+ *
+ * 【前端】学术搜索子组件
+ *
+ * 职责：
+ * - 显示前2位作者（首字母头像+姓名），剩余作者显示+N
+ * - 显示出版信息（期刊名+Tag图标）
+ * - 显示摘要（2行截断，超长部分隐藏）
+ * - 支持字符串数组或{name, name_zh}对象数组两种作者数据格式
+ *
+ * 引用方：
+ * - tabs/PaperCard — 论文卡片中的作者/摘要展示
+ * - tabs/ChineseDiscoveryTab — 中文发现结果中的论文展示
+ * - tabs/ForeignDiscoveryTab — 外文发现结果中的论文展示
+ * - tabs/ComprehensiveSearchTab — 综合搜索结果中的论文展示
+ */
 import { Tag } from "lucide-react";
 
 interface AuthorDisplayProps {

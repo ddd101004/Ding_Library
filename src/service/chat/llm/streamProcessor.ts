@@ -1,5 +1,3 @@
-import logger from "@/helper/logger";
-
 /**
  * LLM流式响应处理 — 遍历OpenAI stream chunks，收集content/reasoning/usage统计
  *
@@ -11,7 +9,7 @@ import logger from "@/helper/logger";
  * 引用方：
  * - service/chat/llmService.ts — callChatLLMStream中处理流式响应
  */
-
+import logger from "@/helper/logger";
 export async function processLLMStream(
   stream: AsyncIterable<any>,
   onToken: (data: { type: "reasoning" | "content"; text: string }) => void

@@ -1,3 +1,21 @@
+/**
+ * 论文详情页组件 — 展示论文完整信息，包括标题、作者、来源、摘要、引用格式化
+ *
+ * 【前端】学术搜索子组件
+ *
+ * 职责：
+ * - 渲染论文详情页（标题、作者头像+姓名、出版信息、摘要、DOI、关键词）
+ * - 外文发现论文使用extractEnglishTitle提取英文标题，中文论文使用中文标题
+ * - 导航菜单支持"详情"和"摘要"两个锚点跳转
+ * - 点击引用按钮打开CitationModal
+ *
+ * 引用的子组件：
+ * - tabs/AuthorAvatar — 作者头像（多种尺寸）
+ * - tabs/CitationModal — 引用格式化弹窗
+ *
+ * 引用方：
+ * - pages/paper/[id].tsx（论文详情页）
+ */
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import CitationModal from "./CitationModal";

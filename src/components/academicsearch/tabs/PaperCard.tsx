@@ -1,3 +1,20 @@
+/**
+ * 论文卡片组件 — 论文列表中的单条论文卡片，根据显示模式渲染不同样式
+ *
+ * 【前端】学术搜索子组件
+ *
+ * 职责：
+ * - 渲染单条论文的卡片UI（标题、作者、出版信息、引用按钮）
+ * - 根据displayMode区分综合/中文/外文三种展示样式
+ * - 外文模式下使用extractEnglishTitle提取英文标题
+ * - 点击卡片跳转详情页，点击引用按钮触发回调
+ *
+ * 引用的子组件：
+ * - tabs/AuthorDisplay — 作者+出版信息+摘要展示
+ *
+ * 引用方：
+ * - tabs/ComprehensiveSearchTab — 综合搜索结果中的论文卡片
+ */
 "use client";
 import React from "react";
 import { Quote } from "lucide-react";

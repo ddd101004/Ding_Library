@@ -1,3 +1,32 @@
+/**
+ * FolderDetailPage — 文件夹详情页（知识库内容管理）
+ *
+ * 【前端】知识库模块核心页面组件
+ *
+ * 职责：
+ * - 展示文件夹名称、描述、创建时间和内容数量
+ * - 列表展示文件夹内所有项目（上传论文/对话记录），支持复选框多选
+ * - 全选/取消全选、批量删除、批量移动到其他文件夹
+ * - 导入文件（PDF/DOCX/TXT）和历史对话记录
+ * - 编辑知识库信息（名称、描述、封面）
+ * - 点击项目查看详情：论文跳转/knowledgebase/:id，对话跳转/chatconversation
+ * - 操作中（删除/移动/导入）锁定交互防止并发
+ *
+ * 引用的子组件/hooks/API：
+ * - KnowledgeBaseModal — 编辑知识库弹窗
+ * - ImportModal — 导入文件/历史记录弹窗
+ * - DeleteModal — 删除确认弹窗
+ * - MoveToModal — 移动到文件夹弹窗
+ * - Tooltip (ui/tooltip) — 编辑/返回按钮提示
+ * - useAutoHideScrollbar — 自动隐藏滚动条Hook
+ * - apiGet("/api/folders/:id/items") — 获取文件夹内容
+ * - apiPost("/api/folders/items/remove") — 批量删除项目
+ * - apiGet("/api/folders/:id") — 获取更新后的文件夹信息
+ * - cn (lib/utils) — 条件样式合并
+ *
+ * 引用方：
+ * - knowledgebase/KnowledgeBasePage.tsx — 知识库主页点击文件夹卡片进入
+ */
 import React, { useState, useEffect } from "react";
 import { Plus, Edit } from "lucide-react";
 import { useRouter } from "next/router";

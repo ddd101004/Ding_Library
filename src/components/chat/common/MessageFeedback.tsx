@@ -1,3 +1,23 @@
+/**
+ * 消息反馈 — 点赞/点踩按钮，提交用户对AI回复的评价并实时更新UI状态
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 渲染点赞(ThumbsUp)和点踩(ThumbsDown)图标按钮，间距50px
+ * - 点击后调用POST /api/chat/feedback提交反馈（message_id + feedback_type）
+ * - 乐观更新：点击后立即切换UI状态，请求失败时回滚到之前状态
+ * - 反馈类型：like/dislike/cancel_like/cancel_dislike（已点赞再点击=取消点赞）
+ * - 已选择的按钮变为teal色高亮，未选择的保持默认灰色
+ * - 使用currentVersionMessageId确保反馈提交到正确版本的消息
+ * - 防重复提交：isLiking/isDisliking状态锁
+ *
+ * 引用的API：
+ * - POST /api/chat/feedback — 提交消息反馈
+ *
+ * 引用方：
+ * - common/MessageActions — 消息操作栏中的反馈按钮区域
+ */
 import React, { useState, useEffect } from "react";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { apiPost } from "@/api/request";

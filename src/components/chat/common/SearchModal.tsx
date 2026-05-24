@@ -1,3 +1,23 @@
+/**
+ * 搜索弹窗 — 全屏居中搜索面板，支持对话搜索、关键词联想、搜索结果跳转
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 全屏居中白色卡片弹窗，显示搜索输入框
+ * - 输入关键词实时调用GET /api/chat/search?keyword=搜索对话
+ * - 搜索结果按对话分组展示，每条显示标题+匹配消息摘要+时间
+ * - 点击搜索结果跳转到对应对话(/chatconversation?id=&highlight=)
+ * - 输入为空时显示热门搜索标签(从/api/chat/keywords获取)
+ * - Esc键或点击遮罩关闭弹窗
+ *
+ * 引用的API：
+ * - GET /api/chat/search?keyword= — 搜索对话内容
+ * - GET /api/chat/keywords — 获取热门搜索关键词
+ *
+ * 引用方：
+ * - chat/ChatConversation — 对话详情页搜索入口
+ */
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";

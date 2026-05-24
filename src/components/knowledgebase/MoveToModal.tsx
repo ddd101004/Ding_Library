@@ -1,3 +1,24 @@
+/**
+ * MoveToModal — 移动到文件夹弹窗
+ *
+ * 【前端】知识库模块组件
+ *
+ * 职责：
+ * - 展示可选的目标文件夹列表（排除当前文件夹）
+ * - 支持单选目标文件夹，确认后调用移动API
+ * - 移动成功后从当前文件夹内容中移除已移动项目
+ * - 通过onMovingChange通知父组件移动中状态，防止并发操作
+ *
+ * 引用的子组件/hooks/API：
+ * - apiGet("/api/folders") — 获取文件夹列表
+ * - apiPost("/api/folders/items/move") — 批量移动项目
+ * - toast (sonner) — 操作结果提示
+ * - cn (lib/utils) — 条件样式合并
+ *
+ * 引用方：
+ * - knowledgebase/FolderDetailPage.tsx — 文件夹详情页底部操作栏"移动到"
+ * - knowledgebase/KnowledgeBasePage.tsx — 知识库主页批量操作
+ */
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { apiGet, apiPost, apiDel } from "@/api/request";

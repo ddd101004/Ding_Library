@@ -1,3 +1,12 @@
+/**
+ * POST /api/chat/feedback — 消息反馈（点赞/点踩/取消）
+ *
+ * 【后端API】聊天模块
+ *
+ * 参数：message_id, feedback_type (like/dislike/cancel_like/cancel_dislike)
+ * 逻辑：点赞/点踩互斥，取消删除记录
+ * 权限：withAuth
+ */
 import { NextApiRequest, NextApiResponse } from "next";
 import { withAuth } from "@/middleware/auth/withAuth";
 import { withErrorHandler } from "@/middleware/error/withErrorHandler";

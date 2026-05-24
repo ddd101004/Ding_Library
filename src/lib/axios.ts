@@ -1,3 +1,21 @@
+/**
+ * Axios封装 — 带认证Token的HTTP客户端
+ *
+ * 【前端】全项目API请求基础
+ *
+ * 职责：
+ * - 请求拦截：自动附加Authorization Bearer Token
+ * - 响应拦截：401自动跳转登录页、统一错误提示
+ * - 基于axios.create创建实例
+ *
+ * 导出：
+ * - apiClient — axios实例
+ * - apiGet/ apiPost/ apiPut/ apiDelete/ apiRequest — 封装的HTTP方法
+ *
+ * 引用方：
+ * - hooks/* — 所有自定义Hooks
+ * - components/* — 直接调用API的组件
+ */
 import axios from 'axios';
 
 // 创建axios实例

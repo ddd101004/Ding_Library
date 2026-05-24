@@ -1,3 +1,27 @@
+/**
+ * 忘记密码第三步 — 设置新密码并确认，完成后跳转登录页
+ *
+ * 【前端】认证模块忘记密码流程组件
+ *
+ * 职责：
+ * - 收集新密码和确认密码两个字段
+ * - 调用useFormValidation.validatePassword校验密码强度
+ * - 校验两次密码输入是否一致
+ * - 调用useAuth.resetPassword(phone, verificationCode, newPassword)重置密码
+ * - 重置成功后2秒延迟跳转/login页面
+ * - 底部"返回上一步"链接
+ *
+ * 引用的子组件：
+ * - ui/password-input — 新密码和确认密码输入框（带显示/隐藏切换）
+ * - common/AuthButton — "完成"按钮
+ *
+ * 引用的hooks：
+ * - hooks/use-form-validation — 密码强度校验
+ * - hooks/use-auth — resetPassword重置密码
+ *
+ * 引用方：
+ * - forgot-password/ForgotPasswordPage — step=3时渲染
+ */
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useFormValidation } from "@/hooks/use-form-validation";

@@ -1,3 +1,18 @@
+/**
+ * ConversationItem — 单条对话卡片
+ *
+ * 【前端】历史记录模块对话项组件
+ *
+ * 职责：
+ * - 显示对话标题、论文信息、最后消息预览
+ * - 提供操作按钮：导入知识库、导出、删除、三点菜单
+ *
+ * 引用的子组件：
+ * - 无
+ *
+ * 引用方：
+ * - GroupSection
+ */
 import React from 'react';
 import { FolderPlus, Download, Trash2, MessageSquare, MoreVertical } from 'lucide-react';
 import {

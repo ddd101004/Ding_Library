@@ -14,13 +14,7 @@
  * 引用方：
  * - service/chat/messageService.ts — executeAutoSearch、formatRelatedPapers
  */
- *
- * 用于在AI对话中自动检索相关论文：
- * 1. 使用 LLM 从用户问题中提取中文关键词
- * 2. 调用万方 API 检索相关论文
- * 3. 将论文存入 Paper 表（upsert）
- * 4. 创建 MessageCitation 关联
- */
+
 
 import logger from "@/helper/logger";
 import { getAIChatApi } from "@/lib/ai/client";

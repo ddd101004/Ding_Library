@@ -1,3 +1,19 @@
+/**
+ * 消息版本控制器 — 多版本AI回复的切换按钮（左箭头+版本号+右箭头）
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 只有多版本(totalVersions>1)时才显示版本切换控件
+ * - 显示当前版本号(currentVersion)和总版本数(totalVersions)
+ * - 左箭头(ChevronUp)切换到上一版本，右箭头(ChevronDown)切换到下一版本
+ * - 第1版本时禁用左箭头，最后版本时禁用右箭头
+ * - 流式输出期间隐藏版本切换
+ * - 版本号之间使用蓝色圆点(Dot图标)分隔
+ *
+ * 引用方：
+ * - common/MessageActions — 消息操作栏中的版本切换区域
+ */
 import React from "react";
 import {
   Tooltip,

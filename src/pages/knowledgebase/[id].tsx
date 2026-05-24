@@ -1,3 +1,13 @@
+/**
+ * 知识库文件详情页 /knowledgebase/:id — 查看知识库中的论文详情
+ *
+ * 【前端】路由：/knowledgebase/:id
+ *
+ * 职责：
+ * - 根据动态路由参数id加载论文详情
+ * - 展示论文标题、作者、摘要、全文内容
+ * - 使用WithSidebarLayout布局
+ */
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import WithSidebarLayout from "../../components/layout/WithSidebarLayout";

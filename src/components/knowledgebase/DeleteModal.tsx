@@ -1,3 +1,21 @@
+/**
+ * DeleteModal — 删除确认弹窗
+ *
+ * 【前端】知识库模块通用组件
+ *
+ * 职责：
+ * - 展示删除警告图标、确认文案（含知识库名称高亮）
+ * - 提示"此操作不可恢复"
+ * - 取消/确认删除两个操作按钮
+ *
+ * 引用的子组件/hooks/API：
+ * - Trash2 (lucide-react) — 删除警告图标
+ * - Folder (types/foder) — 文件夹类型定义
+ *
+ * 引用方：
+ * - knowledgebase/KnowledgeBasePage.tsx — 知识库主页删除知识库
+ * - knowledgebase/FolderDetailPage.tsx — 文件夹详情页批量删除内容
+ */
 import React from "react";
 import { Trash2 } from "lucide-react";
 import { Folder } from "../../types/foder";

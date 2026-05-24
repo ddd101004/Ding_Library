@@ -1,3 +1,26 @@
+/**
+ * KnowledgeBaseModal — 创建/编辑知识库弹窗
+ *
+ * 【前端】知识库模块组件
+ *
+ * 职责：
+ * - 支持创建（create）和编辑（edit）两种模式
+ * - 编辑模式回显知识库名称、描述和封面图
+ * - 封面图上传：支持jpg/jpeg/png，建议284×112，≤2MB
+ * - 名称校验：必填且不超过10个字符
+ * - 创建调用POST /api/folders，编辑调用PATCH /api/folders/:id
+ *
+ * 引用的子组件/hooks/API：
+ * - useCoverUpload — 封面图上传Hook（选择→上传→返回cosKey）
+ * - apiPost("/api/folders") — 创建知识库
+ * - apiRequest("/api/folders/:id", PATCH) — 更新知识库
+ * - toast (sonner) — 操作结果提示
+ * - cn (lib/utils) — 条件样式合并
+ *
+ * 引用方：
+ * - knowledgebase/KnowledgeBasePage.tsx — 新建知识库按钮
+ * - knowledgebase/FolderDetailPage.tsx — 编辑知识库按钮
+ */
 import React, { useState, useEffect } from "react";
 import { apiPost, apiRequest } from "@/api/request";
 import { toast } from "sonner";

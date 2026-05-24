@@ -1,3 +1,21 @@
+/**
+ * MainContent — 主内容区容器（根据页面类型切换布局）
+ *
+ * 【前端】布局模块组件
+ *
+ * 职责：
+ * - 聊天首页（isChatHome）：居中布局，承载聊天输入区
+ * - 勾选聊天页（isCheckedChat）：居中布局 + 顶部功能标题/描述
+ * - 其他页面：带滚动条的内容区域，支持自定义背景图/颜色
+ * - 知识库页面（isKnowledgeBase）：透明背景，无圆角，无滚动条
+ * - 小屏幕适配：调整内边距和边距
+ *
+ * 引用的子组件/hooks/API：
+ * - useAutoHideScrollbar — 自动隐藏滚动条Hook
+ *
+ * 引用方：
+ * - layout/WithSidebarLayout.tsx — 侧边栏布局中作为主内容区
+ */
 import React from "react";
 import { useAutoHideScrollbar } from "@/hooks/use-auto-hide-scrollbar";
 

@@ -1,3 +1,25 @@
+/**
+ * 用户头像悬浮菜单 — 右上角固定头像，悬停显示个人中心和退出登录选项
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 固定在页面右上角(z-50)展示用户头像
+ * - 鼠标悬停200ms延迟后显示下拉菜单（个人中心/退出登录）
+ * - 点击"个人中心"调用GET /api/auth/info获取用户信息并弹窗展示
+ * - 点击"退出登录"弹出确认对话框，确认后调用POST /api/auth/logout
+ * - 退出登录后清除localStorage token并跳转/login
+ * - 防止与搜索弹窗冲突：通过onAnyModalOpen回调通知父组件弹窗状态
+ *
+ * 引用的API：
+ * - GET /api/auth/info — 获取用户个人信息
+ * - POST /api/auth/logout — 退出登录
+ *
+ * 引用方：
+ * - chat/ChatHome — 对话首页右上角
+ * - chat/CheckedChat — 功能对话页右上角
+ * - chat/ChatConversation — 对话详情页右上角
+ */
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/router";

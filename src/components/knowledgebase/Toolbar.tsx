@@ -1,3 +1,19 @@
+/**
+ * Toolbar — 视图切换工具栏（列表/网格）
+ *
+ * 【前端】知识库模块通用组件
+ *
+ * 职责：
+ * - 列表视图（List）和网格视图（LayoutGrid）切换按钮
+ * - 当前激活视图高亮显示（白色背景+阴影 + 主题色图标）
+ * - 固定定位在知识库页面右上角
+
+ * 引用的子组件/hooks/API：
+ * - List, LayoutGrid (lucide-react) — 视图切换图标
+ *
+ * 引用方：
+ * - knowledgebase/KnowledgeBasePage.tsx — 知识库主页右上角
+ */
 import React from "react";
 import { List, LayoutGrid } from "lucide-react";
 

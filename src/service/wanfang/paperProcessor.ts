@@ -1,3 +1,14 @@
+/**
+ * 万方论文搜索结果处理器 — 入库+查询UUID+格式化返回
+ *
+ * 【后端】仅在学术搜索API中使用
+ *
+ * 导出函数：
+ * - processWanfangSearchResults(params) — 处理万方搜索结果：批量upsert入库→查询DB获取UUID→检查收藏状态→格式化返回
+ *
+ * 引用方：
+ * - pages/api/academic-search.ts — 学术搜索API
+ */
 import { batchUpsertWanfangPapers } from "@/db/wanfang/paper";
 import { findPaperIdsBySource } from "@/db/paper";
 import { WanfangPaperItem } from "@/type/paper";

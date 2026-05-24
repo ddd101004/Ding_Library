@@ -1,3 +1,22 @@
+/**
+ * 全局常量定义
+ *
+ * 【前后端共用】
+ *
+ * 导出：
+ * - SCORE_NAME — 评分字段名("token")
+ * - PRODUCT_NAME — 产品名称
+ * - TOKEN_EXPIRE_IN — JWT过期时间("7d")
+ * - UNAUTHORIZED_TIPS — 登录过期提示
+ * - REGISTER_TYPE — 注册类型("phone")
+ * - ACCOUNT_NAME — 账号名称
+ * - VERIFICATION_CODE_INTERVAL — 验证码发送间隔(60秒)
+ * - CONVERSATION_MAX_TOKENS — 对话最大token数(64000)
+ * - MAX_FILE_SIZE — 最大上传文件大小(50MB)
+ * - ADMIN_ROLE/USER_ROLE — 角色常量
+ * - DEFAULT_RESET_PASSWORD — 管理员重置默认密码
+ * - PDFJS_CMAP_URL/PDFJS_STANDARD_FONT_DATA_URL — PDF.js资源URL
+ */
 export const SCORE_NAME = "token";
 export const PRODUCT_NAME = "AI Library";
 

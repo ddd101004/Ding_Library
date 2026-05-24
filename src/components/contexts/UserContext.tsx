@@ -1,3 +1,22 @@
+/**
+ * UserContext — 用户信息上下文
+ *
+ * 【前端】全局上下文
+ *
+ * 导出：
+ * - UserProvider — 上下文Provider，管理用户登录态和信息
+ * - useUser — 获取用户上下文的Hook（user/setUser/clearUser/isAdmin）
+ *
+ * 职责：
+ * - 自动检查登录态（/api/auth/check），未登录则跳转登录页
+ * - 管理员身份判断（role === 'admin'）
+ * - 登录/登出状态管理
+ *
+ * 引用方：
+ * - pages/_app.tsx — 全局Provider包裹
+ * - layout/WithSidebarLayout.tsx — 侧边栏登出/用户信息
+ * - admin/AdminPage.tsx — 管理员权限校验
+ */
 "use client";
 import React, {
   createContext,

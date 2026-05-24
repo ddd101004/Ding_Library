@@ -1,3 +1,11 @@
+/**
+ * GET /api/admin/users — 获取用户列表（管理员）
+ *
+ * 【后端API】管理员模块
+ *
+ * 参数：page/size/search
+ * 权限：withAdminAuth
+ */
 import { NextApiRequest, NextApiResponse } from "next";
 import { withAdminAuth } from "@/middleware/auth/withAdminAuth";
 import { getAllUsersWithFileCount } from "@/db/user";

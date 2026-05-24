@@ -1,3 +1,20 @@
+/**
+ * AdminPage — 管理员后台页面（用户管理）
+ *
+ * 【前端】管理员模块核心页面
+ *
+ * 职责：
+ * - 展示用户列表（分页、搜索、状态筛选）
+ * - 切换用户启用/禁用状态
+ * - 重置用户密码
+ * - 管理员权限校验（非管理员跳转登录页）
+ *
+ * 引用的子组件/hooks/API：
+ * - ResetPasswordModal — 重置密码弹窗
+ * - apiGet("/api/admin/users") — 获取用户列表
+ * - apiPost("/api/admin/users/:id/toggle-status") — 切换用户状态
+ * - useUser (UserContext) — 当前登录用户信息
+ */
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";

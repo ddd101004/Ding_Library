@@ -1,3 +1,30 @@
+/**
+ * 功能对话页 — 快问快答和深度学习模式的专用对话页面
+ *
+ * 【前端】对话模块功能页面组件
+ *
+ * 职责：
+ * - 从URL参数获取功能类型（quickQA/deepStudy）和初始输入文本
+ * - 快问快答模式：获取随机问题列表，点击问题后填入输入框
+ * - 深度学习模式：展示关键词网格（两行6+7布局），点击关键词后调用/api/ai/questions生成问题
+ * - 发送消息后调用useConversation.handleSendMessage创建对话
+ * - 支持DeepThink和文献检索模式切换
+ * - "换一批"按钮刷新关键词/问题（useTopicManager）
+ *
+ * 引用的子组件：
+ * - common/AvatarHoverMenu — 用户头像悬浮菜单
+ * - common/ChatInput — 消息输入框
+ * - common/Toolbar — 底部工具栏
+ * - common/FunctionSelection — 当前功能标签（带关闭按钮）
+ *
+ * 引用的hooks：
+ * - hooks/useConversation — 消息发送和对话创建
+ * - hooks/useTopicManager — 主题/关键词管理
+ * - hooks/useAudioRecorder — 语音录制
+ *
+ * 引用方：
+ * - pages/checkedchat.tsx（功能对话页面入口）
+ */
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";

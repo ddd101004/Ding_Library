@@ -1,3 +1,17 @@
+/**
+ * SearchContext — 学术搜索弹窗上下文
+ *
+ * 【前端】全局上下文
+ *
+ * 导出：
+ * - SearchProvider — 上下文Provider，管理搜索弹窗的打开/关闭/关键词状态
+ * - useSearch — 获取搜索上下文的Hook（openSearch/closeSearch/searchKeyword）
+ *
+ * 引用方：
+ * - pages/_app.tsx — 全局Provider包裹
+ * - layout/WithSidebarLayout.tsx — 侧边栏学术搜索按钮
+ * - academicsearch/AcademicSearchModal.tsx — 搜索弹窗组件
+ */
 "use client";
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { apiGet, apiPost, apiDel } from "@/api/request";

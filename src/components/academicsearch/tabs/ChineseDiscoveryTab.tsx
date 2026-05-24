@@ -1,3 +1,21 @@
+/**
+ * 中文发现标签页 — 展示万方中文论文搜索结果，支持无限滚动加载和引用弹窗
+ *
+ * 【前端】学术搜索子组件
+ *
+ * 职责：
+ * - 渲染中文论文搜索结果列表（万方数据源）
+ * - 无限滚动加载更多论文（IntersectionObserver）
+ * - 点击论文卡片跳转详情页
+ * - 点击引用按钮打开CitationModal
+ *
+ * 引用的子组件：
+ * - tabs/AuthorDisplay — 作者+出版信息+摘要展示
+ * - tabs/CitationModal — 引用格式化弹窗
+ *
+ * 引用方：
+ * - academicsearch/AcademicSearch.tsx（中文发现标签页）
+ */
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import { Quote } from "lucide-react";

@@ -1,3 +1,19 @@
+/**
+ * 思考过程展示 — 深度思考模式下折叠/展开显示AI推理过程
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 深度思考模式下展示AI推理过程文本
+ * - 默认折叠状态，显示"深度思考完成"标签(CheckCircle图标+绿色文字)
+ * - 点击展开显示完整思考过程内容，点击"收起"按钮折叠
+ * - 思考过程文本内容使用max-height限制+overflow-y-auto滚动
+ * - 支持maxWidth属性限制思考区域最大宽度
+ * - 流式输出中时思考过程自动展开
+ *
+ * 引用方：
+ * - common/ChatMessage — AI消息中的思考过程区域
+ */
 import React from "react";
 import { CheckCircle, ChevronDown, ChevronUp, Dot, Atom } from "lucide-react";
 

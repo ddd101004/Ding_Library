@@ -1,3 +1,13 @@
+/**
+ * 管理员登录页 /admin-login — 管理员后台登录
+ *
+ * 【前端】路由：/admin-login
+ *
+ * 职责：
+ * - 管理员专属登录表单
+ * - 登录成功后跳转管理后台
+ * - 记住密码功能
+ */
 "use client";
 
 import React, { useState, useEffect } from "react";

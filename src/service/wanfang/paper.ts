@@ -1,3 +1,20 @@
+/**
+ * 万方论文搜索服务 — 期刊/会议/学位论文检索与详情获取
+ *
+ * 【后端】仅在学术搜索API和自动论文检索中使用
+ *
+ * 导出函数/类型：
+ * - WanfangFilter — 过滤器类型（field + value）
+ * - WanfangPaperSearchParams — 论文搜索参数类型（keyword/page/size/search_type/year_from/year_to/filters）
+ * - WanfangPaperResult — 论文结果类型（id/title/creator/abstract/keywords/doi等）
+ * - searchWanfangPapers(params) — 搜索万方论文（4个collections：期刊/会议/中文期刊/学位论文，默认search_type=all全文检索）
+ * - getWanfangPaperDetail(id) — 获取单篇论文详情
+ *
+ * 引用方：
+ * - service/chat/autoRelatedPapers.ts — 自动论文检索调用searchWanfangPapers
+ * - pages/api/academic-search.ts — 学术搜索API
+ * - service/wanfang/paperProcessor.ts — 搜索结果处理
+ */
 import {
   wanfangFetch,
   handleWanfangError,

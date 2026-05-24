@@ -1,3 +1,22 @@
+/**
+ * 对话分屏布局 — 管理消息列表区与论文搜索侧栏的双栏/单栏切换
+ *
+ * 【前端】对话模块布局组件
+ *
+ * 职责：
+ * - 论文搜索开启时：左侧消息列表+右侧RelatedPapers面板，中间分割线
+ * - 论文搜索关闭时：单栏消息列表+底部输入区
+ * - 管理三个滚动容器分别使用useAutoHideScrollbar（消息列表、论文面板、单栏模式）
+ * - 遍历messages渲染ChatMessage，关联每条消息的relatedPapers
+ * - 仅最新AI消息显示重新生成按钮（canRegenerate逻辑）
+ *
+ * 引用的子组件：
+ * - common/ChatMessage — 单条消息渲染
+ * - common/RelatedPapers — 论文搜索侧栏
+ *
+ * 引用方：
+ * - chat/ChatConversation — 作为布局容器传入消息区和输入区内容
+ */
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 import ChatMessage from "./common/ChatMessage";

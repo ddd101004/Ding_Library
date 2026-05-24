@@ -1,3 +1,15 @@
+/**
+ * _app.tsx — Next.js全局应用入口
+ *
+ * 【前端】全局页面框架
+ *
+ * 职责：
+ * - 全局Provider包裹：UserProvider、SearchProvider、AvatarProvider、TooltipProvider
+ * - AuthChecker组件：自动检查登录态，未登录跳转登录页
+ * - 全局样式导入（Tailwind CSS）
+ * - 页面切换时保持Provider状态
+ * - Toaster通知组件
+ */
 "use client";
 import type { AppProps } from "next/app";
 import { useEffect, useState } from "react";
@@ -43,14 +55,14 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
         setAuthChecked(true);
       } catch (error: any) {
         console.error('认证检查失败:', error);
-        
+
         // 如果是超时或网络错误，不立即清除token，允许继续访问
         if (error.message === '认证检查超时' || !error.response) {
           console.warn('认证检查网络超时，但允许继续访问');
           setAuthChecked(true);
           return;
         }
-        
+
         // 只有明确的服务端401错误才清除token
         if (error.response?.status === 401) {
           clearUserInfo();

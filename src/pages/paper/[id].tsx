@@ -1,6 +1,28 @@
+/**
+ * 论文详情页 /paper/:id — 万方论文详情查看
+ *
+ * 【前端】路由：/paper/:id
+ *
+ * 职责：
+ * - 根据动态路由参数id加载论文详情
+ * - 展示论文标题、作者、摘要、发表信息
+ * - 支持引用、收藏、添加到知识库
+ * - 使用WithSidebarLayout布局
+ */
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import WithSidebarLayout from "../../components/layout/WithSidebarLayout";
+/**
+ * 论文详情页 /paper/:id — 万方论文详情查看
+ *
+ * 【前端】路由：/paper/:id
+ *
+ * 职责：
+ * - 根据动态路由参数id加载论文详情
+ * - 展示论文标题、作者、摘要、发表信息
+ * - 支持引用、收藏、添加到知识库
+ * - 使用WithSidebarLayout布局
+ */
 import PaperDetail from "../../components/academicsearch/tabs/PaperDetail";
 import SearchModal from "../../components/chat/common/SearchModal";
 import Head from "next/head";

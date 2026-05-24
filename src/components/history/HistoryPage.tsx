@@ -1,3 +1,25 @@
+/**
+ * HistoryPage — 对话历史记录管理页面
+ *
+ * 【前端】历史记录模块主组件
+ *
+ * 职责：
+ * - 展示历史对话列表，按时间分组（最近7天/30天内/更早）渲染
+ * - 提供搜索功能，调用 GET /api/chat/messages/search
+ * - 获取对话列表，调用 GET /api/chat/conversations
+ * - 删除对话，调用 DELETE /api/chat/conversations/:id
+ * - 导出功能：获取全部消息后生成txt文件下载
+ * - 导入知识库：选择文件夹后调用 POST /api/folders/:id/items
+ *
+ * 引用的子组件：
+ * - ./GroupSection — 按时间分组渲染对话列表
+ * - ./ConversationItem — 单条对话卡片（通过GroupSection间接引用）
+ * - ./AvatarHoverMenu — 头像悬停菜单
+ * - DeleteConfirmationDialog（内部定义）— 删除确认弹窗
+ *
+ * 引用方：
+ * - pages/history.tsx
+ */
 import React, { useState, useEffect } from "react";
 import { Trash2, History as HistoryIcon, MessageSquare } from "lucide-react";
 import GroupSection from "./GroupSection";

@@ -1,3 +1,25 @@
+/**
+ * 引用格式化弹窗 — 用户选择引用格式后，展示格式化文本并支持复制/下载
+ *
+ * 【前端】学术搜索子组件
+ *
+ * 职责：
+ * - 提供6种引用格式选择：APA、MLA、Chicago、GB/T 7714-2015、BibTeX、RIS
+ * - 调用后端 /api/chat/citations/format 接口获取格式化文本
+ * - 支持一键复制格式化文本
+ * - 支持 BibTeX/RIS 格式文件下载（调用 /api/chat/citations/download 接口）
+ *
+ * 引用的API：
+ * - GET /api/chat/citations/format?paper_id=&format=
+ * - GET /api/chat/citations/download?paper_id=&format=
+ *
+ * 引用方：
+ * - tabs/ChineseDiscoveryTab — 中文发现论文卡片引用按钮
+ * - tabs/ForeignDiscoveryTab — 外文发现论文卡片引用按钮
+ * - tabs/ComprehensiveSearchTab — 综合搜索论文卡片引用按钮
+ * - tabs/PaperDetail — 论文详情页引用按钮
+ * - chat/common/RelatedPapers.tsx — 对话中相关论文面板引用按钮
+ */
 import React, { useState, useEffect, useRef } from "react";
 import { X, Eye, EyeOff, ChevronDown } from "lucide-react";
 import { apiGetAuth, apiDownloadFile } from "@/api/request";

@@ -1,3 +1,21 @@
+/**
+ * 复制按钮 — 通用复制到剪贴板按钮，支持多种样式和浏览器兼容降级
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 点击后复制content文本到剪贴板，优先使用navigator.clipboard.writeText
+ * - 旧浏览器降级使用document.execCommand("copy")方法
+ * - 支持三种变体：icon(图标)、text(文字+状态)、button(按钮+图标+文字)
+ * - 支持三种尺寸：sm(16px)、md(21px)、lg(24px)
+ * - 复制成功后3秒内显示Check图标替代Copy图标，3秒后自动恢复
+ * - 防重复点击保护(isCopying状态)
+ * - 集成shadcn/ui Tooltip悬停提示
+ * - 复制成功/失败通过sonner toast通知用户
+ *
+ * 引用方：
+ * - common/MessageActions — 消息操作栏中的复制按钮
+ */
 import React, { useState, useCallback, useRef } from "react";
 import { Copy, Check } from "lucide-react";
 import { toast } from "sonner";

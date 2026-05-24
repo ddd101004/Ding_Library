@@ -4,14 +4,12 @@
  * 【后端】仅在上传论文API中使用
  *
  * 导出函数：
- * - parseFileContent(filePath, originalName) — 解析文件内容（自动识别格式：docx/pdf/txt）
- * - triggerFileParsing(paperId, filePath, originalName) — 触发后台文件解析+更新解析状态到DB
+ * - parseFileContent(filePath, fileType) — 解析文件内容（自动识别格式：docx/pdf/txt）
+ * - triggerFileParsing(paperId) — 触发后台文件解析+更新解析状态到DB
  * - updatePaperParseStatus(paperId, status, content?, errorMessage?) — 更新论文解析状态到DB
  *
  * 引用方：
  * - pages/api/uploaded-papers/index.ts — 上传论文API（上传后触发后台解析）
- */
- * 支持 docx, pdf, txt 等格式
  */
 
 import mammoth from 'mammoth';

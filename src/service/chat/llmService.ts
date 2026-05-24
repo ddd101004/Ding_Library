@@ -14,6 +14,7 @@
  * - pages/api/ai/keywords.ts — callAI（生成AI关键词）
  * - service/chat/streamHelper.ts — callChatLLMStream（流式聊天）
  */
+import logger from "@/helper/logger";
 import { getConversationById } from "@/db/chatConversation";
 // import { findUploadedPaperById } from "@/db/ai-reading/uploadedPaper";
 import { getAIChatApi } from "@/lib/ai/client";

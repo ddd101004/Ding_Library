@@ -1,3 +1,13 @@
+/**
+ * 勾选聊天页 /checkedchat — 预设话题对话页面
+ *
+ * 【前端】路由：/checkedchat
+ *
+ * 职责：
+ * - 展示预设话题列表供用户选择
+ * - 选择后进入AI对话模式
+ * - 使用WithSidebarLayout布局（isCheckedChat模式）
+ */
 import Head from "next/head";
 import CheckedChat from '../components/chat/CheckedChat';
 import { useRouter } from 'next/router';

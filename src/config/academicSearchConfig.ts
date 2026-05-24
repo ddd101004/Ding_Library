@@ -1,3 +1,19 @@
+/**
+ * 学术搜索配置 — 搜索参数、分页、标签颜色、布局、滚动阈值
+ *
+ * 【前后端共用】学术搜索模块配置
+ *
+ * 导出：
+ * - ACADEMIC_SEARCH_CONFIG — 搜索配置（综合/中文发现/外文发现API映射、分页大小、标签颜色、布局参数、滚动阈值）
+ * - SEARCH_TABS — 搜索标签列表
+ * - CENTER_TABS — 居中标签列表
+ * - SCHOLAR_NAME_PATTERNS — 学者姓名检测正则
+ * - SearchTabType/SearchConfigKey — 类型定义
+ *
+ * 引用方：
+ * - pages/api/academic-search.ts — 后端搜索API
+ * - components/academicsearch/* — 前端搜索界面
+ */
 // 学术搜索配置文件
 
 export const ACADEMIC_SEARCH_CONFIG = {

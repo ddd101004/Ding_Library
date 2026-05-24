@@ -1,3 +1,25 @@
+/**
+ * 单条消息组件 — 根据角色渲染用户消息或AI回复，包含思考过程、操作按钮、版本控制
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 用户消息(role=user)：直接渲染MessageBubble
+ * - AI消息(role=assistant)：渲染AI头像+ThinkingProcess思考过程+MessageBubble回复内容+MessageActions操作按钮
+ * - 思考过程长度>10字符时才显示ThinkingProcess组件
+ * - 使用backendId作为消息唯一标识（优先于前端生成的id）
+ * - 流式输出时底部显示StopStreamingButton停止按钮
+ * - 支持论文引用标记点击(onReferenceClick)
+ *
+ * 引用的子组件：
+ * - common/MessageBubble — 消息气泡渲染（含MarkdownRenderer）
+ * - common/ThinkingProcess — 思考过程折叠/展开
+ * - common/MessageActions — 复制/重新生成/版本切换/点赞点踩
+ * - common/StopStreamingButton — 停止流式输出按钮
+ *
+ * 引用方：
+ * - chat/ChatSplitLayout — 消息列表中每条消息的渲染
+ */
 import React from 'react';
 import MessageBubble from './MessageBubble';
 import ThinkingProcess from './ThinkingProcess';

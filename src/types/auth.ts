@@ -1,3 +1,14 @@
+/**
+ * 认证相关类型定义
+ *
+ * 【前后端共用】
+ *
+ * 导出：
+ * - LoginCredentials — 登录凭证（手机号+密码/验证码）
+ * - RegisterCredentials — 注册凭证
+ * - AuthResponse — 认证响应
+ * - User — 用户信息
+ */
 // 登录凭证类型
 export interface LoginCredentials {
   phone_number: string;

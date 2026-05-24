@@ -1,3 +1,24 @@
+/**
+ * 忘记密码页面 — 三步流程编排：输入手机号 → 验证码确认 → 设置新密码
+ *
+ * 【前端】认证模块页面组件
+ *
+ * 职责：
+ * - 管理三步流程的状态切换（step: 1 | 2 | 3）
+ * - 步骤间数据传递：手机号(step1→step2)、验证码(step2→step3)
+ * - 每步标题和描述文案动态切换（重置密码/验证手机号/设置新密码）
+ * - 支持返回上一步和返回登录
+ *
+ * 引用的子组件：
+ * - layout/AuthPageLayout — 页面布局容器
+ * - forgot-password/ForgotPasswordStep1 — 输入手机号+发送验证码
+ * - forgot-password/ForgotPasswordStep2 — 输入6位验证码
+ * - forgot-password/ForgotPasswordStep3 — 设置新密码+确认密码
+ *
+ * 引用方：
+ * - pages/forgot-password.tsx（忘记密码页面入口）
+ * - login/LoginForm — "忘记密码"链接跳转
+ */
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/router";

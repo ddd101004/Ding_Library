@@ -1,5 +1,27 @@
+/**
+ * 注册第一步 — 输入昵称、手机号和密码，校验后进入第二步验证码确认
+ *
+ * 【前端】认证模块注册流程组件
+ *
+ * 职责：
+ * - 收集昵称、手机号、密码三个字段
+ * - 调用useFormValidation校验用户名、手机号格式、密码强度
+ * - 调用useAuth.checkPhone检查手机号是否已注册
+ * - 校验通过后将数据通过onNext回调传递给RegisterStep2
+ *
+ * 引用的子组件：
+ * - common/AuthInput — 昵称和手机号输入框
+ * - common/AuthButton — "下一步"按钮
+ * - ui/password-input — 密码输入框
+ *
+ * 引用的hooks：
+ * - hooks/use-form-validation — 用户名、手机号、密码校验
+ * - hooks/use-auth — checkPhone检查手机号是否已注册
+ *
+ * 引用方：
+ * - login/LoginPage — 注册模式第一步渲染
+ */
 import React, { useState } from "react";
-import { useFormValidation } from "@/hooks/use-form-validation";
 import { useAuth } from "@/hooks/use-auth";
 import { AuthInput, AuthButton } from "@/components/auth";
 import { PasswordInput } from "@/components/ui/password-input";

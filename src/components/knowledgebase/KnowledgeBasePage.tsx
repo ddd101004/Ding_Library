@@ -1,3 +1,28 @@
+/**
+ * KnowledgeBasePage — 知识库模块的主入口页面，展示文件夹列表与详情页切换
+ *
+ * 【前端】知识库模块组件
+ *
+ * 职责：
+ * - 展示所有知识库文件夹列表（支持列表/网格两种视图模式）
+ * - 提供新建、编辑、删除知识库的入口与流程控制
+ * - 管理文件夹选中状态与详情页/列表页的切换（含URL参数同步）
+ * - 渲染顶部导航栏、下拉菜单、操作弹窗等子组件
+ *
+ * 引用的子组件/hooks/API：
+ * - KnowledgeBaseModal — 新建/编辑知识库弹窗
+ * - DeleteModal — 删除知识库确认弹窗
+ * - Toolbar — 列表/网格视图切换工具栏
+ * - ImportModal — 导入文件弹窗（仅在详情页使用，当前未直接渲染）
+ * - FolderDetailPage — 文件夹详情页（选中文件夹后切换显示）
+ * - AvatarHoverMenu — 右上角头像悬浮菜单
+ * - useAutoHideScrollbar — 内容区域滚动条自动隐藏Hook
+ * - apiGet / apiDel — 获取文件夹列表、删除文件夹
+ * - Folder (类型) — 文件夹数据类型定义
+ *
+ * 引用方：
+ * - src/pages/knowledge-base.tsx
+ */
 import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { Folder as FolderIcon, ChevronDown, ChevronRight, FolderOpen, Plus, Edit, Trash2, MoreVertical } from "lucide-react";

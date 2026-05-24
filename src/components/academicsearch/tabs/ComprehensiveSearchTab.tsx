@@ -1,3 +1,22 @@
+/**
+ * 综合搜索标签页 — 同时展示中文和英文论文搜索结果，分语言区块渲染
+ *
+ * 【前端】学术搜索子组件
+ *
+ * 职责：
+ * - 分组渲染中文论文和外文论文搜索结果
+ * - 支持跳转到中文发现/外文发现独立页面（查看更多）
+ * - 点击论文卡片跳转详情页
+ * - 点击引用按钮打开CitationModal
+ *
+ * 引用的子组件：
+ * - tabs/PaperCard — 论文卡片（综合模式）
+ * - tabs/AuthorDisplay — 作者+出版信息+摘要展示
+ * - tabs/CitationModal — 引用格式化弹窗
+ *
+ * 引用方：
+ * - academicsearch/AcademicSearch.tsx（综合搜索标签页）
+ */
 "use client";
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";

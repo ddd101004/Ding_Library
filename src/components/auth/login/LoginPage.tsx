@@ -1,3 +1,24 @@
+/**
+ * 登录/注册页面 — 登录与注册模式切换的入口页面，编排整个认证流程
+ *
+ * 【前端】认证模块页面组件
+ *
+ * 职责：
+ * - 管理登录/注册模式切换（mode: login | register）
+ * - 注册流程编排：第一步(昵称+手机号+密码) → 第二步(验证码确认)
+ * - 登录成功后跳转redirect参数指定页面（默认/chat）
+ * - 注册成功后2秒延迟自动切换回登录模式
+ * - 点击"忘记密码"跳转/forgot-password页面
+ *
+ * 引用的子组件：
+ * - layout/AuthPageLayout — 页面布局容器
+ * - login/LoginForm — 登录表单
+ * - register/RegisterStep1 — 注册第一步
+ * - register/RegisterStep2 — 注册第二步
+ *
+ * 引用方：
+ * - pages/login.tsx（登录页面入口）
+ */
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/router";

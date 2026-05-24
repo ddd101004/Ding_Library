@@ -1,3 +1,27 @@
+/**
+ * 万方API基础模块 — 认证签名、请求封装、响应解析、查询构建
+ *
+ * 【后端】仅在wanfang子模块和学术搜索API中使用
+ *
+ * 导出函数/类型：
+ * - WanfangFieldValue — 万方字段值类型（stringValue/numberValue/boolValue/listValue）
+ * - WanfangDocument — 万方文档类型（resourceType, uid, fields）
+ * - WanfangSearchResponse — 搜索响应类型（documents, numFound）
+ * - WanfangDetailResponse — 详情响应类型（document）
+ * - extractChineseValue(field) — 从字段提取中文值（第一个值）
+ * - extractEnglishValue(field) — 从字段提取英文值（第二个值）
+ * - extractStringArray(field) — 从字段提取字符串数组
+ * - extractYear(dateStr?, numStr?) — 从日期或编号提取年份
+ * - wanfangFetch(endpoint, body) — 万方API请求封装（AppKey+MD5签名认证，30秒超时）
+ * - handleWanfangError(error) — 统一错误处理（401/403/429/5xx分类）
+ * - WanfangSearchOptions — 搜索参数类型
+ * - buildWanfangQuery(options) — 构建万方查询字符串（all/title/abstract/keyword模式+年份范围）
+ *
+ * 引用方：
+ * - service/wanfang/paper.ts — 论文搜索与详情
+ * - service/wanfang/paperProcessor.ts — 搜索结果处理
+ * - pages/api/academic-search.ts — 学术搜索API
+ */
 import axios from "axios";
 import crypto from "crypto";
 import logger from "@/helper/logger";

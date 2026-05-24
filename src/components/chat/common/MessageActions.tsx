@@ -1,3 +1,23 @@
+/**
+ * 消息操作栏 — AI消息底部的操作按钮组（版本切换、点赞点踩、复制、重新生成）
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 版本切换：多版本时显示左右箭头+版本号(1/2)，调用MessageVersionControl切换
+ * - 反馈按钮：调用MessageFeedback组件渲染点赞/点踩按钮
+ * - 复制按钮：调用CopyButton复制消息文本到剪贴板
+ * - 重新生成按钮：调用onRegenerate重新生成AI回复，AI回复中时显示禁用态+hover提示
+ * - 流式输出期间隐藏整条操作栏(isStreaming时display:none)
+ *
+ * 引用的子组件：
+ * - common/CopyButton — 复制到剪贴板按钮
+ * - common/MessageVersionControl — 消息版本切换控制器
+ * - common/MessageFeedback — 点赞/点踩反馈按钮
+ *
+ * 引用方：
+ * - common/ChatMessage — AI消息底部的操作区域
+ */
 import React from "react";
 import { RefreshCw } from "lucide-react";
 import CopyButton from "./CopyButton";

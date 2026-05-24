@@ -1,3 +1,14 @@
+/**
+ * 学术搜索页 /academic-search — 万方论文检索
+ *
+ * 【前端】路由：/academic-search
+ *
+ * 职责：
+ * - 学术论文搜索界面（关键词/标题/作者/摘要/关键词字段）
+ * - 搜索结果列表展示
+ * - 论文详情查看
+ * - 使用WithSidebarLayout布局
+ */
 import { useRouter } from "next/router";
 import WithSidebarLayout from "../components/layout/WithSidebarLayout";
 import SearchModal from "../components/chat/common/SearchModal";

@@ -1,3 +1,26 @@
+/**
+ * 忘记密码第一步 — 输入手机号，校验后发送重置密码验证码
+ *
+ * 【前端】认证模块忘记密码流程组件
+ *
+ * 职责：
+ * - 收集手机号并校验格式（useFormValidation.validatePhone）
+ * - 调用useAuth.checkPhone检查手机号是否已注册（未注册则报错）
+ * - 调用useAuth.sendVerificationCode发送resetPassword类型验证码
+ * - 校验和发送成功后通过onNext回调将手机号传递给Step2
+ * - 底部"返回登录"链接
+ *
+ * 引用的子组件：
+ * - common/AuthInput — 手机号输入框
+ * - common/AuthButton — "获取验证码"按钮
+ *
+ * 引用的hooks：
+ * - hooks/use-form-validation — 手机号格式校验
+ * - hooks/use-auth — checkPhone、sendVerificationCode
+ *
+ * 引用方：
+ * - forgot-password/ForgotPasswordPage — step=1时渲染
+ */
 import React, { useState } from "react";
 import { useFormValidation } from "@/hooks/use-form-validation";
 import { useAuth } from "@/hooks/use-auth";

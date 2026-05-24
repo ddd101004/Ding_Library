@@ -1,3 +1,27 @@
+/**
+ * 忘记密码第二步 — 输入6位短信验证码，验证通过后进入设置新密码
+ *
+ * 【前端】认证模块忘记密码流程组件
+ *
+ * 职责：
+ * - 渲染6位独立数字验证码输入框，支持自动聚焦跳转
+ * - 验证码填写完毕自动提交验证（autoSubmit=true）
+ * - 调用useAuth.verifyCode校验验证码是否正确
+ * - 验证通过后通过onNext回调将验证码传递给Step3
+ * - 支持重新发送验证码（60秒倒计时）
+ * - 底部"返回上一步"链接
+ *
+ * 引用的子组件：
+ * - common/VerificationCodeInput — 6位验证码输入（autoSubmit=true）
+ * - common/AuthButton — "下一步"按钮
+ *
+ * 引用的hooks：
+ * - hooks/use-countdown — 重新发送验证码60秒倒计时
+ * - hooks/use-auth — verifyCode验证码校验、sendVerificationCode重发
+ *
+ * 引用方：
+ * - forgot-password/ForgotPasswordPage — step=2时渲染
+ */
 import React, { useState } from "react";
 import { VerificationCodeInput, AuthButton } from "@/components/auth";
 import { useCountdown } from "@/hooks/use-countdown";

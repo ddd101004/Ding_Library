@@ -1,3 +1,17 @@
+/**
+ * 文件夹内容数据库操作 — 获取内容列表、批量查询加入状态
+ *
+ * 【后端】仅在文件夹API中使用
+ *
+ * 导出函数/类型：
+ * - FolderPaperItem/FolderConversationItem/FolderContentItem — 内容项类型
+ * - getFolderContents(folderId, options) — 获取文件夹内容（分页）
+ * - batchGetFolderItemStatus(userId, itemIds) — 批量查询内容加入状态
+ *
+ * 引用方：
+ * - pages/api/folders/[id].ts — 文件夹详情API
+ * - pages/api/folders/index.ts — 文件夹列表API
+ */
 import logger from "@/helper/logger";
 import prisma from "@/utils/prismaProxy";
 import { Prisma } from "@prisma/client";

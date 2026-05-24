@@ -1,3 +1,19 @@
+/**
+ * 日志工具 — 基于winston的结构化日志
+ *
+ * 【前后端共用】全项目统一日志输出
+ *
+ * 导出：
+ * - logger — winston Logger实例
+ * - 日志格式：JSON + timestamp + service标签
+ * - 日志轮转：按天分割，单文件≤20MB，保留14天
+ * - 开发环境额外输出到Console（带颜色）
+ *
+ * 引用方：
+ * - service/* — 所有后端服务层
+ * - pages/api/* — 所有API路由
+ * - db/* — 所有数据库操作层
+ */
 import { createLogger, format, transports } from "winston";
 import fs from "fs";
 import DailyRotateFile from "winston-daily-rotate-file";

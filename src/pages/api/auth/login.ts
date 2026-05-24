@@ -1,3 +1,13 @@
+/**
+ * POST /api/auth/login — 用户登录
+ *
+ * 【后端API】认证模块
+ *
+ * 参数：phone_number + password/verification_code
+ * 返回：{ token, phone_number, user_id, username, role }
+ * 逻辑：密码登录/验证码登录，验证码5次错误锁定15分钟，管理员不允许普通登录
+ * 权限：公开
+ */
 // pages/api/auth/login.ts
 import { withErrorHandler } from "@/middleware/error/withErrorHandler";
 import {

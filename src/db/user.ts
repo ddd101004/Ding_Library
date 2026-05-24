@@ -1,3 +1,19 @@
+/**
+ * 用户数据库操作 — 用户CRUD、密码管理、验证码管理、管理员操作
+ *
+ * 【后端】仅在认证API和管理员API中使用
+ *
+ * 导出函数：
+ * - createUser/getUserByPhoneNumber/findUserByUserId/getUserProfile/updateUserProfile — 用户CRUD
+ * - updateUserByPhoneNumber/updateUserByUserId — 用户更新
+ * - upsertVerificationCode/createUserWithVerificationCode/verifyPhoneNumberCode — 验证码管理
+ * - resetCodeAttemptCount/lockUserAccount/incrementCodeAttemptCount/clearVerificationCode — 账户锁定
+ * - getAllUsersWithFileCount/resetUserPasswordByAdmin/toggleUserStatus — 管理员操作
+ *
+ * 引用方：
+ * - pages/api/auth/* — 认证相关API
+ * - pages/api/admin/users/* — 管理员用户管理API
+ */
 import { REGISTER_TYPE } from "@/constants";
 import logger from "@/helper/logger";
 import { checkCodeValid } from "@/service/checkCodeValid";

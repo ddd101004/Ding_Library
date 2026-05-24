@@ -17,6 +17,7 @@
  * - pages/api/chat/messages/stream.ts — 流式发送消息API
  * - pages/api/chat/messages/[id]/regenerate.ts — 重新生成消息API
  */
+import { NextApiResponse } from "next";
 import { updateMessage } from "@/db/chatMessage";
 import { updateConversation } from "@/db/chatConversation";
 import { callChatLLMStream } from "./llmService";

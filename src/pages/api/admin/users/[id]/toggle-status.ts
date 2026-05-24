@@ -1,3 +1,11 @@
+/**
+ * POST /api/admin/users/:id/toggle-status — 切换用户启用/禁用状态（管理员）
+ *
+ * 【后端API】管理员模块
+ *
+ * 权限：withAdminAuth
+ * 限制：不能禁用管理员账号
+ */
 import { NextApiRequest, NextApiResponse } from "next";
 import { withAdminAuth } from "@/middleware/auth/withAdminAuth";
 import { toggleUserStatus, findUserByUserIdInner } from "@/db/user";

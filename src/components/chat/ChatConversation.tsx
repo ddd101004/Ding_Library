@@ -1,3 +1,37 @@
+/**
+ * 对话详情页 — 管理单次对话的完整交互流程：消息收发、SSE流式响应、模式切换、版本控制
+ *
+ * 【前端】对话模块核心页面组件
+ *
+ * 职责：
+ * - 渲染对话消息列表（用户消息+AI回复），支持SSE流式逐字输出
+ * - 管理三种对话模式切换（普通/深度思考/文献检索），各模式使用不同LLM策略
+ * - 发送消息时POST /api/chat/messages/stream，接收SSE流式响应逐字渲染
+ * - 支持消息重新生成、版本切换（多轮对话同一问题可有多个AI回答版本）
+ * - 支持语音录制和文字识别（useAudioRecorder）
+ * - 从知识库跳入时显示返回知识库按钮（from=knowledgebase参数）
+ * - 文献检索模式下右侧展示RelatedPapers论文面板
+ * - 组件卸载时清理sessionStorage缓存标记
+ *
+ * 引用的子组件：
+ * - conversation-components/UserAvatarSection — 右上角用户头像悬浮菜单
+ * - conversation-components/MessageListContainer — 消息列表渲染容器
+ * - conversation-components/ChatInputArea — 底部输入区域
+ * - common/MessageInput — 消息输入框组件
+ * - chat/ChatSplitLayout — 分屏布局（消息区+论文搜索区）
+ *
+ * 引用的hooks：
+ * - hooks/useChatState — 对话状态管理（消息、模式、加载等）
+ * - hooks/useMessageActions — 消息操作（复制、重新生成、流式处理）
+ * - hooks/useRelatedPapers — 相关论文数据管理
+ * - hooks/useConversationData — 会话数据加载和初始化
+ * - hooks/useMessageVersions — 消息版本控制
+ * - hooks/use-chat-scroll — 自动滚动到底部
+ * - hooks/useAudioRecorder — 语音录制和识别
+ *
+ * 引用方：
+ * - pages/chatconversation.tsx（对话详情页入口）
+ */
 "use client";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { flushSync } from "react-dom";

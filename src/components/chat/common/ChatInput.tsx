@@ -1,3 +1,20 @@
+/**
+ * 自适应高度输入框 — 支持自动调整高度、中文输入法兼容、光标定位的textarea
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 2行以内自动扩展高度，超过2行切换为固定高度+滚动条(maxHeight限制)
+ * - 使用ResizeObserver监听容器宽度变化后重新调整高度
+ * - 处理中文输入法(isComposing)避免composition期间触发onChange
+ * - 通过useImperativeHandle暴露focusToEnd/focus/value/selectionStart等方法给父组件
+ * - 支持onKeyDown事件（Enter发送、Shift+Enter换行）
+ *
+ * 引用方：
+ * - common/MessageInput — 对话输入区域的textarea
+ * - chat/ChatHome — 首页输入框
+ * - chat/CheckedChat — 功能对话页输入框
+ */
 // ChatInput.tsx
 import { useRef, useEffect, useImperativeHandle, useState } from 'react';
 import React, { forwardRef } from 'react';

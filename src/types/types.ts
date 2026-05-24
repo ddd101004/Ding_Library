@@ -1,3 +1,11 @@
+/**
+ * 通用搜索结果类型定义
+ *
+ * 【前端】学术搜索模块使用
+ *
+ * 导出：
+ * - SearchResult — 搜索结果项（id/source/title/authors/abstract/year等）
+ */
 export interface SearchResult {
   id: string;
   source: string;

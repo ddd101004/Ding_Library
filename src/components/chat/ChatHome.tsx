@@ -1,3 +1,29 @@
+/**
+ * 对话首页 — 展示问候语、输入框、功能按钮，发送消息后创建新对话
+ *
+ * 【前端】对话模块首页组件
+ *
+ * 职责：
+ * - 显示基于时间的问候语（早上好/上午好/中午好/下午好/晚上好）
+ * - 渲染输入框和工具栏（DeepThink/文献检索/语音录制/发送按钮）
+ * - 发送消息后调用useConversation.handleSendMessage创建新对话并跳转
+ * - 支持快问快答和深度学习功能入口跳转（/checkedchat页面）
+ * - 空闲时预加载关键词数据（usePreload + requestIdleCallback）
+ * - 支持语音录制和文字识别（useAudioRecorder）
+ *
+ * 引用的子组件：
+ * - common/AvatarHoverMenu — 右上角用户头像悬浮菜单
+ * - common/ChatInput — 消息输入框
+ * - common/Toolbar — 底部工具栏（模式切换/语音/发送）
+ *
+ * 引用的hooks：
+ * - hooks/useConversation — 消息发送和对话创建
+ * - hooks/useAudioRecorder — 语音录制和识别
+ * - hooks/usePreload — 数据预加载
+ *
+ * 引用方：
+ * - chat/ChatSplitLayout — 无对话ID时渲染的欢迎首页
+ */
 "use client";
 import React, { useState, useRef, useEffect } from "react";
 import Head from "next/head";

@@ -1,3 +1,21 @@
+/**
+ * 消息气泡 — 渲染消息内容气泡，区分用户(AI头像)和用户样式，使用MarkdownRenderer
+ *
+ * 【前端】对话模块通用组件
+ *
+ * 职责：
+ * - 用户消息(role=user)：右侧布局，时间+昵称+头像在上，气泡在下（圆角右上角尖）
+ * - AI消息(role=assistant)：左侧布局，无边框纯文本，使用MarkdownRenderer渲染
+ * - 气泡内容通过formatMessageForDisplay预处理后交给MarkdownRenderer渲染
+ * - 支持论文引用标记点击(onReferenceClick)传递给MarkdownRenderer
+ * - 流式输出时AI消息末尾显示跳动光标(span.animate-bounce)
+ *
+ * 引用的子组件：
+ * - common/MarkdownRenderer — Markdown文本渲染（含引用标记识别和GFM表格支持）
+ *
+ * 引用方：
+ * - common/ChatMessage — 单条消息的内容区域渲染
+ */
 import React from "react";
 import MarkdownRenderer from './MarkdownRenderer';
 import { formatMessageForDisplay } from "@/service/chat/conversationUtils";

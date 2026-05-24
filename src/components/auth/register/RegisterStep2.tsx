@@ -1,3 +1,27 @@
+/**
+ * 注册第二步 — 输入6位短信验证码，自动发送验证码并支持自动提交注册
+ *
+ * 【前端】认证模块注册流程组件
+ *
+ * 职责：
+ * - 组件挂载时自动发送短信验证码（仅执行一次）
+ * - 渲染6位独立数字验证码输入框，支持自动聚焦跳转
+ * - 验证码填写完毕自动提交注册（autoSubmit=true）
+ * - 支持手动点击"完成注册"按钮提交
+ * - 提交时调用useAuth.register完成注册，成功后跳转/chat或redirect页面
+ * - 手机号中间4位脱敏显示（138****1234格式）
+ *
+ * 引用的子组件：
+ * - common/VerificationCodeInput — 6位验证码输入（autoSubmit=true）
+ * - common/AuthButton — "完成注册"按钮
+ *
+ * 引用的hooks：
+ * - hooks/use-countdown — 重新发送验证码60秒倒计时
+ * - hooks/use-auth — register注册、sendVerificationCode发送验证码
+ *
+ * 引用方：
+ * - login/LoginPage — 注册模式第二步渲染
+ */
 import React, { useState, useEffect, useRef } from "react";
 import { VerificationCodeInput, AuthButton } from "@/components/auth";
 import { useCountdown } from "@/hooks/use-countdown";

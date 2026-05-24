@@ -1,3 +1,23 @@
+/**
+ * 消息列表容器 — 渲染对话消息列表，处理消息key、版本映射、重新生成权限
+ *
+ * 【前端】对话模块布局组件
+ *
+ * 职责：
+ * - 遍历messages数组渲染ChatMessage组件列表
+ * - 使用backendId（后端消息ID）作为React key，确保消息唯一性和正确更新
+ * - 从currentVersionMessageIds映射获取每条消息当前版本的实际message_id
+ * - 仅最新AI消息(latestAiMessageId)显示重新生成按钮(canRegenerate=true)
+ * - 支持分栏布局(isInSplitLayout)和单栏布局两种样式
+ * - 列表底部放置messagesEndRef用于自动滚动到底部
+ * - 显示messageError全局错误提示
+ *
+ * 引用的子组件：
+ * - common/ChatMessage — 单条消息渲染
+ *
+ * 引用方：
+ * - chat/ChatConversation — 对话详情页的消息列表区域
+ */
 "use client";
 import React from "react";
 import ChatMessage from "../common/ChatMessage";

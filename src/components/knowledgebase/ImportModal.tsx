@@ -1,3 +1,25 @@
+/**
+ * ImportModal — 导入内容弹窗（文件上传 + 历史记录选择）
+ *
+ * 【前端】知识库模块组件
+ *
+ * 职责：
+ * - 悬浮式三级弹窗：导入入口 → 文件/历史记录选择 → 文件上传/历史记录多选
+ * - 文件导入：校验类型（PDF/DOCX/TXT）、大小（≤50MB），上传到本地并关联到文件夹
+ * - 历史记录导入：分页加载对话列表，支持多选，自动检测已存在的记录并标记"已存在"
+ * - 点击外部自动关闭，上传/导入中显示加载状态
+ *
+ * 引用的子组件/hooks/API：
+ * - apiGet("/api/chat/conversations") — 分页获取对话历史
+ * - apiPost("/api/folders/:id/items") — 将项目添加到文件夹（单条/批量）
+ * - uploadFileToLocal — 本地文件上传
+ * - toast (sonner) — 操作结果提示
+ * - cn (lib/utils) — 条件样式合并
+ *
+ * 引用方：
+ * - knowledgebase/FolderDetailPage.tsx — 文件夹详情页导入按钮
+ * - knowledgebase/KnowledgeBasePage.tsx — 知识库主页导入按钮
+ */
 import React, { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
 import { apiGet, apiPost } from "@/api/request";

@@ -23,8 +23,7 @@
  * 引用方：
  * - pages/api/chat/messages/stream.ts — 流式发送消息API
  */
- * 抽取流式和非流式消息接口的公共逻辑
- */
+
 
 import { NextApiResponse } from "next";
 import { sendWarnningResponse } from "@/helper/responseHelper";

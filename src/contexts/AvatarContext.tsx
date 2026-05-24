@@ -1,3 +1,19 @@
+/**
+ * AvatarContext — 用户头像上下文
+ *
+ * 【前端】全局上下文
+ *
+ * 导出：
+ * - AvatarProvider — 上下文Provider，管理头像URL和上传/更新
+ * - useAvatar — 获取头像上下文的Hook（avatarUrl/refreshAvatar）
+ *
+ * 职责：
+ * - 获取当前用户头像URL
+ * - 头像上传后刷新
+ *
+ * 引用方：
+ * - pages/_app.tsx — 全局Provider包裹
+ */
 "use client";
 import React, { createContext, useContext } from "react";
 

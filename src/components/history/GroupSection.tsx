@@ -1,3 +1,18 @@
+/**
+ * GroupSection — 按时间分组渲染对话列表
+ *
+ * 【前端】历史记录模块分组组件
+ *
+ * 职责：
+ * - 按时间区间（最近7天/30天内/更早）分组展示对话
+ * - 渲染每组标题及对应的ConversationItem列表
+ *
+ * 引用的子组件：
+ * - ./ConversationItem — 单条对话卡片
+ *
+ * 引用方：
+ * - HistoryPage
+ */
 // GroupSection.tsx
 import React from 'react';
 import ConversationItem from './ConversationItem';
