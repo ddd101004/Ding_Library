@@ -87,6 +87,12 @@ const handlePost = async (req: NextApiRequest, res: NextApiResponse) => {
     return;
   }
 
+  // 账号被禁用时不允许登录
+  if (user.disabled_status) {
+    sendWarnningResponse(res, "该账号已被禁用，请联系管理员");
+    return;
+  }
+
   // 密码登录
   if (password) {
     const pwd = Buffer.from(password, "base64").toString();

@@ -47,7 +47,7 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
 
       try {
         // 验证token是否有效
-        await axios.get('/api/auth/check', {
+        const res = await axios.get('/api/auth/check', {
           timeout: 3000,
           withCredentials: true,
           silentAuthError: true
@@ -65,8 +65,18 @@ function AuthChecker({ children }: { children: React.ReactNode }) {
 
         // 只有明确的服务端401错误才清除token
         if (error.response?.status === 401) {
-          clearUserInfo();
-          router.push('/login?redirect=' + encodeURIComponent(router.asPath));
+          const reason = error.response?.data?.reason;
+          const errorMsg = error.response?.data?.error;
+
+          // 账号被禁用时，提示用户并跳转登录页
+          if (reason === 'account_disabled') {
+            clearUserInfo();
+            // 将禁用提示通过URL参数传递给登录页
+            router.push('/login?disabled=1&msg=' + encodeURIComponent(errorMsg || '该账号已被禁用'));
+          } else {
+            clearUserInfo();
+            router.push('/login?redirect=' + encodeURIComponent(router.asPath));
+          }
         } else {
           // 其他错误允许继续访问
           setAuthChecked(true);

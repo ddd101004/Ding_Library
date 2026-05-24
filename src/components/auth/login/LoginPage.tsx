@@ -20,7 +20,7 @@
  * - pages/login.tsx（登录页面入口）
  */
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import {
   AuthPageLayout,
@@ -41,6 +41,17 @@ export default function LoginPage() {
     null
   );
   const [showSuccess, setShowSuccess] = useState(false);
+  const [disabledMessage, setDisabledMessage] = useState<string | null>(null);
+
+  // 检测URL中的账号禁用提示
+  useEffect(() => {
+    if (router.query.disabled === "1") {
+      const msg = (router.query.msg as string) || "该账号已被禁用，请联系管理员";
+      setDisabledMessage(decodeURIComponent(msg));
+      // 清除URL参数，避免刷新后重复显示
+      router.replace("/login", undefined, { shallow: true });
+    }
+  }, [router.query]);
 
   /**
    * 登录成功处理
@@ -112,6 +123,13 @@ export default function LoginPage() {
         {showSuccess && (
           <div className="fixed top-4 left-1/2 transform -translate-x-1/2 p-3 rounded-[10px] text-sm text-center bg-green-50 border border-green-200 text-green-600 z-50">
             注册成功，正在跳转到登录...
+          </div>
+        )}
+
+        {/* 账号禁用提示 */}
+        {disabledMessage && (
+          <div className="mb-4 p-3 rounded-lg text-sm text-center bg-red-50 border border-red-200 text-red-600">
+            {disabledMessage}
           </div>
         )}
 
