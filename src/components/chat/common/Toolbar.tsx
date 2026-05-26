@@ -1,16 +1,14 @@
 /**
- * 底部工具栏 — 输入框下方的功能按钮组（DeepThink/文献检索/语音录制/发送）
+ * 底部工具栏 — 输入框下方的功能按钮组（DeepThink/论文搜索/语音录制/发送）
  *
  * 【前端】对话模块通用组件
  *
  * 职责：
- * - DeepThink模式切换按钮(Brain图标)：开启时显示橙色圆点指示+橙色边框
- * - 文献检索切换按钮(FileSearch图标)：开启时显示橙色圆点指示+橙色边框
+ * - DeepThink模式切换按钮(Brain图标)：开启时显示绿色圆点指示+绿色边框
+ * - 论文搜索切换按钮(FileSearch图标)：开启时显示绿色圆点指示+绿色边框
  * - 语音录制按钮(Mic/MicOff图标)：录音中显示红色MicOff图标+脉冲动画
- * - 发送按钮(Send图标)：有内容时teal色可点击，无内容时灰色禁用态
- * - 深度思考+文献检索不可同时开启（互斥逻辑）
+ * - 发送按钮(Send图标)：有内容时teal色可点击，无内容时触发提示
  * - 侧边栏宽度影响按钮位置偏移
- * - 文件上传中或流式输出中时禁用部分按钮
  *
  * 引用方：
  * - common/MessageInput — 消息输入区域底部工具栏
@@ -85,7 +83,6 @@ export default function Toolbar({
   // isOverallDisabled 只用于发送按钮
   const isOverallDisabled = disabled || isSending;
 
-  // 深度思考和论文搜索不受文件解析影响
   const isControlDisabled = disabled || isSending;
 
   return (

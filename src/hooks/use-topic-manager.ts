@@ -30,7 +30,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   const [topics, setTopics] = useState<string[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [refreshCount, setRefreshCount] = useState(0);
-  const [hasLoadedKeywords, setHasLoadedKeywords] = useState(false); // 标记是否已加载关键词
+  const hasLoadedKeywordsRef = useRef(false);
   const { preloadData, isLoading } = usePreload();
 //快问快答默认问题（备用，当API调用失败时使用）
   const quickQADefaults = [
@@ -120,13 +120,12 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   }, [preloadData, deepLearningTopics]);
 
   const handleTopicButtonClick = useCallback((type: string) => {
-    // 深度学习模式：直接加载关键词，不区分主题类型
-    if (currentFunction === "deepStudy" && !hasLoadedKeywords) {
+    if (currentFunction === "deepStudy" && !hasLoadedKeywordsRef.current) {
       fetchDeepLearningKeywords(false);
-      setHasLoadedKeywords(true); // 标记已加载
+      hasLoadedKeywordsRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFunction, hasLoadedKeywords]);
+  }, [currentFunction]);
 
   const handleTopicClick = useCallback((topic: string) => {
     setSelectedTopic(topic);
@@ -148,10 +147,9 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   useEffect(() => {
     if (currentFunction === "quickQA") {
       fetchQuickQAQuestions(false);
-    } else if (currentFunction === "deepStudy" && !hasLoadedKeywords) {
-      // 深度学习模式：首次进入时立即加载关键词
+    } else if (currentFunction === "deepStudy" && !hasLoadedKeywordsRef.current) {
       fetchDeepLearningKeywords(false);
-      setHasLoadedKeywords(true);
+      hasLoadedKeywordsRef.current = true;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentFunction]);
