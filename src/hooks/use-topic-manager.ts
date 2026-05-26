@@ -32,7 +32,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
   const [refreshCount, setRefreshCount] = useState(0);
   const [hasLoadedKeywords, setHasLoadedKeywords] = useState(false); // 标记是否已加载关键词
   const { preloadData, isLoading } = usePreload();
-
+//快问快答默认问题（备用，当API调用失败时使用）
   const quickQADefaults = [
     "什么是人工智能？它的主要应用领域有哪些？",
     "机器学习与深度学习的主要区别是什么？",
@@ -48,7 +48,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
     "迁移学习", "监督学习", "无监督学习"
   ];
 
-  // 深度学习主题池（用于生成多样化的关键词）
+  // 内置的主题池列表，用于深度学习（用于生成多样化的关键词）
   const deepLearningTopics = [
     "深度学习", "机器学习", "人工智能", "数据科学", "计算机视觉",
     "自然语言处理", "强化学习", "神经网络", "大数据分析", "云计算"
@@ -60,7 +60,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
     refreshCountRef.current = refreshCount;
   }, [refreshCount]);
 
-  // 获取快问快答问题
+  // ！！获取快问快答问题
   const fetchQuickQAQuestions = useCallback(async (forceRefresh = false) => {
     // 优先从 sessionStorage 读取预加载的问题
     if (!forceRefresh) {
@@ -97,7 +97,7 @@ export const useTopicManager = ({ currentFunction, selectedButton }: TopicManage
     }
   }, [preloadData]);
 
-  // 获取深度学习关键词
+  // ！！获取深度学习关键词
   const fetchDeepLearningKeywords = useCallback(async (forceRefresh = false) => {
     const timestamp = Date.now();
 

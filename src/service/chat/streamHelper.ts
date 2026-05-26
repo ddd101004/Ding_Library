@@ -22,8 +22,6 @@ import { updateMessage } from "@/db/chatMessage";
 import { updateConversation } from "@/db/chatConversation";
 import { callChatLLMStream } from "./llmService";
 import { RelatedPaper } from "./autoRelatedPapers";
-import { AttachmentContent } from "./messageService";
-import { getRecentMessages } from "@/db/chatMessage/query";
 import logger from "@/helper/logger";
 
 export interface StreamState {

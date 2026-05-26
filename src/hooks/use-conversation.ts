@@ -49,9 +49,6 @@ export const useConversation = () => {
 
     setIsSending(true);
     try {
-      // 注意：根据要求，不再拼接文件内容到content中，文件内容通过attachment_ids传递
-      // const fileContent = formatFileContent(uploadedFiles);
-      // const fullContent = fileContent
       //   ? `${fileContent}${inputText.trim()}`
       //   : inputText.trim();
       // 保持为纯用户输入内容

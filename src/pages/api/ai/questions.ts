@@ -53,7 +53,7 @@ const handlePostQuestions = async (
 ) => {
   let { keyword, count = 5 } = req.body;
 
-  // 如果关键词为空，随机选择一个内置关键词（快问快答模式）
+  //随机选择一个内置关键词（快问快答模式）
   const isQuickMode = !keyword || keyword.trim() === "";
   if (isQuickMode) {
     const randomIndex = Math.floor(Math.random() * RANDOM_KEYWORDS.length);
