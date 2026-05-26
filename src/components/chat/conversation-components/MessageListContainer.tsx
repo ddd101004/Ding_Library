@@ -65,7 +65,7 @@ interface MessageListContainerProps {
   isAiResponding?: boolean;
   onPreviousVersion: (messageId: string) => void;
   onNextVersion: (messageId: string) => void;
-  messagesEndRef: React.RefObject<HTMLDivElement | null>;
+  messagesEndRef: React.RefObject<HTMLDivElement>;
   // 新增：是否在分栏布局中
   isInSplitLayout?: boolean;
   // 新增：相关论文数据

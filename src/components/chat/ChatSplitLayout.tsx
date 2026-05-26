@@ -83,7 +83,7 @@ interface ChatSplitLayoutProps {
   onReferenceClick: (paperIndex: number, element: HTMLElement) => void;
   singleColumnContent: React.ReactNode;
   inputAreaContent: React.ReactNode;
-  messagesEndRef: React.RefObject<HTMLDivElement | null>;
+  messagesEndRef: React.RefObject<HTMLDivElement>;
   onFeedbackSuccess?: (messageId: string, feedbackType: 'like' | 'dislike' | 'cancel_like' | 'cancel_dislike') => void;
   currentVersionMessageIds?: Record<string, string>;
   latestAiMessageId?: string | null;
