@@ -45,7 +45,7 @@ export function LoginForm({
   onSwitchToRegister,
   onForgotPassword,
 }: LoginFormProps) {
-  const router = useRouter(); // 👈 修复：缺少 router 定义
+  const router = useRouter(); // 修复：缺少 router 定义
   const [loginType, setLoginType] = useState<'password' | 'code'>('password');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');

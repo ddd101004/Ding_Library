@@ -23,7 +23,6 @@ const sendSms = async (
   console.log("=".repeat(60));
   console.log(`手机号: ${phoneNumbers.join(", ")}`);
   console.log(`验证码: ${code}`);
-  console.log(`时间: ${new Date().toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" })}`);
   console.log("=".repeat(60) + "\n");
 
   // 返回成功状态（保持与原API一致的返回格式）
