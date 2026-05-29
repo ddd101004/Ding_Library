@@ -311,8 +311,7 @@ export default function CitationModal({
 
           {/* 下载说明文字 */}
           <div className="mt-[clamp(12px,1.5vw,18px)] text-[clamp(12px,1.5vw,16px)] text-[#999999] leading-relaxed">
-            下载可以被引用管理软件(如 BibTex、EndNote、ProCite、RefWorks 和
-            ReferenceManager)导入的 BibTex 或 RIS 格式的引用文件。
+            下载可以被引用管理软件(如 BibTex)导入的 BibTex 或 RIS 格式的引用文件。
           </div>
 
           {/* 下载格式选择 */}
