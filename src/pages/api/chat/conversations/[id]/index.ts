@@ -13,14 +13,6 @@ import {
   verifyConversationOwner,
 } from "@/db/chatConversation";
 
-// 生成文件访问 URL（本地存储）
-function getFileUrl(filePath: string | null): string | null {
-  if (!filePath) return null;
-  if (filePath.startsWith("papers/") || filePath.startsWith("covers/") || filePath.startsWith("avatars/")) {
-    return `/api/uploads/${filePath}`;
-  }
-  return null;
-}
 import { validateId, validateString } from "@/utils/validateString";
 
 /**
