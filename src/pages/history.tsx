@@ -17,7 +17,7 @@ export default function History() {
   return (
  <>
       <Head>
-        <title>AI智慧学术交互系统-历史记录</title>
+        <title>AI学术交互系统-历史记录</title>
       </Head>
       <WithSidebarLayout>
         <HistoryPage/>

@@ -5,7 +5,7 @@
  *
  * 职责：
  * - 渲染全屏白色表单容器，居中展示子组件内容
- * - 通过Head组件设置页面标题（AI智慧学术交互系统 + title后缀）
+ * - 通过Head组件设置页面标题（AI学术交互系统 + title后缀）
  * - 提供返回首页导航
  *
  * 引用方：
@@ -39,7 +39,7 @@ export function AuthPageLayout({ title, children }: AuthPageLayoutProps) {
       className="w-full min-h-screen bg-cover bg-center bg-no-repeat flex overflow-hidden"
     >
       <Head>
-        <title>AI智慧学术交互系统{title}</title>
+        <title>AI学术交互系统{title}</title>
       </Head>
 
       {/* 右侧表单区域 */}

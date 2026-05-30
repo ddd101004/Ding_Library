@@ -17,7 +17,7 @@ export default function chat() {
   return (
  <>
       <Head>
-        <title>AI智慧学术交互系统-AI对话</title>
+        <title>AI学术交互系统-AI对话</title>
       </Head>
       <WithSidebarLayout skipMainContent={true}>
         <ChatConversation/>

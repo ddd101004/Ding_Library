@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <Head>
-        <title>管理员登录 - AI智慧学术系统</title>
+        <title>管理员登录 - AI学术系统</title>
       </Head>
 
       <div className="w-full max-w-md">

@@ -734,7 +734,7 @@ export default function ChatConversation({
   return (
     <>
       <Head>
-        <title>AI智慧学术交互系统-AI对话</title>
+        <title>AI学术交互系统-AI对话</title>
       </Head>
 
       {/* 全局样式覆盖 - 浅绿主题 */}

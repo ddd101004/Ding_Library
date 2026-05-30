@@ -29,14 +29,14 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>AI智慧学术交互系统</title>
+        <title>AI学术交互系统</title>
         <meta
           name="description"
-          content="AI智慧学术交互系统·陪你探索世界"
+          content="AI学术交互系统·陪你探索世界"
         />
         <meta
           name="keywords"
-          content="AI智慧交互系统,文献检索,科研助手,学术搜索,AI助手"
+          content="AI交互系统,文献检索,科研助手,学术搜索,AI助手"
         />
         <meta
           name="viewport"

@@ -233,7 +233,7 @@ export default function ChatHome() {
   return (
     <>
       <Head>
-        <title>AI智慧学术交互系统-AI对话</title>
+        <title>AI学术交互系统-AI对话</title>
       </Head>
 
       {/* 用户头像 */}

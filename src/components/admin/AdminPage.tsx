@@ -154,7 +154,7 @@ export function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Head>
-        <title>AI智慧学术系统 - 管理后台</title>
+        <title>AI学术系统 - 管理后台</title>
       </Head>
 
       {/* 顶部导航 */}

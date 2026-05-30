@@ -17,7 +17,7 @@ export default function ChatPage() {
   return (
     <>
       <Head>
-        <title>AI智慧学术交互系统-AI对话</title>
+        <title>AI学术交互系统-AI对话</title>
       </Head>
       <WithSidebarLayout
         isChatHome={true}
