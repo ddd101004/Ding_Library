@@ -22,6 +22,7 @@
  * - login/LoginPage — 注册模式第一步渲染
  */
 import React, { useState } from "react";
+import { useFormValidation } from "@/hooks/use-form-validation";
 import { useAuth } from "@/hooks/use-auth";
 import { AuthInput, AuthButton } from "@/components/auth";
 import { PasswordInput } from "@/components/ui/password-input";
